@@ -1,3 +1,10 @@
+import { GlobalStyle } from "@/App.styled.ts";
+
 export function App() {
-  return <div>Hello World!</div>;
+  return (
+    <>
+      <GlobalStyle />
+      <div>Hello world!</div>
+    </>
+  );
 }
