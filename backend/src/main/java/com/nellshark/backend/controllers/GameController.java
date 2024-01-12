@@ -17,7 +17,8 @@ public class GameController {
     private final GameService gameService;
 
     @GetMapping
-    private ResponseEntity<List<Game>> getAllGames() {
-        return ResponseEntity.ok(gameService.getAllGames());
+    private ResponseEntity<List<Long>> getAllGamesId() {
+        List<Long> list = gameService.getAllGames().stream().map(Game::getId).toList();
+        return ResponseEntity.ok(list);
     }
 }
