@@ -3,11 +3,12 @@ package com.nellshark.backend.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -17,14 +18,23 @@ import java.time.LocalDate;
 @Entity
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class Price {
     @Id
     @Column(name = "id", nullable = false, updatable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "price", nullable = false, updatable = false)
-    private Float price;
+    @Column(name = "price_usd", nullable = false, updatable = false)
+    private Long priceUsd;
+
+    @Column(name = "price_eur", nullable = false, updatable = false)
+    private Long priceEur;
+
+    @Column(name = "price_rub", nullable = false, updatable = false)
+    private Long priceRub;
+
+    @Column(name = "price_kzt", nullable = false, updatable = false)
+    private Long priceKzt;
 
     @Column(name = "local_date", nullable = false, updatable = false)
     private LocalDate localDate;
@@ -33,4 +43,13 @@ public class Price {
     @JoinColumn(name = "game_id", nullable = false, updatable = false)
     @JsonIgnore
     private Game game;
+
+    public Price(Long priceUsd, Long priceEur, Long priceRub, Long priceKzt, LocalDate localDate, Game game) {
+        this.priceUsd = priceUsd;
+        this.priceEur = priceEur;
+        this.priceRub = priceRub;
+        this.priceKzt = priceKzt;
+        this.localDate = localDate;
+        this.game = game;
+    }
 }
