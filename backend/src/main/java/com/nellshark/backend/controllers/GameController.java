@@ -1,6 +1,5 @@
 package com.nellshark.backend.controllers;
 
-import com.nellshark.backend.models.Game;
 import com.nellshark.backend.services.GameService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +17,6 @@ public class GameController {
 
     @GetMapping
     private ResponseEntity<List<Long>> getAllGamesId() {
-        List<Long> list = gameService.getAllGames().stream().map(Game::getId).toList();
-        return ResponseEntity.ok(list);
+        return ResponseEntity.ok(gameService.getAllGameIds());
     }
 }

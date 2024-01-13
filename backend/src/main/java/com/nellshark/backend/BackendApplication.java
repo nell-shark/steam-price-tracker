@@ -25,7 +25,7 @@ public class BackendApplication {
         return (args) -> {
             System.out.println("In CommandLineRunnerImpl ");
             Game game = new Game();
-            game.setId(1L);
+            game.setId(620L);
             gameRepository.save(game);
 
 
