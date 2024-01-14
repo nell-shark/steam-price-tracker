@@ -7,7 +7,7 @@ export function NavBar() {
   return (
     <Navbar expand="lg" className="bg-body-tertiary" bg="dark" data-bs-theme="dark">
       <Container>
-        <Navbar.Brand href="#">SteamCritic</Navbar.Brand>
+        <Navbar.Brand href="#">SC</Navbar.Brand>
         <Navbar.Toggle aria-controls="navbarScroll" />
         <Navbar.Collapse id="navbarScroll" className="justify-content-between">
           <Nav className="my-2 my-lg-0" navbarScroll>

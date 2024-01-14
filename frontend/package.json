@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "vite --host",
     "build": "tsc && vite build",
-    "lint": "prettier . --write && eslint --fix --ext ts,tsx --report-unused-disable-directives  .",
+    "lint": "prettier . --write && eslint --fix --ext ts,tsx --report-unused-disable-directives .",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -13,8 +13,7 @@
     "react": "^18.2.0",
     "react-bootstrap": "^2.9.2",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.21.2",
-    "styled-components": "^6.1.8"
+    "react-router-dom": "^6.21.2"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
