@@ -24,19 +24,19 @@ public class Price {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "price_usd", nullable = false, updatable = false)
+    @Column(name = "price_usd", nullable = false, updatable = false, columnDefinition = "BIGINT")
     private Long priceUsd;
 
-    @Column(name = "price_eur", nullable = false, updatable = false)
+    @Column(name = "price_eur", nullable = false, updatable = false, columnDefinition = "BIGINT")
     private Long priceEur;
 
-    @Column(name = "price_rub", nullable = false, updatable = false)
+    @Column(name = "price_rub", nullable = false, updatable = false, columnDefinition = "BIGINT")
     private Long priceRub;
 
-    @Column(name = "price_kzt", nullable = false, updatable = false)
+    @Column(name = "price_kzt", nullable = false, updatable = false, columnDefinition = "BIGINT")
     private Long priceKzt;
 
-    @Column(name = "local_date", nullable = false, updatable = false)
+    @Column(name = "local_date", nullable = false, updatable = false, columnDefinition = "DATE")
     private LocalDate localDate;
 
     @ManyToOne
@@ -44,12 +44,30 @@ public class Price {
     @JsonIgnore
     private Game game;
 
-    public Price(Long priceUsd, Long priceEur, Long priceRub, Long priceKzt, LocalDate localDate, Game game) {
+    public Price(Long priceUsd,
+                 Long priceEur,
+                 Long priceRub,
+                 Long priceKzt,
+                 LocalDate localDate,
+                 Game game) {
         this.priceUsd = priceUsd;
         this.priceEur = priceEur;
         this.priceRub = priceRub;
         this.priceKzt = priceKzt;
         this.localDate = localDate;
         this.game = game;
+    }
+
+    @Override
+    public String toString() {
+        return "Price{" +
+                "id=" + id +
+                ", priceUsd=" + priceUsd +
+                ", priceEur=" + priceEur +
+                ", priceRub=" + priceRub +
+                ", priceKzt=" + priceKzt +
+                ", localDate=" + localDate +
+                ", gameId=" + game.getId() +
+                '}';
     }
 }

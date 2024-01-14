@@ -26,8 +26,8 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(apiError, apiError.getHttpStatus());
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiError> handleException(Exception e, HttpServletRequest request) {
+    @ExceptionHandler({Exception.class, GameSaveException.class})
+    public ResponseEntity<ApiError> handleInternalServerErrorException(Exception e, HttpServletRequest request) {
         log.error("{} Occurred: {}", e.getClass().getSimpleName(), e.getMessage());
 
         ApiError apiError = new ApiError(
