@@ -128,11 +128,16 @@ public class GameService {
         }
     }
 
-    public void addNewGame(Long steamId) {
+    public void addNewGame(long steamId) {
         log.info("Adding a new game: id={}", steamId);
         Game game = new Game(steamId);
         Price price = getNewGamePrice(game);
+        game.setPrices(List.of(price));
         gameRepository.save(game);
-        priceService.savePrice(price);
+    }
+
+    public void deleteGame(long steamId) {
+        log.info("Deleting the game id={}", steamId);
+        gameRepository.deleteById(steamId);
     }
 }

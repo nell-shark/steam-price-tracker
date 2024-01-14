@@ -1,5 +1,6 @@
 package com.nellshark.backend.models;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -21,7 +22,10 @@ public class Game {
     @Column(name = "id", nullable = false, updatable = false)
     private Long id;
 
-    @OneToMany(mappedBy = "game", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "game",
+            fetch = FetchType.LAZY,
+            orphanRemoval = true,
+            cascade = {CascadeType.MERGE, CascadeType.REMOVE})
     @ToString.Exclude
     private List<Price> prices;
 
