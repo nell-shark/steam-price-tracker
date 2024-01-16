@@ -19,20 +19,26 @@ public class BackendApplication {
     public CommandLineRunner commandLineRunnerBean(
             GameRepository gameRepository) {
         return (args) -> {
-            Game game1 = new Game(620L);
-            Game game2 = new Game(620L);
-            Game game3 = new Game(620L);
-            Game game4 = new Game(620L);
-            Game game5 = new Game(620L);
-            Game game6 = new Game(620L);
-            Game game7 = new Game(620L);
-            Game game8 = new Game(620L);
-            Game game9 = new Game(620L);
-
             List<Game> gameList = List.of(
-                    game1, game2, game3,
-                    game4, game5, game6,
-                    game7, game8, game9
+                    new Game(1086940L,
+                            "Baldur's Gate",
+                            "The classic adventure returns! Baldur’s Gate: Enhanced Edition includes " +
+                                    "the original Baldur’s Gate adventure, the Tales of the Sword Coast expansion, " +
+                                    "and all-new content including three new party members.",
+                            "https://cdn.akamai.steamstatic.com/steam/apps/1086940/header.jpg?t=1703250718",
+                            true,
+                            false,
+                            true),
+
+                    new Game(252490L,
+                            "Rust",
+                            "The only aim in Rust is to survive. Everything wants you to die - " +
+                                    "the island’s wildlife and other inhabitants, the environment, other survivors. " +
+                                    "Do whatever it takes to last another night.",
+                            "https://cdn.akamai.steamstatic.com/steam/apps/252490/header.jpg?t=1701938429",
+                            true,
+                            false,
+                            true)
             );
 
             gameRepository.saveAll(gameList);

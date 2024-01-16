@@ -1,3 +1,5 @@
+import { useNavigate } from "react-router-dom";
+
 export interface GameItemProps {
   id: number;
   name: string;
@@ -5,8 +7,9 @@ export interface GameItemProps {
 }
 
 export function GameItem({ id, name, price }: GameItemProps) {
+  const navigate = useNavigate();
   return (
-    <tr onClick={() => console.log(`Clicked ${name}`)} style={{ cursor: "pointer" }}>
+    <tr onClick={() => navigate(`/games/${id}`)} style={{ cursor: "pointer" }}>
       <td>{id}</td>
       <td>{name}</td>
       <td>{price}</td>

@@ -3,12 +3,14 @@ package com.nellshark.backend.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nellshark.backend.dto.GameDTO;
 import com.nellshark.backend.exceptions.GameNotFoundException;
 import com.nellshark.backend.exceptions.UnexpectedJsonStructureException;
 import com.nellshark.backend.models.CountryCode;
 import com.nellshark.backend.models.Game;
 import com.nellshark.backend.models.Price;
 import com.nellshark.backend.repositories.GameRepository;
+import com.nellshark.backend.utils.MappingUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
@@ -42,27 +44,25 @@ public class GameService {
     private final OkHttpClient okHttpClient;
     private final ObjectMapper objectMapper;
 
-    public List<Game> getAllGames() {
+    public List<GameDTO> getAllGames() {
         log.info("Getting all games");
-        return gameRepository.findAll();
-    }
-
-    public List<Long> getAllGameIds() {
-        log.info("Getting all game ids");
-        return gameRepository.getAllGameIds();
+        return gameRepository.findAll()
+                .stream()
+                .map(MappingUtils::toDTO)
+                .toList();
     }
 
     public Game getGameById(Long id) {
         log.info("Getting game by id: {}", id);
         return gameRepository
-                .findByIdWithPrices(id)
+                .findById(id)
                 .orElseThrow(() -> new GameNotFoundException("Game not found id=" + id));
     }
 
     @Scheduled(cron = PRICE_UPDATE_CRON_EXPRESSION)
     public void schedulePriceUpdate() {
         log.info("Staring getting a new price of the games");
-        getAllGames().parallelStream()
+        gameRepository.findAll().parallelStream()
                 .map(this::getNewGamePrice)
                 .forEach(priceService::savePrice);
     }
@@ -130,10 +130,11 @@ public class GameService {
 
     public void addNewGame(long steamId) {
         log.info("Adding a new game: id={}", steamId);
-        Game game = new Game(steamId);
-        Price price = getNewGamePrice(game);
-        game.setPrices(List.of(price));
-        gameRepository.save(game);
+//        Game game = new Game(steamId);
+//
+//        Price price = getNewGamePrice(game);
+//        game.setPrices(List.of(price));
+//        gameRepository.save(game);
     }
 
     public void deleteGame(long steamId) {

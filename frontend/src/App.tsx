@@ -1,23 +1,27 @@
 import "./App.css";
 
+import { Container } from "react-bootstrap";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
+import { Footer } from "@/components/Footer";
+import { NavBar } from "@/components/NavBar";
+import { Game } from "@/pages/Game";
 import { Home } from "@/pages/Home";
-
-import { Footer } from "./components/Footer";
-import { NavBar } from "./components/NavBar";
 
 export function App() {
   return (
     <>
       <NavBar />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
-      </BrowserRouter>
-      <Footer />
+      <Container>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/games/:id" element={<Game />} />
+            <Route path="*" element={<Navigate to="/" />} />
+          </Routes>
+        </BrowserRouter>
+        <Footer />
+      </Container>
     </>
   );
 }

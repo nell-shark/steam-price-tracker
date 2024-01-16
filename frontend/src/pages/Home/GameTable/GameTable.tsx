@@ -1,4 +1,3 @@
-import { Container } from "react-bootstrap";
 import Table from "react-bootstrap/Table";
 
 import { GameItem, GameItemProps } from "./GameItem";
@@ -12,26 +11,25 @@ const games: GameItemProps[] = [
   { id: 6, name: "Warhammer", price: 600 },
   { id: 7, name: "Broforce", price: 700 },
   { id: 8, name: "Starcraft", price: 800 },
-  { id: 9, name: "Need for Speed", price: 900 }
+  { id: 9, name: "Need for Speed", price: 900 },
+  { id: 620, name: "Portal 2", price: 1000 }
 ];
 
 export function GameTable() {
   return (
-    <Container>
-      <Table hover>
-        <thead className="table-dark">
+    <Table hover className="overflow-hidden rounded">
+      <thead className="table-dark">
         <tr>
           <th>#</th>
           <th>Name</th>
           <th>Price</th>
         </tr>
-        </thead>
-        <tbody>
+      </thead>
+      <tbody>
         {games.map(game => (
           <GameItem key={game.id} {...game} />
         ))}
-        </tbody>
-      </Table>
-    </Container>
+      </tbody>
+    </Table>
   );
 }

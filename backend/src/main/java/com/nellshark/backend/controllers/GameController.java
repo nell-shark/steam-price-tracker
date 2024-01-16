@@ -1,5 +1,6 @@
 package com.nellshark.backend.controllers;
 
+import com.nellshark.backend.dto.GameDTO;
 import com.nellshark.backend.models.Game;
 import com.nellshark.backend.services.GameService;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +22,8 @@ public class GameController {
     private final GameService gameService;
 
     @GetMapping
-    public ResponseEntity<List<Long>> getAllGameIds() {
-        return ResponseEntity.ok(gameService.getAllGameIds());
+    public ResponseEntity<List<GameDTO>> getAllGames() {
+        return ResponseEntity.ok(gameService.getAllGames());
     }
 
     @GetMapping("/{id}")
