@@ -31,6 +31,10 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @Slf4j
 public class SteamService {
+    private static final short STEAM_API_REQUEST_LIMIT = 150;
+    private static final int FIVE_MINUTES_IN_MILLIS = 1000 * 60 * 5;
+    private static short countOfSteamRequests = 0;
+
     private final OkHttpClient okHttpClient;
     private final ObjectMapper objectMapper;
 
@@ -52,15 +56,13 @@ public class SteamService {
 
     private JsonNode fetchSteamApiData(@NonNull URL url) {
         log.info("Fetching steam api data: {}", url);
+        handleRateLimit();
 
         Request request = new Request.Builder()
                 .url(url)
                 .build();
 
-        try (Response response = okHttpClient
-                .newCall(request)
-                .execute()
-        ) {
+        try (Response response = okHttpClient.newCall(request).execute()) {
             if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
 
             ResponseBody responseBody = response.body();
@@ -74,6 +76,23 @@ public class SteamService {
             throw new RuntimeException("Error fetching data from URL " + url, e);
         }
     }
+
+    private void handleRateLimit() {
+        log.debug("countOfSteamRequests = {}", countOfSteamRequests);
+
+        if (++countOfSteamRequests != STEAM_API_REQUEST_LIMIT) {
+            return;
+        }
+
+        try {
+            Thread.sleep(FIVE_MINUTES_IN_MILLIS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException("Sleep interrupted", e);
+        }
+        countOfSteamRequests = 0;
+    }
+
 
     private JsonNode getJsonNode(@NonNull String apiData) {
         JsonNode jsonNode;
