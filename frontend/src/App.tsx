@@ -10,18 +10,16 @@ import { Home } from "@/pages/Home";
 
 export function App() {
   return (
-    <>
+    <BrowserRouter>
       <NavBar />
       <Container>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/games/:id" element={<Game />} />
-            <Route path="*" element={<Navigate to="/" />} />
-          </Routes>
-        </BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/games/:id" element={<Game />} />
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
         <Footer />
       </Container>
-    </>
+    </BrowserRouter>
   );
 }

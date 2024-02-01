@@ -3,5 +3,5 @@ postgres:
     	--name db \
     	-p 5432:5432 \
     	-e POSTGRES_PASSWORD=root \
-    	-e POSTGRES_DB=steam_critic \
+    	-e POSTGRES_DB=steam_prices \
     	postgres:16.1-alpine3.19

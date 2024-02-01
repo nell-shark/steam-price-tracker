@@ -1,1 +1,1 @@
-# steam-critic
+# steam-prices

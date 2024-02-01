@@ -5,7 +5,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/steam_critic
+    url: jdbc:postgresql://localhost:5432/steam_prices
     driverClassName: org.postgresql.Driver
     username: postgres
     password: root

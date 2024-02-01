@@ -14,53 +14,52 @@ import lombok.ToString;
 
 import java.util.List;
 
-
 @Table(name = "games")
 @Entity
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(of = "id")
+@ToString(of = {"id", "name"})
 public class Game {
     @Id
     @Column(name = "id", nullable = false, updatable = false)
-    private Long id;
+    private long id;
 
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "description", nullable = false)
+    @Column(name = "description", nullable = false, columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "imageUrl", nullable = false)
-    private String imageUrl;
+    @Column(name = "image", nullable = false)
+    private String image;
 
     @Column(name = "windows", nullable = false)
-    private Boolean windows;
+    private boolean windows;
 
     @Column(name = "mac", nullable = false)
-    private Boolean mac;
+    private boolean mac;
 
     @Column(name = "linux", nullable = false)
-    private Boolean linux;
+    private boolean linux;
 
     @OneToMany(mappedBy = "game",
             fetch = FetchType.LAZY,
             orphanRemoval = true,
-            cascade = {CascadeType.MERGE, CascadeType.REMOVE})
-    @ToString.Exclude
+            cascade = CascadeType.REMOVE)
     private List<Price> prices;
 
-    public Game(Long id,
+    public Game(long id,
                 String name,
                 String description,
-                String imageUrl,
-                Boolean windows,
-                Boolean linux,
-                Boolean mac) {
+                String image,
+                boolean windows,
+                boolean mac,
+                boolean linux) {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.imageUrl = imageUrl;
+        this.image = image;
         this.windows = windows;
         this.linux = linux;
         this.mac = mac;

@@ -13,6 +13,7 @@ import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.time.LocalDate;
 
@@ -23,23 +24,24 @@ import static com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(of = "id")
+@ToString(of = {"id", "game"})
 public class Price {
     @Id
     @Column(name = "id", nullable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "USD", nullable = false, updatable = false)
-    private Long usd;
+    @Column(name = "usd", nullable = false, updatable = false)
+    private long usd;
 
-    @Column(name = "EUR", nullable = false, updatable = false)
-    private Long eur;
+    @Column(name = "eur", nullable = false, updatable = false)
+    private long eur;
 
-    @Column(name = "RUB", nullable = false, updatable = false)
-    private Long rub;
+    @Column(name = "rub", nullable = false, updatable = false)
+    private long rub;
 
-    @Column(name = "KZT", nullable = false, updatable = false)
-    private Long kzt;
+    @Column(name = "kzt", nullable = false, updatable = false)
+    private long kzt;
 
     @Column(name = "local_date", nullable = false, updatable = false)
     @JsonFormat(shape = STRING)
@@ -50,10 +52,10 @@ public class Price {
     @JsonIgnore
     private Game game;
 
-    public Price(Long usd,
-                 Long eur,
-                 Long rub,
-                 Long kzt,
+    public Price(long usd,
+                 long eur,
+                 long rub,
+                 long kzt,
                  LocalDate localDate,
                  Game game) {
         this.usd = usd;
@@ -62,18 +64,5 @@ public class Price {
         this.kzt = kzt;
         this.localDate = localDate;
         this.game = game;
-    }
-
-    @Override
-    public String toString() {
-        return "Price{" +
-                "id=" + id +
-                ", usd=" + usd +
-                ", eur=" + eur +
-                ", rub=" + rub +
-                ", kzt=" + kzt +
-                ", localDate=" + localDate +
-                ", gameId=" + game.getId() +
-                '}';
     }
 }

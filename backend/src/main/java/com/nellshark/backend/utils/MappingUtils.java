@@ -13,10 +13,10 @@ public final class MappingUtils {
                 game.getId(),
                 game.getName(),
                 game.getDescription(),
-                game.getImageUrl(),
-                game.getWindows(),
-                game.getMac(),
-                game.getLinux()
+                game.getImage(),
+                game.isWindows(),
+                game.isMac(),
+                game.isLinux()
         );
     }
 }
