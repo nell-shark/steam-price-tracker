@@ -26,13 +26,13 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class SteamService {
     private static final short STEAM_API_REQUEST_LIMIT = 150;
-    private static final int FIVE_MINUTES_IN_MILLIS = 1000 * 60 * 5;
     private static short countOfSteamRequests = 0;
 
     private final OkHttpClient okHttpClient;
@@ -78,19 +78,17 @@ public class SteamService {
     }
 
     private void handleRateLimit() {
-        log.debug("countOfSteamRequests = {}", countOfSteamRequests);
-
-        if (++countOfSteamRequests != STEAM_API_REQUEST_LIMIT) {
+        if (++countOfSteamRequests <= STEAM_API_REQUEST_LIMIT) {
             return;
         }
 
         try {
-            Thread.sleep(FIVE_MINUTES_IN_MILLIS);
+            Thread.sleep(TimeUnit.MINUTES.toMillis(5));
+            countOfSteamRequests = 0;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new RuntimeException("Sleep interrupted", e);
         }
-        countOfSteamRequests = 0;
     }
 
 
@@ -172,6 +170,12 @@ public class SteamService {
         long id = Long.parseLong(jsonNode.fieldNames().next());
 
         JsonNode data = jsonNode.elements().next().get("data");
+
+        String type = data.get("type").asText();
+        if (!type.equals("game") && !type.equals("dlc")) {
+            return null;
+        }
+
         String name = data.get("name").asText();
         String description = data.get("short_description").asText();
         String image = data.get("header_image").asText();

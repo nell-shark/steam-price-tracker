@@ -3,7 +3,7 @@ import { Form, InputGroup } from "react-bootstrap";
 export function Title() {
   return (
     <div className="my-5">
-      <h1 className="display-4 text-center">Steam Critic</h1>
+      <h1 className="display-4 text-center">Steam Prices</h1>
       <h2 className="fw-light text-center mb-5">
         Price history, critic scores, system requirements
       </h2>

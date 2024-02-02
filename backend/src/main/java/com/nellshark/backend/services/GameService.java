@@ -7,6 +7,7 @@ import com.nellshark.backend.models.Game;
 import com.nellshark.backend.models.Price;
 import com.nellshark.backend.repositories.GameRepository;
 import com.nellshark.backend.utils.MappingUtils;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
@@ -14,9 +15,11 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.nellshark.backend.models.CountryCode.DE;
 import static com.nellshark.backend.models.CountryCode.KZ;
@@ -28,9 +31,6 @@ import static java.util.Objects.nonNull;
 @RequiredArgsConstructor
 @Slf4j
 public class GameService {
-    private static final String STEAM_GAMES_CHECK_CRON_EXPRESSION = "@daily";
-    private static final String PRICE_UPDATE_CRON_EXPRESSION = "0 * * * * *";
-
     private final GameRepository gameRepository;
     private final PriceService priceService;
     private final SteamService steamService;
@@ -62,7 +62,8 @@ public class GameService {
         return gameRepository.findAllIds();
     }
 
-    @Scheduled(cron = STEAM_GAMES_CHECK_CRON_EXPRESSION)
+    @Scheduled(cron = "@daily")
+    @PostConstruct
     public void scheduleCheckingNewGames() {
         log.info("Check new games");
         List<Long> allSteamGamesId = steamService.getAllSteamGameIds();
@@ -85,10 +86,9 @@ public class GameService {
         }
     }
 
-    //    @Scheduled(cron = PRICE_UPDATE_CRON_EXPRESSION)
+    @Scheduled(initialDelay = 1, timeUnit = TimeUnit.MINUTES)
     public void scheduleUpdatingPrices() {
         log.info("Check new prices");
-
         getAllGames().stream()
                 .map(this::getNewGamePrice)
                 .forEach(priceService::savePrice);
@@ -97,12 +97,11 @@ public class GameService {
     private Price getNewGamePrice(@NonNull Game game) {
         log.info("Updating game price: game={}", game);
 
-        Map<CountryCode, Long> map = new HashMap<>();
-        for (CountryCode countryCode : CountryCode.values()) {
-            long price = steamService.getNewGamePrice(game.getId(), countryCode);
-            map.put(countryCode, price);
-            log.info("Price of gameId={}: {} {}", game.getId(), price, countryCode.getCurrency());
-        }
+        Map<CountryCode, Long> map = Stream.of(CountryCode.values())
+                .collect(Collectors.toMap(
+                        countryCode -> countryCode,
+                        countryCode -> steamService.getNewGamePrice(game.getId(), countryCode)
+                ));
 
         return new Price(
                 map.get(US),
