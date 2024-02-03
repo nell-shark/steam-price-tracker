@@ -1,6 +1,6 @@
 package com.nellshark.backend.utils;
 
-import com.nellshark.backend.dto.GameDTO;
+import com.nellshark.backend.dtos.GameDTO;
 import com.nellshark.backend.models.Game;
 
 public final class MappingUtils {
@@ -12,11 +12,7 @@ public final class MappingUtils {
         return new GameDTO(
                 game.getId(),
                 game.getName(),
-                game.getDescription(),
-                game.getImage(),
-                game.isWindows(),
-                game.isMac(),
-                game.isLinux()
+                game.getHeaderImage()
         );
     }
 }

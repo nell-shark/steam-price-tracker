@@ -14,8 +14,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.springframework.lang.NonNull;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import static com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING;
 
@@ -43,9 +44,9 @@ public class Price {
     @Column(name = "kzt", nullable = false, updatable = false)
     private long kzt;
 
-    @Column(name = "local_date", nullable = false, updatable = false)
+    @Column(name = "local_date_time", nullable = false, updatable = false)
     @JsonFormat(shape = STRING)
-    private LocalDate localDate;
+    private LocalDateTime localDateTime;
 
     @ManyToOne
     @JoinColumn(name = "game_id", nullable = false, updatable = false)
@@ -56,13 +57,13 @@ public class Price {
                  long eur,
                  long rub,
                  long kzt,
-                 LocalDate localDate,
-                 Game game) {
+                 @NonNull LocalDateTime localDateTime,
+                 @NonNull Game game) {
         this.usd = usd;
         this.eur = eur;
         this.rub = rub;
         this.kzt = kzt;
-        this.localDate = localDate;
+        this.localDateTime = localDateTime;
         this.game = game;
     }
 }

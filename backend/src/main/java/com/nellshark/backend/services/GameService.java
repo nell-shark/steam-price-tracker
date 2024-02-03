@@ -1,6 +1,6 @@
 package com.nellshark.backend.services;
 
-import com.nellshark.backend.dto.GameDTO;
+import com.nellshark.backend.dtos.GameDTO;
 import com.nellshark.backend.exceptions.GameNotFoundException;
 import com.nellshark.backend.models.CountryCode;
 import com.nellshark.backend.models.Game;
@@ -14,7 +14,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -25,7 +25,7 @@ import static com.nellshark.backend.models.CountryCode.DE;
 import static com.nellshark.backend.models.CountryCode.KZ;
 import static com.nellshark.backend.models.CountryCode.RU;
 import static com.nellshark.backend.models.CountryCode.US;
-import static java.util.Objects.nonNull;
+import static java.util.Objects.isNull;
 
 @Service
 @RequiredArgsConstructor
@@ -35,7 +35,7 @@ public class GameService {
     private final PriceService priceService;
     private final SteamService steamService;
 
-    public List<GameDTO> getAllGamesDTO() {
+    public List<GameDTO> getAllGameDTOs() {
         log.info("Getting all games DTO");
         return gameRepository.findAll()
                 .stream()
@@ -45,9 +45,7 @@ public class GameService {
 
     private List<Game> getAllGames() {
         log.info("Getting all games");
-        return gameRepository.findAll()
-                .stream()
-                .toList();
+        return gameRepository.findAll();
     }
 
     public Game getGameById(long id) {
@@ -64,7 +62,7 @@ public class GameService {
 
     @Scheduled(cron = "@daily")
     @PostConstruct
-    public void scheduleCheckingNewGames() {
+    public void checkForNewGamesPeriodically() {
         log.info("Check new games");
         List<Long> allSteamGamesId = steamService.getAllSteamGameIds();
         List<Long> gameIdsFromDb = getAllGameIds();
@@ -78,23 +76,23 @@ public class GameService {
     }
 
     private void addNewGame(long id) {
-        log.info("Adding a new game: id={}", id);
         Game game = steamService.getGameInfo(id);
-        if (nonNull(game)) {
-            log.info("Saving {}", game);
-            gameRepository.save(game);
+        if (isNull(game)) {
+            return;
         }
+        log.info("New game added to db: {}", game);
+        gameRepository.save(game);
     }
 
-    @Scheduled(initialDelay = 1, timeUnit = TimeUnit.MINUTES)
-    public void scheduleUpdatingPrices() {
+    @Scheduled(initialDelay = 5, timeUnit = TimeUnit.MINUTES)
+    public void updateGamePricesPeriodically() {
         log.info("Check new prices");
         getAllGames().stream()
-                .map(this::getNewGamePrice)
+                .map(this::getUpdatedGamePrice)
                 .forEach(priceService::savePrice);
     }
 
-    private Price getNewGamePrice(@NonNull Game game) {
+    private Price getUpdatedGamePrice(@NonNull Game game) {
         log.info("Updating game price: game={}", game);
 
         Map<CountryCode, Long> map = Stream.of(CountryCode.values())
@@ -108,7 +106,7 @@ public class GameService {
                 map.get(DE),
                 map.get(RU),
                 map.get(KZ),
-                LocalDate.now(),
+                LocalDateTime.now(),
                 game
         );
     }
