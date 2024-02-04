@@ -3,7 +3,7 @@ package com.nellshark.backend.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nellshark.backend.exceptions.GameNotFoundException;
+import com.nellshark.backend.exceptions.SteamApiException;
 import com.nellshark.backend.exceptions.UnexpectedJsonStructureException;
 import com.nellshark.backend.models.CountryCode;
 import com.nellshark.backend.models.Game;
@@ -17,6 +17,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import org.apache.commons.lang3.EnumUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.net.URIBuilder;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
@@ -34,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -45,6 +47,31 @@ import static org.apache.commons.lang3.StringUtils.stripToNull;
 @RequiredArgsConstructor
 @Slf4j
 public class SteamService {
+    private static final String APPLIST_FIELD = "applist";
+    private static final String APPS_FIELD = "apps";
+    private static final String NAME_FIELD = "name";
+    private static final String APPID_FIELD = "appid";
+    private static final String SUCCESS_FIELD = "success";
+    private static final String IS_FREE_FIELD = "is_free";
+    private static final String DATA_FIELD = "data";
+    private static final String TYPE_FIELD = "type";
+    private static final String HEADER_IMAGE_FIELD = "header_image";
+    private static final String SHORT_DESCRIPTION_FIELD = "short_description";
+    private static final String WEBSITE_FIELD = "website";
+    private static final String RELEASE_DATE_FIELD = "release_date";
+    private static final String COMING_SOON_FIELD = "coming_soon";
+    private static final String DATE_FIELD = "date";
+    private static final String DEVELOPERS_FIELD = "developers";
+    private static final String PUBLISHERS_FIELD = "publishers";
+    private static final String PLATFORMS_FIELD = "platforms";
+    private static final String MINIMUM_FIELD = "minimum";
+    private static final String METACRITIC_FIELD = "metacritic";
+    private static final String SCORE_FIELD = "score";
+    private static final String URL_FIELD = "url";
+    private static final String WINDOWS_REQUIREMENTS_FIELD = "pc_requirements";
+    private static final String PRICE_OVERVIEW_FIELD = "price_overview";
+    private static final String FINAL_FIELD = "final";
+
     private static final short STEAM_API_REQUEST_LIMIT = 150;
     private static final DateTimeFormatter DATE_TIME_FORMATTER;
     private static short countOfSteamRequests = 0;
@@ -61,12 +88,13 @@ public class SteamService {
 
     private final OkHttpClient okHttpClient;
     private final ObjectMapper objectMapper;
+    private final GameBlockedService gameBlockedService;
 
     public List<Long> getAllSteamGameIds() {
         log.info("Getting all steam games id");
         URL url = buildSteamAppListUrl();
         JsonNode jsonNode = fetchSteamApiData(url);
-        return parseGameIds(jsonNode);
+        return parseGameIdsNode(jsonNode);
     }
 
     private URL buildSteamAppListUrl() {
@@ -131,14 +159,14 @@ public class SteamService {
         return jsonNode;
     }
 
-    private List<Long> parseGameIds(@NonNull JsonNode jsonNode) {
+    private List<Long> parseGameIdsNode(@NonNull JsonNode jsonNode) {
         if (!jsonNode.isObject()) {
             throw new UnexpectedJsonStructureException("JSON response is not a JSON object");
         }
 
         JsonNode appsArray = jsonNode
-                .path("applist")
-                .path("apps");
+                .path(APPLIST_FIELD)
+                .path(APPS_FIELD);
 
         if (!appsArray.isArray()) {
             throw new UnexpectedJsonStructureException("Error parsing JSON response. JSON must be an array");
@@ -147,9 +175,9 @@ public class SteamService {
         return StreamSupport.stream(appsArray.spliterator(), true)
                 .filter(JsonNode::isObject)
                 .filter(app -> !app.isEmpty())
-                .filter(app -> isNotBlank(app.path("name").asText()))
-                .filter(app -> app.hasNonNull("appid"))
-                .map(app -> app.get("appid").asLong())
+                .filter(app -> isNotBlank(app.path(NAME_FIELD).asText()))
+                .filter(app -> app.hasNonNull(APPID_FIELD))
+                .map(app -> app.get(APPID_FIELD).asLong())
                 .toList();
     }
 
@@ -177,107 +205,135 @@ public class SteamService {
             throw new UnexpectedJsonStructureException("JSON response is not a JSON object");
         }
 
+        long id = Long.parseLong(jsonNode.fieldNames().next());
+
         JsonNode mainNode = jsonNode.elements().next();
-        if (!mainNode.path("success").asBoolean()) {
+        if (!mainNode.path(SUCCESS_FIELD).asBoolean()) {
+            gameBlockedService.addGameToBlockList(id);
             return null;
         }
 
-        JsonNode dataNode = mainNode.path("data");
-        JsonNode releaseDateNode = dataNode.path("release_date");
-        String gameTypeText = dataNode.path("type").asText().toUpperCase();
-
-        if (!EnumUtils.isValidEnumIgnoreCase(GameType.class, gameTypeText)
-                || dataNode.path("is_free").asBoolean()
-                || releaseDateNode.path("coming_soon").asBoolean()) {
+        JsonNode dataNode = mainNode.path(DATA_FIELD);
+        if (dataNode.path(IS_FREE_FIELD).asBoolean()) {
             return null;
         }
 
-        long id = dataNode.get("steam_appid").asLong();
-        String name = dataNode.path("name").asText();
+        String name = dataNode.path(NAME_FIELD).asText();
+        String gameTypeText = dataNode.path(TYPE_FIELD).asText().toUpperCase();
+        if (!EnumUtils.isValidEnumIgnoreCase(GameType.class, gameTypeText)) {
+            return null;
+        }
         GameType gameType = GameType.valueOf(gameTypeText);
-        String headerImage = dataNode.path("header_image").asText();
-        String shortDescription = stripToNull(
-                dataNode.path("short_description").asText()
-        );
-        String developers = stripToNull(
-                dataNode.path("developers").asText()
-        );
-        String website = stripToNull(
-                dataNode.path("website").asText()
-        );
-        String releaseDateText = releaseDateNode.path("date").asText();
-        LocalDate releaseDate = LocalDate.parse(releaseDateText, DATE_TIME_FORMATTER);
+        String headerImage = dataNode.path(HEADER_IMAGE_FIELD).asText();
+        LocalDate releaseDate = parseReleaseDateNode(dataNode);
+        Map<OperatingSystem, String> operatingSystemRequirements = parseOperatingSystemRequirementsNode(dataNode);
 
-        JsonNode supportInfoNode = dataNode.path("support_info");
-        String email = stripToNull(
-                supportInfoNode.path("email").asText()
-        );
-
-        Map<OperatingSystem, String> operatingSystemRequirements = parseOperatingSystemRequirementsList(dataNode);
-
-        Metacritic metacritic = parseMetacritic(dataNode);
+        String shortDescription = stripToNull(dataNode.path(SHORT_DESCRIPTION_FIELD).textValue());
+        String developers = parseDevelopersNode(dataNode);
+        String publishers = parsePublishersNode(dataNode);
+        String website = stripToNull(dataNode.path(WEBSITE_FIELD).textValue());
+        Metacritic metacritic = parseMetacriticNode(dataNode);
 
         return new Game(
                 id,
                 name,
                 gameType,
                 headerImage,
-                releaseDate,
                 operatingSystemRequirements,
                 shortDescription,
+                releaseDate,
                 developers,
+                publishers,
                 website,
-                email,
                 metacritic
         );
     }
 
-    private Map<OperatingSystem, String> parseOperatingSystemRequirementsList(@NonNull JsonNode dataNode) {
-        JsonNode platformsNode = dataNode.path("platforms");
+    @Nullable
+    private LocalDate parseReleaseDateNode(@NonNull JsonNode dataNode) {
+        JsonNode releaseDateNode = dataNode.path(RELEASE_DATE_FIELD);
+        String date = releaseDateNode.path(DATE_FIELD).asText();
+
+        if (releaseDateNode.path(COMING_SOON_FIELD).asBoolean()
+                || StringUtils.isBlank(date)) {
+            return null;
+        }
+
+        return LocalDate.parse(date, DATE_TIME_FORMATTER);
+    }
+
+    @Nullable
+    private String parseDevelopersNode(@NonNull JsonNode dataNode) {
+        JsonNode developersNode = dataNode.path(DEVELOPERS_FIELD);
+        return parseDevelopersOrPublishersNode(developersNode);
+    }
+
+    @Nullable
+    private String parsePublishersNode(@NonNull JsonNode dataNode) {
+        JsonNode developersNode = dataNode.path(PUBLISHERS_FIELD);
+        return parseDevelopersOrPublishersNode(developersNode);
+    }
+
+    @Nullable
+    private String parseDevelopersOrPublishersNode(@NonNull JsonNode jsonNode) {
+        if (jsonNode.isMissingNode()
+                || !jsonNode.isArray()
+                || jsonNode.isEmpty()
+                || (jsonNode.size() == 1 && StringUtils.isBlank(jsonNode.get(0).asText()))) {
+            return null;
+        }
+
+        return StreamSupport.stream(jsonNode.spliterator(), true)
+                .map(JsonNode::textValue)
+                .filter(StringUtils::isNotBlank)
+                .collect(Collectors.joining(","));
+    }
+
+    private Map<OperatingSystem, String> parseOperatingSystemRequirementsNode(@NonNull JsonNode dataNode) {
+        JsonNode platformsNode = dataNode.path(PLATFORMS_FIELD);
 
         return Stream.of(OperatingSystem.values())
                 .filter(system -> platformsNode.path(system.name().toLowerCase()).asBoolean())
                 .collect(HashMap::new,
-                        (map, system) -> map.put(system, parseMinOperatingSystemRequirements(dataNode, system)),
+                        (map, system) -> map.put(system, parseOperatingSystemRequirements(dataNode, system)),
                         HashMap::putAll
                 );
     }
 
-    private String parseMinOperatingSystemRequirements(@NonNull JsonNode dataNode,
-                                                       OperatingSystem operatingSystem) {
+    @Nullable
+    private String parseOperatingSystemRequirements(@NonNull JsonNode dataNode,
+                                                    @NonNull OperatingSystem operatingSystem) {
         String requirementsPath = operatingSystem == WINDOWS
-                ? "pc_requirements"
+                ? WINDOWS_REQUIREMENTS_FIELD
                 : operatingSystem.name().toLowerCase() + "_requirements";
 
-        return stripToNull(dataNode
-                .path(requirementsPath)
-                .path("minimum")
-                .asText()
+        return stripToNull(
+                dataNode.path(requirementsPath)
+                        .path(MINIMUM_FIELD)
+                        .textValue()
         );
     }
 
     @Nullable
-    private Metacritic parseMetacritic(@NonNull JsonNode dataNode) {
-        JsonNode metacriticNode = dataNode.path("metacritic");
+    private Metacritic parseMetacriticNode(@NonNull JsonNode dataNode) {
+        JsonNode metacriticNode = dataNode.path(METACRITIC_FIELD);
 
         if (metacriticNode.isMissingNode()) {
             return null;
         }
 
-        int score = metacriticNode.path("score").asInt();
-        String url = stripToNull(
-                metacriticNode.path("url").asText()
-        );
+        Integer score = metacriticNode.path(SCORE_FIELD).intValue();
+        String url = stripToNull(metacriticNode.path(URL_FIELD).textValue());
         return new Metacritic(score, url);
     }
 
-    public long getNewGamePrice(long gameId, CountryCode countryCode) {
+    public long getNewGamePrice(long gameId, @NonNull CountryCode countryCode) throws SteamApiException {
         URL url = buildSteamPriceOverviewUrl(gameId, countryCode);
         JsonNode jsonNode = fetchSteamApiData(url);
-        return parseGamePrice(jsonNode);
+        return parseGamePriceNode(jsonNode);
     }
 
-    private URL buildSteamPriceOverviewUrl(long gameId, CountryCode countryCode) {
+    private URL buildSteamPriceOverviewUrl(long gameId, @NonNull CountryCode countryCode) {
         try {
             URIBuilder uri = new URIBuilder("https://store.steampowered.com/api/appdetails");
             uri.addParameter("appids", String.valueOf(gameId));
@@ -289,20 +345,20 @@ public class SteamService {
         }
     }
 
-    private long parseGamePrice(@NonNull JsonNode jsonNode) {
+    private long parseGamePriceNode(@NonNull JsonNode jsonNode) throws SteamApiException {
         if (!jsonNode.isObject()) {
             throw new UnexpectedJsonStructureException("JSON response is not a JSON object");
         }
 
         JsonNode mainNode = jsonNode.elements().next();
-        if (!mainNode.path("success").asBoolean()) {
-            throw new GameNotFoundException("Game doesn't exist");
+        if (!mainNode.path(SUCCESS_FIELD).asBoolean()) {
+            throw new SteamApiException("Steam API request was not successful");
         }
 
         return mainNode
-                .path("data")
-                .path("price_overview")
-                .path("final")
+                .path(DATA_FIELD)
+                .path(PRICE_OVERVIEW_FIELD)
+                .path(FINAL_FIELD)
                 .asLong();
     }
 }

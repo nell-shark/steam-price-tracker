@@ -15,6 +15,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 
 import java.time.LocalDateTime;
 
@@ -32,17 +33,17 @@ public class Price {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "usd", nullable = false, updatable = false)
-    private long usd;
+    @Column(name = "usd", updatable = false)
+    private Long usd;
 
-    @Column(name = "eur", nullable = false, updatable = false)
-    private long eur;
+    @Column(name = "eur", updatable = false)
+    private Long eur;
 
-    @Column(name = "rub", nullable = false, updatable = false)
-    private long rub;
+    @Column(name = "rub", updatable = false)
+    private Long rub;
 
-    @Column(name = "kzt", nullable = false, updatable = false)
-    private long kzt;
+    @Column(name = "kzt", updatable = false)
+    private Long kzt;
 
     @Column(name = "local_date_time", nullable = false, updatable = false)
     @JsonFormat(shape = STRING)
@@ -53,10 +54,10 @@ public class Price {
     @JsonIgnore
     private Game game;
 
-    public Price(long usd,
-                 long eur,
-                 long rub,
-                 long kzt,
+    public Price(@Nullable Long usd,
+                 @Nullable Long eur,
+                 @Nullable Long rub,
+                 @Nullable Long kzt,
                  @NonNull LocalDateTime localDateTime,
                  @NonNull Game game) {
         this.usd = usd;

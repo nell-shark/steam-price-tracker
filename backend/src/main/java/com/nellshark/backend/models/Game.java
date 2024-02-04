@@ -49,14 +49,10 @@ public class Game {
     @Column(name = "header_image", nullable = false)
     private String headerImage;
 
-    @Column(name = "release_date", nullable = false)
-    @JsonFormat(shape = Shape.STRING, pattern = "dd MMM, yyyy")
-    private LocalDate releaseDate;
-
     @ElementCollection
     @CollectionTable(
-            name = "operating_system_requirements",  // You can specify the name of the table
-            joinColumns = @JoinColumn(name = "game_id")  // Optional: If this is part of an entity, specify the join column
+            name = "operating_system_requirements",
+            joinColumns = @JoinColumn(name = "game_id")
     )
     @MapKeyEnumerated(EnumType.STRING)
     @MapKeyColumn(name = "operating_system")
@@ -66,14 +62,18 @@ public class Game {
     @Column(name = "short_description", columnDefinition = "TEXT")
     private String shortDescription;
 
+    @Column(name = "release_date")
+    @JsonFormat(shape = Shape.STRING, pattern = "dd MMM, yyyy")
+    private LocalDate releaseDate;
+
     @Column(name = "developers")
     private String developers;
 
+    @Column(name = "publishers")
+    private String publishers;
+
     @Column(name = "website")
     private String website;
-
-    @Column(name = "email")
-    private String email;
 
     @Embedded
     private Metacritic metacritic;
@@ -88,12 +88,12 @@ public class Game {
                 @NonNull String name,
                 @NonNull GameType gameType,
                 @NonNull String headerImage,
-                @NonNull LocalDate releaseDate,
                 @NonNull Map<OperatingSystem, String> operatingSystemRequirements,
                 @Nullable String shortDescription,
+                @Nullable LocalDate releaseDate,
                 @Nullable String developers,
+                @Nullable String publishers,
                 @Nullable String website,
-                @Nullable String email,
                 @Nullable Metacritic metacritic) {
         this.id = id;
         this.name = name;
@@ -103,8 +103,8 @@ public class Game {
         this.operatingSystemRequirements = operatingSystemRequirements;
         this.shortDescription = shortDescription;
         this.developers = developers;
+        this.publishers = publishers;
         this.website = website;
-        this.email = email;
         this.metacritic = metacritic;
     }
 }

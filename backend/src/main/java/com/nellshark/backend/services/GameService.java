@@ -2,23 +2,25 @@ package com.nellshark.backend.services;
 
 import com.nellshark.backend.dtos.GameDTO;
 import com.nellshark.backend.exceptions.GameNotFoundException;
+import com.nellshark.backend.exceptions.SteamApiException;
 import com.nellshark.backend.models.CountryCode;
 import com.nellshark.backend.models.Game;
 import com.nellshark.backend.models.Price;
 import com.nellshark.backend.repositories.GameRepository;
 import com.nellshark.backend.utils.MappingUtils;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.nellshark.backend.models.CountryCode.DE;
@@ -34,6 +36,7 @@ public class GameService {
     private final GameRepository gameRepository;
     private final PriceService priceService;
     private final SteamService steamService;
+    private final GameBlockedService gameBlockedService;
 
     public List<GameDTO> getAllGameDTOs() {
         log.info("Getting all games DTO");
@@ -61,26 +64,28 @@ public class GameService {
     }
 
     @Scheduled(cron = "@daily")
-    @PostConstruct
     public void checkForNewGamesPeriodically() {
         log.info("Check new games");
-        List<Long> allSteamGamesId = steamService.getAllSteamGameIds();
         List<Long> gameIdsFromDb = getAllGameIds();
 
-        long newGamesCount = allSteamGamesId.stream()
-                .filter(id -> !gameIdsFromDb.contains(id))
-                .peek(this::addNewGame)
-                .count();
+        List<Long> allSteamGameIds = steamService.getAllSteamGameIds();
+        List<Long> blockedGameIds = gameBlockedService.getGameBlockedIds();
 
-        log.info("{} new games found", newGamesCount);
+        allSteamGameIds.stream()
+                .filter(Objects::nonNull)
+                .filter(id -> !gameIdsFromDb.contains(id))
+                .filter(id -> !blockedGameIds.contains(id))
+                .forEach(this::addNewGame);
     }
 
     private void addNewGame(long id) {
         Game game = steamService.getGameInfo(id);
+
         if (isNull(game)) {
             return;
         }
-        log.info("New game added to db: {}", game);
+
+        log.info("New game added to db: gameId={}", id);
         gameRepository.save(game);
     }
 
@@ -95,19 +100,31 @@ public class GameService {
     private Price getUpdatedGamePrice(@NonNull Game game) {
         log.info("Updating game price: game={}", game);
 
-        Map<CountryCode, Long> map = Stream.of(CountryCode.values())
-                .collect(Collectors.toMap(
-                        countryCode -> countryCode,
-                        countryCode -> steamService.getNewGamePrice(game.getId(), countryCode)
-                ));
+        Map<CountryCode, Long> priceMap = Stream.of(CountryCode.values())
+                .collect(HashMap::new,
+                        (map, countryCode) -> map.put(countryCode, getPrice(game, countryCode)),
+                        HashMap::putAll
+                );
 
         return new Price(
-                map.get(US),
-                map.get(DE),
-                map.get(RU),
-                map.get(KZ),
+                priceMap.get(US),
+                priceMap.get(DE),
+                priceMap.get(RU),
+                priceMap.get(KZ),
                 LocalDateTime.now(),
                 game
         );
+    }
+
+    @Nullable
+    private Long getPrice(Game game, CountryCode countryCode) {
+        try {
+            return steamService.getNewGamePrice(game.getId(), countryCode);
+        } catch (SteamApiException e) {
+            log.warn("Failed to get price for game {} in country {}. Reason: {}",
+                    game.getId(), countryCode, e.getMessage()
+            );
+            return null;
+        }
     }
 }

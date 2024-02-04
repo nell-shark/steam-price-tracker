@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Metacritic {
     @Column(name = "metacritic_score")
-    private int score;
+    private Integer score;
 
     @Column(name = "metacritic_url")
     private String url;
