@@ -23,7 +23,7 @@ public class GameBlockedService {
     }
 
     public void addGameToBlockList(long gameId) {
-        log.info("Adding game to blacklist: gameId={}", gameId);
+        log.info("Adding game to block list: gameId={}", gameId);
         GameBlocked blockedGame = new GameBlocked(gameId);
         gameBlockedRepository.save(blockedGame);
     }

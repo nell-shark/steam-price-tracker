@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -73,8 +74,8 @@ public class SteamService {
     private static final String FINAL_FIELD = "final";
 
     private static final short STEAM_API_REQUEST_LIMIT = 150;
+    private static final AtomicInteger countOfSteamRequests = new AtomicInteger();
     private static final DateTimeFormatter DATE_TIME_FORMATTER;
-    private static short countOfSteamRequests = 0;
 
     static {
         DateTimeFormatter pattern1 = DateTimeFormatter.ofPattern("MMM d, yyyy");
@@ -130,13 +131,13 @@ public class SteamService {
     }
 
     private void handleRateLimit() {
-        if (++countOfSteamRequests <= STEAM_API_REQUEST_LIMIT) {
+        if (countOfSteamRequests.incrementAndGet() <= STEAM_API_REQUEST_LIMIT) {
             return;
         }
 
         try {
             Thread.sleep(TimeUnit.MINUTES.toMillis(5));
-            countOfSteamRequests = 0;
+            countOfSteamRequests.set(0);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new RuntimeException("Sleep interrupted", e);

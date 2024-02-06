@@ -14,9 +14,13 @@ import java.util.Optional;
 public interface GameRepository extends JpaRepository<Game, Long> {
     @Override
     @NotNull
-    @EntityGraph(attributePaths = "prices")
+    @EntityGraph(attributePaths = {
+            "operatingSystemRequirements",
+            "prices"
+    })
     Optional<Game> findById(@NotNull Long id);
 
-    @Query("SELECT g.id FROM Game g")
+    @Query("SELECT id " +
+            "FROM Game")
     List<Long> findAllIds();
 }

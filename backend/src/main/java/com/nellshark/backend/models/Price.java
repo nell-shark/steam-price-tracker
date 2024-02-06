@@ -46,7 +46,7 @@ public class Price {
     private Long kzt;
 
     @Column(name = "local_date_time", nullable = false, updatable = false)
-    @JsonFormat(shape = STRING)
+    @JsonFormat(shape = STRING, pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime localDateTime;
 
     @ManyToOne

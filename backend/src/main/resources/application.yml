@@ -13,6 +13,7 @@ spring:
     open-in-view: false
     hibernate:
       ddl-auto: create-drop
-    properties:
-      hibernate:
-        show_sql: true
+
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS}  %-5level [%thread] %-50logger{50} : %msg%n"
