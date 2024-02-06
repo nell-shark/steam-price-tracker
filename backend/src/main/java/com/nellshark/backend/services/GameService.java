@@ -10,6 +10,8 @@ import com.nellshark.backend.repositories.GameRepository;
 import com.nellshark.backend.utils.MappingUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -64,6 +66,7 @@ public class GameService {
     }
 
     @Scheduled(cron = "@daily")
+    @EventListener(ApplicationReadyEvent.class)
     public void checkForNewGamesPeriodically() {
         log.info("Check new games");
         List<Long> gameIdsFromDb = getAllGameIds();
@@ -89,7 +92,7 @@ public class GameService {
         gameRepository.save(game);
     }
 
-    @Scheduled(initialDelay = 5, timeUnit = TimeUnit.MINUTES)
+    @Scheduled(initialDelay = 2, timeUnit = TimeUnit.MINUTES)
     public void updateGamePricesPeriodically() {
         log.info("Check new prices");
         getAllGames().stream()

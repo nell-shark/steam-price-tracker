@@ -2,6 +2,8 @@ package com.nellshark.backend.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Shape;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -34,6 +36,7 @@ import java.util.Map;
 @NoArgsConstructor
 @EqualsAndHashCode(of = "id")
 @ToString(of = {"id", "name"})
+@JsonInclude(Include.NON_NULL)
 public class Game {
     @Id
     @Column(name = "id", nullable = false, updatable = false)
@@ -42,14 +45,14 @@ public class Game {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "type", nullable = false)
+    @Column(name = "game_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private GameType gameType;
 
     @Column(name = "header_image", nullable = false)
     private String headerImage;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(
             name = "operating_system_requirements",
             joinColumns = @JoinColumn(name = "game_id")

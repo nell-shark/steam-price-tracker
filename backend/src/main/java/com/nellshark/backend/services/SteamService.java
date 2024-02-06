@@ -144,7 +144,6 @@ public class SteamService {
         }
     }
 
-
     private JsonNode getJsonNode(@NonNull String apiData) {
         JsonNode jsonNode;
         try {
