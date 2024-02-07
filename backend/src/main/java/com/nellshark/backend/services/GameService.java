@@ -10,6 +10,7 @@ import com.nellshark.backend.repositories.GameRepository;
 import com.nellshark.backend.utils.MappingUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.lang.NonNull;
@@ -41,7 +42,7 @@ public class GameService {
     private final GameBlockedService gameBlockedService;
 
     public List<GameDTO> getAllGameDTOs() {
-        log.info("Getting all games DTO");
+        log.info("Getting all game DTOs");
         return gameRepository.findAll()
                 .stream()
                 .map(MappingUtils::toDTO)
@@ -58,6 +59,19 @@ public class GameService {
         return gameRepository
                 .findById(id)
                 .orElseThrow(() -> new GameNotFoundException("Game not found id=" + id));
+    }
+
+    public List<GameDTO> getGameDTOsByPrefixName(@NonNull String prefixName) {
+        log.info("Getting game DTOs by prefix name");
+        prefixName = StringUtils.stripToNull(prefixName);
+
+        List<Game> games = isNull(prefixName)
+                ? getAllGames()
+                : gameRepository.findByNameStartsWithIgnoreCase(prefixName);
+
+        return games.stream()
+                .map(MappingUtils::toDTO)
+                .toList();
     }
 
     private List<Long> getAllGameIds() {

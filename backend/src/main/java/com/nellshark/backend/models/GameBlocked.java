@@ -10,8 +10,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-@Table(name = "blocked_games")
 @Entity
+@Table(name = "blocked_games")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

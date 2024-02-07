@@ -28,7 +28,7 @@ public class PriceService {
     @Transactional
     public void deleteOldPricesPeriodically() {
         log.info("Deleting old prices");
-        LocalDateTime cutoffDateTime = LocalDateTime.now().minusYears(1);
-        priceRepository.deleteOlderThan(cutoffDateTime);
+        LocalDateTime deletingTime = LocalDateTime.now().minusYears(1);
+        priceRepository.deleteOlderThan(deletingTime);
     }
 }

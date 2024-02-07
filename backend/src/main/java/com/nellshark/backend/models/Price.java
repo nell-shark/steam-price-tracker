@@ -21,8 +21,8 @@ import java.time.LocalDateTime;
 
 import static com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING;
 
-@Table(name = "prices")
 @Entity
+@Table(name = "prices")
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(of = "id")

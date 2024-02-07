@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -20,11 +21,19 @@ public class GameController {
 
     @GetMapping
     public ResponseEntity<List<GameDTO>> getAllGameDTOs() {
-        return ResponseEntity.ok(gameService.getAllGameDTOs());
+        List<GameDTO> gameDTOs = gameService.getAllGameDTOs();
+        return ResponseEntity.ok(gameDTOs);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Game> getGameById(@PathVariable long id) {
-        return ResponseEntity.ok(gameService.getGameById(id));
+        Game game = gameService.getGameById(id);
+        return ResponseEntity.ok(game);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<GameDTO>> getGameDTOsByPrefixName(@RequestParam("name") String prefixName) {
+        List<GameDTO> games = gameService.getGameDTOsByPrefixName(prefixName);
+        return ResponseEntity.ok(games);
     }
 }

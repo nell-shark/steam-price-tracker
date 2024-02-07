@@ -14,6 +14,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MapKeyColumn;
 import jakarta.persistence.MapKeyEnumerated;
@@ -30,8 +31,10 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
-@Table(name = "games")
 @Entity
+@Table(name = "games",
+        indexes = @Index(name = "name_index", columnList = "name")
+)
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(of = "id")
