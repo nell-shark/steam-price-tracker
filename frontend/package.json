@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --host",
+    "dev": "vite",
     "build": "tsc && vite build",
     "lint": "prettier . --write && eslint --fix --ext ts,tsx --report-unused-disable-directives .",
     "preview": "vite preview"

@@ -1,0 +1,10 @@
+.vscode
+.dockerignore
+Dockerfile
+build
+dist
+node_modules
+.prettierrc.json
+.eslintrc.json
+*.iml
+*.env

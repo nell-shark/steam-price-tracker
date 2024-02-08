@@ -1,5 +1,3 @@
-import { Container } from "react-bootstrap";
-
 import { NavItem, NavItemProps } from "./NavItem";
 
 const navItems: NavItemProps[] = [

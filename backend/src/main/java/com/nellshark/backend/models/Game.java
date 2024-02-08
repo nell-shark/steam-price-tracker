@@ -69,7 +69,7 @@ public class Game {
     private String shortDescription;
 
     @Column(name = "release_date")
-    @JsonFormat(shape = Shape.STRING, pattern = "dd MMM, yyyy")
+    @JsonFormat(shape = Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate releaseDate;
 
     @Column(name = "developers")

@@ -30,6 +30,7 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,7 +74,7 @@ public class SteamService {
     private static final String PRICE_OVERVIEW_FIELD = "price_overview";
     private static final String FINAL_FIELD = "final";
 
-    private static final short STEAM_API_REQUEST_LIMIT = 150;
+    private static final short STEAM_API_REQUEST_LIMIT = 50;
     private static final AtomicInteger countOfSteamRequests = new AtomicInteger();
     private static final DateTimeFormatter DATE_TIME_FORMATTER;
 
@@ -258,8 +259,12 @@ public class SteamService {
                 || StringUtils.isBlank(date)) {
             return null;
         }
-
-        return LocalDate.parse(date, DATE_TIME_FORMATTER);
+        try {
+            return LocalDate.parse(date, DATE_TIME_FORMATTER);
+        } catch (DateTimeParseException e) {
+            log.warn("Failed to parse date '{}': {}", e.getParsedString(), e.getMessage());
+        }
+        return null;
     }
 
     @Nullable
