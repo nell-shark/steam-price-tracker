@@ -1,6 +1,6 @@
 postgres:
 	docker run -d --rm \
-    	--name db \
+    	--name postgres_db \
     	-p 5432:5432 \
     	-e POSTGRES_PASSWORD=root \
     	-e POSTGRES_INITDB_ARGS="--encoding=UTF-8 --lc-collate=en_US.UTF-8 --lc-ctype=en_US.UTF-8" \

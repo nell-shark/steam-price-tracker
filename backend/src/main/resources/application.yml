@@ -13,6 +13,12 @@ logging:
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS}  %-5level [%thread] %-50logger{50} : %msg%n"
 
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
+
 server:
   error:
     whitelabel:
