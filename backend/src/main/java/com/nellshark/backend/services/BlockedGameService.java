@@ -1,7 +1,7 @@
 package com.nellshark.backend.services;
 
-import com.nellshark.backend.models.GameBlocked;
-import com.nellshark.backend.repositories.GameBlockedRepository;
+import com.nellshark.backend.models.BlockedGame;
+import com.nellshark.backend.repositories.BlockedGameRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -11,20 +11,20 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class GameBlockedService {
-    private final GameBlockedRepository gameBlockedRepository;
+public class BlockedGameService {
+    private final BlockedGameRepository blockedGameRepository;
 
-    public List<Long> getGameBlockedIds() {
+    public List<Long> getBlockedGameIds() {
         log.info("Getting all blocked games");
-        return gameBlockedRepository.findAll()
+        return blockedGameRepository.findAll()
                 .stream()
-                .map(GameBlocked::getId)
+                .map(BlockedGame::getId)
                 .toList();
     }
 
     public void addGameToBlockList(long gameId) {
         log.info("Adding game to block list: gameId={}", gameId);
-        GameBlocked blockedGame = new GameBlocked(gameId);
-        gameBlockedRepository.save(blockedGame);
+        BlockedGame blockedGame = new BlockedGame(gameId);
+        blockedGameRepository.save(blockedGame);
     }
 }

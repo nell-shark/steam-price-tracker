@@ -10,12 +10,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -24,13 +25,15 @@ import static com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING;
 @Entity
 @Table(name = "prices")
 @Data
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 @ToString(of = {"id", "game"})
 public class Price {
     @Id
-    @Column(name = "id", nullable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false, updatable = false)
     private Long id;
 
     @Column(name = "usd", updatable = false)
@@ -45,26 +48,14 @@ public class Price {
     @Column(name = "kzt", updatable = false)
     private Long kzt;
 
-    @Column(name = "local_date_time", nullable = false, updatable = false)
-    @JsonFormat(shape = STRING, pattern = "dd-MM-yyyy HH:mm:ss")
-    private LocalDateTime localDateTime;
-
     @ManyToOne
     @JoinColumn(name = "game_id", nullable = false, updatable = false)
     @JsonIgnore
+    @lombok.NonNull
     private Game game;
 
-    public Price(@Nullable Long usd,
-                 @Nullable Long eur,
-                 @Nullable Long rub,
-                 @Nullable Long kzt,
-                 @NonNull LocalDateTime localDateTime,
-                 @NonNull Game game) {
-        this.usd = usd;
-        this.eur = eur;
-        this.rub = rub;
-        this.kzt = kzt;
-        this.localDateTime = localDateTime;
-        this.game = game;
-    }
+    @CreationTimestamp
+    @Column(name = "created_time", nullable = false, updatable = false)
+    @JsonFormat(shape = STRING, pattern = "dd-MM-yyyy HH:mm:ss")
+    private LocalDateTime createdTime;
 }

@@ -1,9 +1,9 @@
 package com.nellshark.backend.repositories;
 
-import com.nellshark.backend.models.GameBlocked;
+import com.nellshark.backend.models.BlockedGame;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface GameBlockedRepository extends JpaRepository<GameBlocked, Long> {
+public interface BlockedGameRepository extends JpaRepository<BlockedGame, Long> {
 }

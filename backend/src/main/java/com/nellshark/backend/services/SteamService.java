@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nellshark.backend.exceptions.SteamApiException;
 import com.nellshark.backend.exceptions.UnexpectedJsonStructureException;
-import com.nellshark.backend.models.CountryCode;
+import com.nellshark.backend.models.Currency;
 import com.nellshark.backend.models.Game;
 import com.nellshark.backend.models.GameType;
 import com.nellshark.backend.models.Metacritic;
@@ -42,6 +42,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static com.nellshark.backend.models.OperatingSystem.WINDOWS;
+import static java.util.Locale.ENGLISH;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.stripToNull;
 
@@ -79,8 +80,8 @@ public class SteamService {
     private static final DateTimeFormatter DATE_TIME_FORMATTER;
 
     static {
-        DateTimeFormatter pattern1 = DateTimeFormatter.ofPattern("MMM d, yyyy");
-        DateTimeFormatter pattern2 = DateTimeFormatter.ofPattern("d MMM, yyyy");
+        DateTimeFormatter pattern1 = DateTimeFormatter.ofPattern("MMM d, yyyy", ENGLISH);
+        DateTimeFormatter pattern2 = DateTimeFormatter.ofPattern("d MMM, yyyy", ENGLISH);
 
         DATE_TIME_FORMATTER = new DateTimeFormatterBuilder()
                 .appendOptional(pattern1)
@@ -90,7 +91,7 @@ public class SteamService {
 
     private final OkHttpClient okHttpClient;
     private final ObjectMapper objectMapper;
-    private final GameBlockedService gameBlockedService;
+    private final BlockedGameService blockedGameService;
 
     public List<Long> getAllSteamGameIds() {
         log.info("Getting all steam games id");
@@ -194,6 +195,7 @@ public class SteamService {
         try {
             URIBuilder uri = new URIBuilder("https://store.steampowered.com/api/appdetails");
             uri.addParameter("appids", String.valueOf(gameId));
+            uri.addParameter("l", "english");
             return uri.build().toURL();
         } catch (URISyntaxException | MalformedURLException e) {
             throw new RuntimeException("Error building URL", e);
@@ -210,7 +212,7 @@ public class SteamService {
 
         JsonNode mainNode = jsonNode.elements().next();
         if (!mainNode.path(SUCCESS_FIELD).asBoolean()) {
-            gameBlockedService.addGameToBlockList(id);
+            blockedGameService.addGameToBlockList(id);
             return null;
         }
 
@@ -332,17 +334,17 @@ public class SteamService {
         return new Metacritic(score, url);
     }
 
-    public long getNewGamePrice(long gameId, @NonNull CountryCode countryCode) throws SteamApiException {
-        URL url = buildSteamPriceOverviewUrl(gameId, countryCode);
+    public long getNewGamePrice(long gameId, @NonNull Currency currency) throws SteamApiException {
+        URL url = buildSteamPriceOverviewUrl(gameId, currency);
         JsonNode jsonNode = fetchSteamApiData(url);
         return parseGamePriceNode(jsonNode);
     }
 
-    private URL buildSteamPriceOverviewUrl(long gameId, @NonNull CountryCode countryCode) {
+    private URL buildSteamPriceOverviewUrl(long gameId, @NonNull Currency currency) {
         try {
             URIBuilder uri = new URIBuilder("https://store.steampowered.com/api/appdetails");
             uri.addParameter("appids", String.valueOf(gameId));
-            uri.addParameter("cc", countryCode.toString());
+            uri.addParameter("cc", currency.getCountryCode());
             uri.addParameter("filters", "price_overview");
             return uri.build().toURL();
         } catch (URISyntaxException | MalformedURLException e) {

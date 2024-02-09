@@ -3,7 +3,7 @@ package com.nellshark.backend.services;
 import com.nellshark.backend.dtos.GameDTO;
 import com.nellshark.backend.exceptions.GameNotFoundException;
 import com.nellshark.backend.exceptions.SteamApiException;
-import com.nellshark.backend.models.CountryCode;
+import com.nellshark.backend.models.Currency;
 import com.nellshark.backend.models.Game;
 import com.nellshark.backend.models.Price;
 import com.nellshark.backend.repositories.GameRepository;
@@ -18,7 +18,6 @@ import org.springframework.lang.Nullable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,10 +25,10 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
-import static com.nellshark.backend.models.CountryCode.DE;
-import static com.nellshark.backend.models.CountryCode.KZ;
-import static com.nellshark.backend.models.CountryCode.RU;
-import static com.nellshark.backend.models.CountryCode.US;
+import static com.nellshark.backend.models.Currency.EUR;
+import static com.nellshark.backend.models.Currency.KZT;
+import static com.nellshark.backend.models.Currency.RUB;
+import static com.nellshark.backend.models.Currency.USD;
 import static java.util.Objects.isNull;
 
 @Service
@@ -39,7 +38,7 @@ public class GameService {
     private final GameRepository gameRepository;
     private final PriceService priceService;
     private final SteamService steamService;
-    private final GameBlockedService gameBlockedService;
+    private final BlockedGameService blockedGameService;
 
     public List<GameDTO> getAllGameDTOs() {
         log.info("Getting all game DTOs");
@@ -86,7 +85,7 @@ public class GameService {
         List<Long> gameIdsFromDb = getAllGameIds();
 
         List<Long> allSteamGameIds = steamService.getAllSteamGameIds();
-        List<Long> blockedGameIds = gameBlockedService.getGameBlockedIds();
+        List<Long> blockedGameIds = blockedGameService.getBlockedGameIds();
 
         allSteamGameIds.stream()
                 .filter(Objects::nonNull)
@@ -106,7 +105,7 @@ public class GameService {
         gameRepository.save(game);
     }
 
-    @Scheduled(initialDelay = 2, timeUnit = TimeUnit.MINUTES)
+    @Scheduled(fixedDelay = 1, initialDelay = 1, timeUnit = TimeUnit.MINUTES)
     public void updateGamePricesPeriodically() {
         log.info("Check new prices");
         getAllGames().stream()
@@ -117,29 +116,28 @@ public class GameService {
     private Price getUpdatedGamePrice(@NonNull Game game) {
         log.info("Updating game price: game={}", game);
 
-        Map<CountryCode, Long> priceMap = Stream.of(CountryCode.values())
+        Map<Currency, Long> priceMap = Stream.of(Currency.values())
                 .collect(HashMap::new,
-                        (map, countryCode) -> map.put(countryCode, getPrice(game, countryCode)),
+                        (map, currency) -> map.put(currency, getPrice(game, currency)),
                         HashMap::putAll
                 );
 
-        return new Price(
-                priceMap.get(US),
-                priceMap.get(DE),
-                priceMap.get(RU),
-                priceMap.get(KZ),
-                LocalDateTime.now(),
-                game
-        );
+        return Price.builder()
+                .game(game)
+                .usd(priceMap.get(USD))
+                .eur(priceMap.get(EUR))
+                .rub(priceMap.get(RUB))
+                .kzt(priceMap.get(KZT))
+                .build();
     }
 
     @Nullable
-    private Long getPrice(Game game, CountryCode countryCode) {
+    private Long getPrice(@NonNull Game game, @NonNull Currency currency) {
         try {
-            return steamService.getNewGamePrice(game.getId(), countryCode);
+            return steamService.getNewGamePrice(game.getId(), currency);
         } catch (SteamApiException e) {
             log.warn("Failed to get price for game {} in country {}. Reason: {}",
-                    game.getId(), countryCode, e.getMessage()
+                    game.getId(), currency, e.getMessage()
             );
             return null;
         }

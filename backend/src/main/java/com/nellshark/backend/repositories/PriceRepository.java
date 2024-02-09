@@ -12,6 +12,6 @@ import java.time.LocalDateTime;
 public interface PriceRepository extends JpaRepository<Price, Long> {
     @Modifying
     @Query("DELETE FROM Price p " +
-            "WHERE p.localDateTime < :deletingTime")
+            "WHERE p.createdTime < :deletingTime")
     void deleteOlderThan(LocalDateTime deletingTime);
 }

@@ -17,7 +17,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 @ToString(of = "id")
-public class GameBlocked {
+public class BlockedGame {
     @Id
     @Column(name = "id", nullable = false)
     private long id;
