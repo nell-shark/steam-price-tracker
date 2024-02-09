@@ -25,10 +25,6 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
-import static com.nellshark.backend.models.Currency.EUR;
-import static com.nellshark.backend.models.Currency.KZT;
-import static com.nellshark.backend.models.Currency.RUB;
-import static com.nellshark.backend.models.Currency.USD;
 import static java.util.Objects.isNull;
 
 @Service
@@ -122,13 +118,7 @@ public class GameService {
                         HashMap::putAll
                 );
 
-        return Price.builder()
-                .game(game)
-                .usd(priceMap.get(USD))
-                .eur(priceMap.get(EUR))
-                .rub(priceMap.get(RUB))
-                .kzt(priceMap.get(KZT))
-                .build();
+        return new Price(game, priceMap);
     }
 
     @Nullable
