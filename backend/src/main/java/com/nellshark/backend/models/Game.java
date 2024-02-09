@@ -28,8 +28,10 @@ import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Entity
 @Table(name = "games",
@@ -93,8 +95,26 @@ public class Game {
     public Game(long id,
                 @NonNull String name,
                 @NonNull GameType gameType,
+                @NonNull String headerImage) {
+        this(id,
+                name,
+                gameType,
+                headerImage,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+    }
+
+    public Game(long id,
+                @NonNull String name,
+                @NonNull GameType gameType,
                 @NonNull String headerImage,
-                @NonNull Map<OperatingSystem, String> operatingSystemRequirements,
+                @Nullable Map<OperatingSystem, String> operatingSystemRequirements,
                 @Nullable String shortDescription,
                 @Nullable LocalDate releaseDate,
                 @Nullable String developers,
@@ -106,7 +126,8 @@ public class Game {
         this.gameType = gameType;
         this.headerImage = headerImage;
         this.releaseDate = releaseDate;
-        this.operatingSystemRequirements = operatingSystemRequirements;
+        this.operatingSystemRequirements
+                = Optional.ofNullable(operatingSystemRequirements).orElse(Collections.emptyMap());
         this.shortDescription = shortDescription;
         this.developers = developers;
         this.publishers = publishers;
