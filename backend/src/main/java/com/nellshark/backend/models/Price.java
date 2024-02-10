@@ -45,11 +45,6 @@ public class Price {
     @JsonIgnore
     private Game game;
 
-    @CreationTimestamp
-    @Column(name = "created_time", nullable = false, updatable = false)
-    @JsonFormat(shape = STRING, pattern = "dd-MM-yyyy HH:mm:ss")
-    private LocalDateTime createdTime;
-
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(
             name = "currency_prices",
@@ -58,10 +53,15 @@ public class Price {
     @MapKeyEnumerated(EnumType.STRING)
     @MapKeyColumn(name = "currency")
     @Column(name = "price")
-    private Map<Currency, Long> currencyPriceMap;
+    private Map<Currency, String> currencyPriceMap;
+
+    @CreationTimestamp
+    @Column(name = "created_time", nullable = false, updatable = false)
+    @JsonFormat(shape = STRING, pattern = "dd-MM-yyyy HH:mm:ss")
+    private LocalDateTime createdTime;
 
     public Price(@NonNull Game game,
-                 @NonNull Map<Currency, Long> currencyPriceMap) {
+                 @NonNull Map<Currency, String> currencyPriceMap) {
         this.game = game;
         this.currencyPriceMap = currencyPriceMap;
     }

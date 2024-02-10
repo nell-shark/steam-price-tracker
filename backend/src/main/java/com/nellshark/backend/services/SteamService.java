@@ -73,7 +73,7 @@ public class SteamService {
     private static final String URL_FIELD = "url";
     private static final String WINDOWS_REQUIREMENTS_FIELD = "pc_requirements";
     private static final String PRICE_OVERVIEW_FIELD = "price_overview";
-    private static final String FINAL_FIELD = "final";
+    private static final String FINAL_FORMATTED_FIELD = "final_formatted";
 
     private static final short STEAM_API_REQUEST_LIMIT = 50;
     private static final AtomicInteger countOfSteamRequests = new AtomicInteger();
@@ -334,7 +334,7 @@ public class SteamService {
         return new Metacritic(score, url);
     }
 
-    public long getNewGamePrice(long gameId, @NonNull Currency currency) throws SteamApiException {
+    public String getNewGamePrice(long gameId, @NonNull Currency currency) throws SteamApiException {
         URL url = buildSteamPriceOverviewUrl(gameId, currency);
         JsonNode jsonNode = fetchSteamApiData(url);
         return parseGamePriceNode(jsonNode);
@@ -352,7 +352,7 @@ public class SteamService {
         }
     }
 
-    private long parseGamePriceNode(@NonNull JsonNode jsonNode) throws SteamApiException {
+    private String parseGamePriceNode(@NonNull JsonNode jsonNode) throws SteamApiException {
         if (!jsonNode.isObject()) {
             throw new UnexpectedJsonStructureException("JSON response is not a JSON object");
         }
@@ -365,7 +365,7 @@ public class SteamService {
         return mainNode
                 .path(DATA_FIELD)
                 .path(PRICE_OVERVIEW_FIELD)
-                .path(FINAL_FIELD)
-                .asLong();
+                .path(FINAL_FORMATTED_FIELD)
+                .asText();
     }
 }

@@ -95,24 +95,6 @@ public class Game {
     public Game(long id,
                 @NonNull String name,
                 @NonNull GameType gameType,
-                @NonNull String headerImage) {
-        this(id,
-                name,
-                gameType,
-                headerImage,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null
-        );
-    }
-
-    public Game(long id,
-                @NonNull String name,
-                @NonNull GameType gameType,
                 @NonNull String headerImage,
                 @Nullable Map<OperatingSystem, String> operatingSystemRequirements,
                 @Nullable String shortDescription,

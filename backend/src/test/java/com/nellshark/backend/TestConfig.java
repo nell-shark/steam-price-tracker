@@ -9,7 +9,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 public class TestConfig {
     @Bean
     @ServiceConnection
-    public static PostgreSQLContainer<?> postgreSQLContainer() {
+    public PostgreSQLContainer<?> postgreSQLContainer() {
         return new PostgreSQLContainer<>("postgres:16.1-alpine3.19");
     }
 }

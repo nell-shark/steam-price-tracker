@@ -112,7 +112,7 @@ public class GameService {
     private Price getUpdatedGamePrice(@NonNull Game game) {
         log.info("Updating game price: game={}", game);
 
-        Map<Currency, Long> priceMap = Stream.of(Currency.values())
+        Map<Currency, String> priceMap = Stream.of(Currency.values())
                 .collect(HashMap::new,
                         (map, currency) -> map.put(currency, getPrice(game, currency)),
                         HashMap::putAll
@@ -122,7 +122,7 @@ public class GameService {
     }
 
     @Nullable
-    private Long getPrice(@NonNull Game game, @NonNull Currency currency) {
+    private String getPrice(@NonNull Game game, @NonNull Currency currency) {
         try {
             return steamService.getNewGamePrice(game.getId(), currency);
         } catch (SteamApiException e) {
