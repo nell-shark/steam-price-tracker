@@ -3,22 +3,41 @@ package com.nellshark.backend.exceptions;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @ControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
-    @ExceptionHandler(GameNotFoundException.class)
+    @ExceptionHandler({
+            GameNotFoundException.class,
+            UserNotFoundException.class
+    })
     public ResponseEntity<ApiError> handleGameNotFoundException(
             RuntimeException e, HttpServletRequest request) {
         log.warn("{} Occurred: {}", e.getClass().getSimpleName(), e.getMessage());
 
         ApiError apiError = new ApiError(
                 NOT_FOUND,
+                e.getMessage(),
+                request.getRequestURI()
+        );
+
+        return new ResponseEntity<>(apiError, apiError.getHttpStatus());
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiError> handleBadRequestException(
+            MethodArgumentNotValidException e,
+            HttpServletRequest request) {
+        log.warn("{} Occurred: {}", e.getClass().getSimpleName(), e.getMessage());
+        ApiError apiError = new ApiError(
+                BAD_REQUEST,
                 e.getMessage(),
                 request.getRequestURI()
         );

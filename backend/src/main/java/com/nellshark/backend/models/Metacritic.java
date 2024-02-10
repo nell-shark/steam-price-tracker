@@ -4,12 +4,16 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Embeddable
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(of = {"score", "url"})
+@ToString(of = {"score", "url"})
 public class Metacritic {
     @Column(name = "metacritic_score")
     private Integer score;

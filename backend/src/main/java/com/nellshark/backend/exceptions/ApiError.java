@@ -18,10 +18,10 @@ public class ApiError {
 
     private final String path;
 
+    private final int code;
+
     @JsonFormat(shape = STRING)
     private final LocalDateTime timestamp;
-
-    private final int code;
 
     @JsonIgnore
     private final HttpStatus httpStatus;
