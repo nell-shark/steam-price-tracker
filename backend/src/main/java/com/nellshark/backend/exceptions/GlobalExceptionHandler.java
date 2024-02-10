@@ -2,10 +2,13 @@ package com.nellshark.backend.exceptions;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
@@ -31,14 +34,34 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(apiError, apiError.getHttpStatus());
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ExceptionHandler(EmailAlreadyTakenException.class)
     public ResponseEntity<ApiError> handleBadRequestException(
-            MethodArgumentNotValidException e,
-            HttpServletRequest request) {
+            RuntimeException e, HttpServletRequest request) {
         log.warn("{} Occurred: {}", e.getClass().getSimpleName(), e.getMessage());
+
         ApiError apiError = new ApiError(
                 BAD_REQUEST,
                 e.getMessage(),
+                request.getRequestURI()
+        );
+
+        return new ResponseEntity<>(apiError, apiError.getHttpStatus());
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiError> handleMethodArgumentNotValidException(
+            MethodArgumentNotValidException e,
+            HttpServletRequest request) {
+        log.warn("{} Occurred: {}", e.getClass().getSimpleName(), e.getMessage());
+
+        String errorMessage = e.getBindingResult().getFieldErrors()
+                .stream()
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .collect(Collectors.joining(". "));
+
+        ApiError apiError = new ApiError(
+                BAD_REQUEST,
+                errorMessage,
                 request.getRequestURI()
         );
 

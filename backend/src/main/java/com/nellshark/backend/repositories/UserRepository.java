@@ -14,4 +14,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "FROM User u " +
             "WHERE u.email = :email")
     Optional<User> findByEmail(@NonNull String email);
+
+    @Query("SELECT COUNT(u) > 0 " +
+            "FROM User u " +
+            "WHERE u.email = :email")
+    boolean isEmailTaken(@NonNull String email);
 }

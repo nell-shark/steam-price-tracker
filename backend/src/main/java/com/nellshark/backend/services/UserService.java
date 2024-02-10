@@ -1,6 +1,7 @@
 package com.nellshark.backend.services;
 
 
+import com.nellshark.backend.exceptions.EmailAlreadyTakenException;
 import com.nellshark.backend.exceptions.UserNotFoundException;
 import com.nellshark.backend.models.User;
 import com.nellshark.backend.repositories.UserRepository;
@@ -34,7 +35,14 @@ public class UserService implements UserDetailsService {
 
     public void createNewUser(@NonNull User user) {
         log.info("Creating new user: {}", user);
+        checkEmailAvailability(user.getEmail());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.saveAndFlush(user);
+    }
+
+    private void checkEmailAvailability(@NonNull String email) {
+        if (userRepository.isEmailTaken(email)) {
+            throw new EmailAlreadyTakenException("Email '%s' is already taken".formatted(email));
+        }
     }
 }

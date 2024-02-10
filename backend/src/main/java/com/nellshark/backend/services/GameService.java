@@ -53,7 +53,7 @@ public class GameService {
         log.info("Getting game by id: {}", id);
         return gameRepository
                 .findById(id)
-                .orElseThrow(() -> new GameNotFoundException("Game not found id=" + id));
+                .orElseThrow(() -> new GameNotFoundException("Game is not found id=" + id));
     }
 
     public List<GameDTO> getGameDTOsByPrefixName(@NonNull String prefixName) {
