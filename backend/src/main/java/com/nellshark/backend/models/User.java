@@ -10,6 +10,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
+import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -24,7 +25,7 @@ import java.util.Collection;
         indexes = @Index(name = "email_index", columnList = "email")
 )
 @Data
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = "id")
 @ToString(of = {"id", "email"})
 public class User implements UserDetails {
@@ -40,7 +41,7 @@ public class User implements UserDetails {
 
     @Column(name = "password", nullable = false)
     @NotEmpty(message = "Password cannot be empty")
-    @Size(min = 8, message = "Password must be at least 8 characters long")
+    @Size(min = 8, max = 32, message = "Password should be between 8 and 32 characters in length")
     private String password;
 
     @Override

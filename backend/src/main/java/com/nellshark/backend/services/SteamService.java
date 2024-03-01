@@ -76,7 +76,7 @@ public class SteamService {
     private static final String FINAL_FORMATTED_FIELD = "final_formatted";
 
     private static final short STEAM_API_REQUEST_LIMIT = 50;
-    private static final AtomicInteger countOfSteamRequests = new AtomicInteger();
+    private static final AtomicInteger countOfSteamRequests = new AtomicInteger(0);
     private static final DateTimeFormatter DATE_TIME_FORMATTER;
 
     static {
@@ -138,7 +138,7 @@ public class SteamService {
         }
 
         try {
-            Thread.sleep(TimeUnit.MINUTES.toMillis(5));
+            TimeUnit.MINUTES.sleep(5);
             countOfSteamRequests.set(0);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();

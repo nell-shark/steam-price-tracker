@@ -1,82 +1,43 @@
 package com.nellshark.backend.exceptions;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-
-import java.util.stream.Collectors;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
-@ControllerAdvice
+@RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
     @ExceptionHandler({
             GameNotFoundException.class,
             UserNotFoundException.class
     })
-    public ResponseEntity<ApiError> handleGameNotFoundException(
-            RuntimeException e, HttpServletRequest request) {
+    public ProblemDetail handleNotFoundException(RuntimeException e) {
         log.warn("{} Occurred: {}", e.getClass().getSimpleName(), e.getMessage());
-
-        ApiError apiError = new ApiError(
-                NOT_FOUND,
-                e.getMessage(),
-                request.getRequestURI()
-        );
-
-        return new ResponseEntity<>(apiError, apiError.getHttpStatus());
+        return ProblemDetail.forStatusAndDetail(NOT_FOUND, e.getMessage());
     }
 
     @ExceptionHandler(EmailAlreadyTakenException.class)
-    public ResponseEntity<ApiError> handleBadRequestException(
-            RuntimeException e, HttpServletRequest request) {
+    public ProblemDetail handleBadRequestException(RuntimeException e) {
         log.warn("{} Occurred: {}", e.getClass().getSimpleName(), e.getMessage());
-
-        ApiError apiError = new ApiError(
-                BAD_REQUEST,
-                e.getMessage(),
-                request.getRequestURI()
-        );
-
-        return new ResponseEntity<>(apiError, apiError.getHttpStatus());
+        return ProblemDetail.forStatusAndDetail(BAD_REQUEST, e.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiError> handleMethodArgumentNotValidException(
-            MethodArgumentNotValidException e,
-            HttpServletRequest request) {
+    public ProblemDetail handleMethodArgumentNotValidException(
+            MethodArgumentNotValidException e) {
         log.warn("{} Occurred: {}", e.getClass().getSimpleName(), e.getMessage());
-
-        String errorMessage = e.getBindingResult().getFieldErrors()
-                .stream()
-                .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                .collect(Collectors.joining(". "));
-
-        ApiError apiError = new ApiError(
-                BAD_REQUEST,
-                errorMessage,
-                request.getRequestURI()
-        );
-
-        return new ResponseEntity<>(apiError, apiError.getHttpStatus());
+        return ProblemDetail.forStatusAndDetail(BAD_REQUEST, e.getMessage());
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiError> handleInternalServerErrorException(Exception e, HttpServletRequest request) {
+    public ProblemDetail handleInternalServerErrorException(Exception e) {
         log.error("{} Occurred: {}", e.getClass().getSimpleName(), e.getMessage());
-        ApiError apiError = new ApiError(
-                INTERNAL_SERVER_ERROR,
-                e.getMessage(),
-                request.getRequestURI()
-        );
-
-        return new ResponseEntity<>(apiError, apiError.getHttpStatus());
+        return ProblemDetail.forStatusAndDetail(INTERNAL_SERVER_ERROR, e.getMessage());
     }
 }

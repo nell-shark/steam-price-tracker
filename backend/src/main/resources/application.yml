@@ -8,6 +8,12 @@ spring:
     open-in-view: false
     hibernate:
       ddl-auto: create-drop
+  mvc:
+    problemdetails:
+      enabled: true
+  threads:
+    virtual:
+      enabled: true
 
 logging:
   pattern:

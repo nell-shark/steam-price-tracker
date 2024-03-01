@@ -4,7 +4,6 @@ import com.nellshark.backend.dtos.GameDTO;
 import com.nellshark.backend.models.Game;
 import com.nellshark.backend.services.GameService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,20 +19,17 @@ public class GameController {
     private final GameService gameService;
 
     @GetMapping
-    public ResponseEntity<List<GameDTO>> getAllGameDTOs() {
-        List<GameDTO> gameDTOs = gameService.getAllGameDTOs();
-        return ResponseEntity.ok(gameDTOs);
+    public List<GameDTO> getAllGameDTOs() {
+        return gameService.getAllGameDTOs();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Game> getGameById(@PathVariable long id) {
-        Game game = gameService.getGameById(id);
-        return ResponseEntity.ok(game);
+    public Game getGameById(@PathVariable long id) {
+        return gameService.getGameById(id);
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<GameDTO>> getGameDTOsByPrefixName(@RequestParam("name") String prefixName) {
-        List<GameDTO> games = gameService.getGameDTOsByPrefixName(prefixName);
-        return ResponseEntity.ok(games);
+    public List<GameDTO> getGameDTOsByPrefixName(@RequestParam("name") String prefixName) {
+        return gameService.getGameDTOsByPrefixName(prefixName);
     }
 }
