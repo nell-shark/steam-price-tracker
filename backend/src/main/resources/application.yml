@@ -15,6 +15,10 @@ spring:
     virtual:
       enabled: true
 
+management:
+  endpoints:
+    enabled-by-default: false
+
 logging:
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS}  %-5level [%thread] %-50logger{50} : %msg%n"

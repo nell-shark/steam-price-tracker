@@ -16,3 +16,14 @@ springdoc:
     path: /swagger
     csrf:
       enabled: true
+
+management:
+  endpoints:
+    enabled-by-default: true
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: "always"
+
