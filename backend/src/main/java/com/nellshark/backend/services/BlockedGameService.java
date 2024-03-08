@@ -6,8 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -15,12 +14,12 @@ import java.util.stream.Collectors;
 public class BlockedGameService {
     private final BlockedGameRepository blockedGameRepository;
 
-    public Set<Long> getBlockedGameIds() {
+    public List<Long> getBlockedGameIds() {
         log.info("Getting all blocked games");
         return blockedGameRepository.findAll()
                 .stream()
                 .map(BlockedGame::getId)
-                .collect(Collectors.toSet());
+                .toList();
     }
 
     public void addGameToBlockList(long gameId) {
