@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface GameRepository extends JpaRepository<Game, Long> {
@@ -24,7 +25,7 @@ public interface GameRepository extends JpaRepository<Game, Long> {
              SELECT g.id
              FROM Game g
             """)
-    List<Long> findAllIds();
+    Set<Long> findAllIds();
 
     @Query("""
              SELECT g

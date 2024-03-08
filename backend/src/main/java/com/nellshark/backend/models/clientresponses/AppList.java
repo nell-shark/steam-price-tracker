@@ -1,4 +1,4 @@
-package com.nellshark.backend.responses;
+package com.nellshark.backend.models.clientresponses;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

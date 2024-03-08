@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
@@ -34,6 +35,8 @@ public class GameService {
     private final GameRepository gameRepository;
     private final PriceService priceService;
     private final SteamService steamService;
+    private final ApiSteamService apiSteamService;
+    private final StoreSteamService storeSteamService;
     private final BlockedGameService blockedGameService;
 
     public List<GameDTO> getAllGameDTOs() {
@@ -69,7 +72,7 @@ public class GameService {
                 .toList();
     }
 
-    private List<Long> getAllGameIds() {
+    private Set<Long> getAllGameIds() {
         log.info("Getting all game ids");
         return gameRepository.findAllIds();
     }
@@ -78,10 +81,9 @@ public class GameService {
     @EventListener(ApplicationReadyEvent.class)
     public void checkForNewGamesPeriodically() {
         log.info("Check new games");
-        List<Long> gameIdsFromDb = getAllGameIds();
-
-        List<Long> allSteamGameIds = steamService.getAllSteamGameIds();
-        List<Long> blockedGameIds = blockedGameService.getBlockedGameIds();
+        Set<Long> allSteamGameIds = apiSteamService.getAllSteamGameIds();
+        Set<Long> gameIdsFromDb = getAllGameIds();
+        Set<Long> blockedGameIds = blockedGameService.getBlockedGameIds();
 
         allSteamGameIds.stream()
                 .filter(Objects::nonNull)
@@ -91,7 +93,7 @@ public class GameService {
     }
 
     private void addNewGame(long id) {
-        Game game = steamService.getGameInfo(id);
+        Game game = storeSteamService.getGameInfo(id);
 
         if (isNull(game)) {
             return;
