@@ -1,5 +1,7 @@
 package com.nellshark.backend.responses;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.List;
 
 /* {
@@ -17,10 +19,10 @@ import java.util.List;
            ]
     }
 } */
-public record AppList(Applist applist) {
-    public record Applist(List<App> apps) {
+public record AppList(@JsonProperty("applist") AppListRoot appListRoot) {
+    public record AppListRoot(@JsonProperty("apps") List<App> apps) {
     }
 
-    public record App(Long appid, String name) {
+    public record App(@JsonProperty("appid") Long appId, @JsonProperty("name") String name) {
     }
 }

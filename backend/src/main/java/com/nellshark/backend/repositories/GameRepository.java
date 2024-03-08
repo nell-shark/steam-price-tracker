@@ -20,13 +20,17 @@ public interface GameRepository extends JpaRepository<Game, Long> {
     })
     Optional<Game> findById(@NotNull Long id);
 
-    @Query("SELECT g.id " +
-            "FROM Game g")
+    @Query("""
+             SELECT g.id
+             FROM Game g
+            """)
     List<Long> findAllIds();
 
-    @Query("SELECT g " +
-            "FROM Game g " +
-            "WHERE LOWER(g.name) " +
-            "LIKE LOWER(CONCAT(:prefixName, '%'))")
+    @Query("""
+             SELECT g
+             FROM Game g
+             WHERE LOWER(g.name)
+             LIKE LOWER(CONCAT(:prefixName, '%'))
+            """)
     List<Game> findByNameStartsWithIgnoreCase(@NotNull String prefixName);
 }

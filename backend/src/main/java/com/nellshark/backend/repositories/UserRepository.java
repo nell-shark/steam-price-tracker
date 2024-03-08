@@ -10,13 +10,17 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-    @Query("SELECT u " +
-            "FROM User u " +
-            "WHERE u.email = :email")
+    @Query("""
+             SELECT u
+             FROM User u
+             WHERE u.email = :email
+            """)
     Optional<User> findByEmail(@NonNull String email);
 
-    @Query("SELECT COUNT(u) > 0 " +
-            "FROM User u " +
-            "WHERE u.email = :email")
+    @Query("""
+             SELECT COUNT(u) > 0
+             FROM User u
+             WHERE u.email = :email
+            """)
     boolean isEmailTaken(@NonNull String email);
 }
