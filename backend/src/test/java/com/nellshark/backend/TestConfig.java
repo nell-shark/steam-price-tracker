@@ -7,9 +7,10 @@ import org.testcontainers.containers.PostgreSQLContainer;
 
 @TestConfiguration(proxyBeanMethods = false)
 public class TestConfig {
-    @Bean
-    @ServiceConnection
-    public PostgreSQLContainer<?> postgreSQLContainer() {
-        return new PostgreSQLContainer<>("postgres:16.1-alpine3.19");
-    }
+
+  @Bean
+  @ServiceConnection
+  public PostgreSQLContainer<?> postgreSQLContainer() {
+    return new PostgreSQLContainer<>("postgres:16.1-alpine3.19");
+  }
 }

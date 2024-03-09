@@ -14,9 +14,10 @@ import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        //    @formatter:off
+
+  @Bean
+  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    //    @formatter:off
         return http
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf
@@ -24,5 +25,5 @@ public class SecurityConfig {
                         .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler()))
                 .build();
         //    @formatter:on
-    }
+  }
 }

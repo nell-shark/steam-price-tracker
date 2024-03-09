@@ -18,7 +18,8 @@ import lombok.ToString;
 @EqualsAndHashCode(of = "id")
 @ToString(of = "id")
 public class BlockedGame {
-    @Id
-    @Column(name = "id", nullable = false)
-    private long id;
+
+  @Id
+  @Column(name = "id", nullable = false)
+  private long id;
 }

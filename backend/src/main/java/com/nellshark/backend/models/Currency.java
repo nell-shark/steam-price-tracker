@@ -6,10 +6,10 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum Currency {
-    USD("US"),
-    EUR("DE"),
-    RUB("RU"),
-    KZT("KZ");
+  USD("US"),
+  EUR("DE"),
+  RUB("RU"),
+  KZT("KZ");
 
-    private final String countryCode;
+  private final String countryCode;
 }

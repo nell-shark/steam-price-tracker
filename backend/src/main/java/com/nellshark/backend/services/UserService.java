@@ -17,32 +17,34 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Slf4j
 public class UserService implements UserDetailsService {
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
 
-    @Override
-    public UserDetails loadUserByUsername(@NonNull String username) {
-        return getUserByEmail(username);
+  private final UserRepository userRepository;
+  private final PasswordEncoder passwordEncoder;
+
+  @Override
+  public UserDetails loadUserByUsername(@NonNull String username) {
+    return getUserByEmail(username);
+  }
+
+  public User getUserByEmail(String email) {
+    log.info("Getting the user by email: {}", email);
+    return userRepository
+        .findByEmail(email)
+        .orElseThrow(
+            () -> new UserNotFoundException("User with email='%s' wasn't found".formatted(email)));
+
+  }
+
+  public void createNewUser(@NonNull User user) {
+    log.info("Creating new user: {}", user);
+    checkEmailAvailability(user.getEmail());
+    user.setPassword(passwordEncoder.encode(user.getPassword()));
+    userRepository.saveAndFlush(user);
+  }
+
+  private void checkEmailAvailability(@NonNull String email) {
+    if (userRepository.isEmailTaken(email)) {
+      throw new EmailAlreadyTakenException("Email '%s' is already taken".formatted(email));
     }
-
-    public User getUserByEmail(String email) {
-        log.info("Getting the user by email: {}", email);
-        return userRepository
-                .findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("User with email='%s' wasn't found".formatted(email)));
-
-    }
-
-    public void createNewUser(@NonNull User user) {
-        log.info("Creating new user: {}", user);
-        checkEmailAvailability(user.getEmail());
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.saveAndFlush(user);
-    }
-
-    private void checkEmailAvailability(@NonNull String email) {
-        if (userRepository.isEmailTaken(email)) {
-            throw new EmailAlreadyTakenException("Email '%s' is already taken".formatted(email));
-        }
-    }
+  }
 }
