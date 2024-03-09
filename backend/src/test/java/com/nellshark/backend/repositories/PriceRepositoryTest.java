@@ -12,15 +12,16 @@ import org.springframework.context.annotation.Import;
 @Import(TestConfig.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class PriceRepositoryTest {
-    @Autowired
-    private PriceRepository underTest;
 
-    @BeforeEach
-    void setUp() {
-        underTest.deleteAll();
-    }
+  @Autowired
+  private PriceRepository underTest;
 
-    @Test
-    void test() {
-    }
+  @BeforeEach
+  void setUp() {
+    underTest.deleteAll();
+  }
+
+  @Test
+  void test() {
+  }
 }

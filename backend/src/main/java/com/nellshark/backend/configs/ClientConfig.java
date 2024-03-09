@@ -10,21 +10,22 @@ import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 
 @Configuration
 public class ClientConfig {
-    @Bean
-    public ApiSteamClient apiSteamClient() {
-        RestClient client = RestClient.create("https://api.steampowered.com");
-        HttpServiceProxyFactory factory = HttpServiceProxyFactory
-                .builderFor(RestClientAdapter.create(client))
-                .build();
-        return factory.createClient(ApiSteamClient.class);
-    }
 
-    @Bean
-    public StoreSteamClient storeSteamClient() {
-        RestClient client = RestClient.create("https://store.steampowered.com");
-        HttpServiceProxyFactory factory = HttpServiceProxyFactory
-                .builderFor(RestClientAdapter.create(client))
-                .build();
-        return factory.createClient(StoreSteamClient.class);
-    }
+  @Bean
+  public ApiSteamClient apiSteamClient() {
+    RestClient client = RestClient.create("https://api.steampowered.com");
+    HttpServiceProxyFactory factory = HttpServiceProxyFactory
+        .builderFor(RestClientAdapter.create(client))
+        .build();
+    return factory.createClient(ApiSteamClient.class);
+  }
+
+  @Bean
+  public StoreSteamClient storeSteamClient() {
+    RestClient client = RestClient.create("https://store.steampowered.com");
+    HttpServiceProxyFactory factory = HttpServiceProxyFactory
+        .builderFor(RestClientAdapter.create(client))
+        .build();
+    return factory.createClient(StoreSteamClient.class);
+  }
 }

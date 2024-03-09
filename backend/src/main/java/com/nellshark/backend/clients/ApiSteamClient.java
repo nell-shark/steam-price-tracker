@@ -6,6 +6,7 @@ import org.springframework.web.service.annotation.GetExchange;
 
 @Component
 public interface ApiSteamClient {
-    @GetExchange("/ISteamApps/GetAppList/v2")
-    AppList getAppList();
+
+  @GetExchange("/ISteamApps/GetAppList/v2")
+  AppList getAppList();
 }

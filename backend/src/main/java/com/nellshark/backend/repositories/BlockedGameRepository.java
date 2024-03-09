@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface BlockedGameRepository extends JpaRepository<BlockedGame, Long> {
+
 }

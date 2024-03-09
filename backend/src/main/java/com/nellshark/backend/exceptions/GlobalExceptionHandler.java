@@ -1,5 +1,10 @@
 package com.nellshark.backend.exceptions;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -13,51 +18,47 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.util.stream.Collectors;
-
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
-
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
-    @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(@NotNull MethodArgumentNotValidException e,
-                                                                  @NotNull HttpHeaders headers,
-                                                                  @NotNull HttpStatusCode status,
-                                                                  @NotNull WebRequest request) {
-        super.handleMethodArgumentNotValid(e, headers, status, request);
-        log.warn("{} Occurred: {}", e.getClass().getSimpleName(), e.getMessage());
 
-        String errorMessage = e.getBindingResult().getFieldErrors()
-                .stream()
-                .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                .collect(Collectors.joining(". "));
+  @Override
+  protected ResponseEntity<Object> handleMethodArgumentNotValid(
+      @NotNull MethodArgumentNotValidException e,
+      @NotNull HttpHeaders headers,
+      @NotNull HttpStatusCode status,
+      @NotNull WebRequest request) {
+    super.handleMethodArgumentNotValid(e, headers, status, request);
+    log.warn("{} Occurred: {}", e.getClass().getSimpleName(), e.getMessage());
 
-        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(BAD_REQUEST, errorMessage);
-        return ResponseEntity.of(problemDetail).build();
-    }
+    String errorMessage = e.getBindingResult().getFieldErrors()
+        .stream()
+        .map(DefaultMessageSourceResolvable::getDefaultMessage)
+        .collect(Collectors.joining(". "));
 
-    @ExceptionHandler({
-            GameNotFoundException.class,
-            UserNotFoundException.class
-    })
-    public ProblemDetail handleNotFoundException(RuntimeException e) {
-        log.warn("{} Occurred: {}", e.getClass().getSimpleName(), e.getMessage());
-        return ProblemDetail.forStatusAndDetail(NOT_FOUND, e.getMessage());
-    }
+    ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(BAD_REQUEST, errorMessage);
+    return ResponseEntity.of(problemDetail).build();
+  }
 
-    @ExceptionHandler(EmailAlreadyTakenException.class)
-    public ProblemDetail handleBadRequestException(RuntimeException e) {
-        log.warn("{} Occurred: {}", e.getClass().getSimpleName(), e.getMessage());
-        return ProblemDetail.forStatusAndDetail(BAD_REQUEST, e.getMessage());
-    }
+  @ExceptionHandler({
+      GameNotFoundException.class,
+      UserNotFoundException.class
+  })
+  public ProblemDetail handleNotFoundException(RuntimeException e) {
+    log.warn("{} Occurred: {}", e.getClass().getSimpleName(), e.getMessage());
+    return ProblemDetail.forStatusAndDetail(NOT_FOUND, e.getMessage());
+  }
+
+  @ExceptionHandler(EmailAlreadyTakenException.class)
+  public ProblemDetail handleBadRequestException(RuntimeException e) {
+    log.warn("{} Occurred: {}", e.getClass().getSimpleName(), e.getMessage());
+    return ProblemDetail.forStatusAndDetail(BAD_REQUEST, e.getMessage());
+  }
 
 
-    @ExceptionHandler(Exception.class)
-    public ProblemDetail handleInternalServerErrorException(Exception e) {
-        log.error("{} Occurred: {}", e.getClass().getSimpleName(), e.getMessage());
-        return ProblemDetail.forStatusAndDetail(INTERNAL_SERVER_ERROR, e.getMessage());
-    }
+  @ExceptionHandler(Exception.class)
+  public ProblemDetail handleInternalServerErrorException(Exception e) {
+    log.error("{} Occurred: {}", e.getClass().getSimpleName(), e.getMessage());
+    return ProblemDetail.forStatusAndDetail(INTERNAL_SERVER_ERROR, e.getMessage());
+  }
 }

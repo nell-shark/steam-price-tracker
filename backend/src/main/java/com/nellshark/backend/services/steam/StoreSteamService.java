@@ -4,7 +4,6 @@ import com.nellshark.backend.clients.StoreSteamClient;
 import com.nellshark.backend.models.Game;
 import com.nellshark.backend.models.GameType;
 import com.nellshark.backend.models.clientresponses.AppDetails;
-import com.nellshark.backend.services.BlockedGameService;
 import com.nellshark.backend.utils.MappingUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,28 +15,28 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @RequiredArgsConstructor
 public class StoreSteamService extends AbstractSteamService {
-    private final StoreSteamClient storeSteamClient;
-    private final BlockedGameService blockedGameService;
 
-    @Nullable
-    public Game getGameInfo(long id) {
-        log.info("Getting a game info: id={}", id);
-        handleRateLimit();
+  private final StoreSteamClient storeSteamClient;
 
-        AppDetails appDetails = storeSteamClient.getAppDetails(id, null);
-        AppDetails.App app = appDetails.getApp();
+  @Nullable
+  public Game getGameInfo(long id) {
+    log.info("Getting a game info: id={}", id);
+    handleRateLimit();
 
-        if (!app.success()) {
-            return null;
-        }
+    AppDetails appDetails = storeSteamClient.getAppDetails(id, null);
+    AppDetails.App app = appDetails.getApp();
 
-        AppDetails.App.Data data = app.data();
-
-        if (!EnumUtils.isValidEnumIgnoreCase(GameType.class, data.type())) {
-            blockedGameService.addGameToBlockList(data.steamAppId());
-            return null;
-        }
-
-        return MappingUtils.toGame(data);
+    if (!app.success()) {
+      return null;
     }
+
+    AppDetails.App.Data data = app.data();
+
+    if (!EnumUtils.isValidEnumIgnoreCase(GameType.class, data.type())
+        || data.isFree()) {
+      return null;
+    }
+
+    return MappingUtils.toGame(data);
+  }
 }

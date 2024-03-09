@@ -10,6 +10,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
+import java.util.Collection;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -18,59 +19,58 @@ import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-
 @Entity
 @Table(name = "users",
-        indexes = @Index(name = "email_index", columnList = "email")
+    indexes = @Index(name = "email_index", columnList = "email")
 )
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = "id")
 @ToString(of = {"id", "email"})
 public class User implements UserDetails {
-    @Id
-    @Column(name = "id", nullable = false, unique = true)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
-    @Column(name = "email", nullable = false, unique = true)
-    @NotEmpty(message = "Email cannot be empty")
-    @Email(message = "Email is not valid")
-    private String email;
+  @Id
+  @Column(name = "id", nullable = false, unique = true)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @Column(name = "password", nullable = false)
-    @NotEmpty(message = "Password cannot be empty")
-    @Size(min = 8, max = 32, message = "Password should be between 8 and 32 characters in length")
-    private String password;
+  @Column(name = "email", nullable = false, unique = true)
+  @NotEmpty(message = "Email cannot be empty")
+  @Email(message = "Email is not valid")
+  private String email;
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
-    }
+  @Column(name = "password", nullable = false)
+  @NotEmpty(message = "Password cannot be empty")
+  @Size(min = 8, max = 32, message = "Password should be between 8 and 32 characters in length")
+  private String password;
 
-    @Override
-    public String getUsername() {
-        return getEmail();
-    }
+  @Override
+  public Collection<? extends GrantedAuthority> getAuthorities() {
+    return null;
+  }
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
+  @Override
+  public String getUsername() {
+    return getEmail();
+  }
 
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
+  @Override
+  public boolean isAccountNonExpired() {
+    return true;
+  }
 
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
+  @Override
+  public boolean isAccountNonLocked() {
+    return true;
+  }
 
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
+  @Override
+  public boolean isCredentialsNonExpired() {
+    return true;
+  }
+
+  @Override
+  public boolean isEnabled() {
+    return true;
+  }
 }

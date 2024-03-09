@@ -16,9 +16,10 @@ import lombok.ToString;
 @EqualsAndHashCode(of = {"score", "url"})
 @ToString(of = {"score", "url"})
 public class Metacritic {
-    @Column(name = "metacritic_score")
-    private Integer score;
 
-    @Column(name = "metacritic_url")
-    private String url;
+  @Column(name = "metacritic_score")
+  private Integer score;
+
+  @Column(name = "metacritic_url")
+  private String url;
 }
