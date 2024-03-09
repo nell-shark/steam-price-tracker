@@ -1,6 +1,6 @@
 package com.nellshark.backend.models;
 
-public enum OperatingSystem {
+public enum Platform {
     WINDOWS,
     MAC,
     LINUX;
