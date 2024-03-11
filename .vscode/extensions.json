@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+    "editorconfig.editorconfig",
+    "dbaeumer.vscode-eslint",
+    "vscjava.vscode-java-pack",
+    "vmware.vscode-boot-dev-pack"
+  ]
+}
