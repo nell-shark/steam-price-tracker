@@ -55,7 +55,7 @@ public class GameService {
 
     List<Game> games = isNull(prefixName)
         ? getAllGames()
-        : gameRepository.findByNameStartsWithIgnoreCase(prefixName);
+        : gameRepository.findByNameStartsWithIgnoreCaseOrderByGameType(prefixName);
 
     return games.stream()
         .map(MappingUtils::toGameDTO)

@@ -28,6 +28,7 @@ public interface GameRepository extends JpaRepository<Game, Long> {
        FROM Game g
        WHERE LOWER(g.name)
        LIKE LOWER(CONCAT(:prefixName, '%'))
+       ORDER BY CASE WHEN g.gameType = 'GAME' THEN 0 ELSE 1 END, g.gameType
       """)
-  List<Game> findByNameStartsWithIgnoreCase(@NotNull String prefixName);
+  List<Game> findByNameStartsWithIgnoreCaseOrderByGameType(@NotNull String prefixName);
 }

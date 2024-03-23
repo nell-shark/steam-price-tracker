@@ -16,21 +16,24 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
 
 @Entity
 @Table(name = "games", indexes = @Index(name = "name_index", columnList = "name"))
 @Data
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = "id")
 @ToString(of = {"id", "name"})
@@ -42,13 +45,15 @@ public class Game {
   private long id;
 
   @Column(name = "name", nullable = false)
+  @lombok.NonNull
   private String name;
 
   @Column(name = "game_type", nullable = false)
-  @Enumerated(EnumType.STRING)
-  private GameType gameType;
+  @lombok.NonNull
+  private String gameType;
 
   @Column(name = "header_image", nullable = false)
+  @lombok.NonNull
   private String headerImage;
 
   @Column(name = "platform", nullable = false)
@@ -82,28 +87,10 @@ public class Game {
       cascade = CascadeType.REMOVE)
   private List<Price> prices;
 
-  public Game(long id,
-      @NonNull String name,
-      @NonNull GameType gameType,
-      @NonNull String headerImage,
-      @Nullable List<Platform> platforms,
-      @Nullable String shortDescription,
-      @Nullable LocalDate releaseDate,
-      @Nullable String developers,
-      @Nullable String publishers,
-      @Nullable String website,
-      @Nullable Metacritic metacritic) {
-    this.id = id;
-    this.name = name;
-    this.gameType = gameType;
-    this.headerImage = headerImage;
-    this.releaseDate = releaseDate;
-    this.platforms = Optional.ofNullable(platforms).orElse(List.of());
-    this.shortDescription = shortDescription;
-    this.developers = developers;
-    this.publishers = publishers;
-    this.website = website;
-    this.metacritic = metacritic;
+  @PrePersist
+  public void prePersist() {
+    this.gameType = this.gameType.toUpperCase();
+    this.prices = Optional.ofNullable(this.prices).orElse(List.of());
   }
 }
 

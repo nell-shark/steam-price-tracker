@@ -16,6 +16,14 @@ public class AppDetails {
   /**
    * Handles unknown properties during deserialization by dynamically mapping them to the 'app'
    * field. The ignored key represents the app id.
+   * {
+   *  "620": {
+   *    "success": true,
+   *    "data": {
+   *    ...
+   *    }
+   *  }
+   *}
    *
    * @param ignoredKey The numeric ID of the unknown property.
    * @param value      The value associated with the unknown property.
@@ -45,18 +53,18 @@ public class AppDetails {
                        @JsonProperty("metacritic") Metacritic metacritic,
                        @JsonProperty("release_date") ReleaseDate releaseDate) {
 
-      public record Platforms(@JsonProperty("windows") Boolean windows,
-                              @JsonProperty("mac") Boolean mac,
-                              @JsonProperty("linux") Boolean linux) {
+      public record Platforms(@JsonProperty("windows") boolean windows,
+                              @JsonProperty("mac") boolean mac,
+                              @JsonProperty("linux") boolean linux) {
 
       }
 
-      public record Metacritic(@JsonProperty("score") Integer score,
+      public record Metacritic(@JsonProperty("score") int score,
                                @JsonProperty("url") String url) {
 
       }
 
-      public record ReleaseDate(@JsonProperty("coming_soon") Boolean comingSoon,
+      public record ReleaseDate(@JsonProperty("coming_soon") boolean comingSoon,
                                 @JsonProperty("date") String date) {
 
       }
