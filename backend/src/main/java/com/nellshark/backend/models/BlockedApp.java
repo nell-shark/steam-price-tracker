@@ -11,13 +11,13 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Entity
-@Table(name = "blocked_games")
+@Table(name = "blocked_apps")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 @ToString(of = "id")
-public class BlockedGame {
+public class BlockedApp {
 
   @Id
   @Column(name = "id", nullable = false)

@@ -41,7 +41,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
   }
 
   @ExceptionHandler({
-      GameNotFoundException.class,
+      AppNotFoundException.class,
       UserNotFoundException.class
   })
   public ProblemDetail handleNotFoundException(RuntimeException e) {

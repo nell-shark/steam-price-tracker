@@ -12,7 +12,7 @@ export function Title() {
           <InputGroup className="mb-3">
             <InputGroup.Text id="basic-addon1">🔎︎</InputGroup.Text>
             <Form.Control
-              placeholder="Search a game"
+              placeholder="Search a app"
               aria-label="search"
               aria-describedby="basic-addon1"
               size="lg"

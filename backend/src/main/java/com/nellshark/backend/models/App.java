@@ -31,7 +31,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Entity
-@Table(name = "games", indexes = @Index(name = "name_index", columnList = "name"))
+@Table(name = "apps", indexes = @Index(name = "name_index", columnList = "name"))
 @Data
 @Builder
 @AllArgsConstructor
@@ -39,7 +39,7 @@ import lombok.ToString;
 @EqualsAndHashCode(of = "id")
 @ToString(of = {"id", "name"})
 @JsonInclude(Include.NON_NULL)
-public class Game {
+public class App {
 
   @Id
   @Column(name = "id", nullable = false, updatable = false)
@@ -49,9 +49,9 @@ public class Game {
   @lombok.NonNull
   private String name;
 
-  @Column(name = "game_type", nullable = false)
+  @Column(name = "app_type", nullable = false)
   @lombok.NonNull
-  private String gameType;
+  private String appType;
 
   @Column(name = "header_image", nullable = false)
   @lombok.NonNull
@@ -82,7 +82,7 @@ public class Game {
   @Embedded
   private Metacritic metacritic;
 
-  @OneToMany(mappedBy = "game",
+  @OneToMany(mappedBy = "app",
       fetch = FetchType.LAZY,
       orphanRemoval = true,
       cascade = CascadeType.REMOVE)
@@ -98,7 +98,7 @@ public class Game {
 
   @PrePersist
   public void prePersist() {
-    this.gameType = this.gameType.toUpperCase();
+    this.appType = this.appType.toUpperCase();
     this.prices = Optional.ofNullable(this.prices).orElse(List.of());
   }
 }

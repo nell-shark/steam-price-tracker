@@ -2,8 +2,8 @@ package com.nellshark.backend.utils;
 
 import static java.util.Locale.ENGLISH;
 
-import com.nellshark.backend.dtos.GameDTO;
-import com.nellshark.backend.models.Game;
+import com.nellshark.backend.dtos.AppDTO;
+import com.nellshark.backend.models.App;
 import com.nellshark.backend.models.Platform;
 import com.nellshark.backend.models.clientresponses.AppDetails;
 import java.time.LocalDate;
@@ -39,11 +39,11 @@ public final class MappingUtils {
     throw new AssertionError();
   }
 
-  public static GameDTO toGameDTO(@NonNull Game game) {
-    return new GameDTO(game.getId(), game.getName(), game.getHeaderImage());
+  public static AppDTO toAppDTO(@NonNull App app) {
+    return new AppDTO(app.getId(), app.getName(), app.getHeaderImage());
   }
 
-  public static Game toGame(@NonNull AppDetails.App.Data data) {
+  public static App toApp(@NonNull AppDetails.App.Data data) {
     List<Platform> platforms = parsePlatforms(data.platforms());
 
     LocalDate releaseDate = parseReleaseDate(data.releaseDate());
@@ -52,12 +52,12 @@ public final class MappingUtils {
 
     String publishers = collectNonEmptyValues(data.publishers());
 
-    Game.Metacritic metacritic = getMetacritic(data.metacritic());
+    App.Metacritic metacritic = getMetacritic(data.metacritic());
 
-    return Game.builder()
+    return App.builder()
         .id(data.steamAppId())
         .name(data.name())
-        .gameType(data.type())
+        .appType(data.type())
         .headerImage(data.headerImage())
         .platforms(platforms)
         .shortDescription(data.shortDescription())
@@ -70,21 +70,18 @@ public final class MappingUtils {
   }
 
   @Nullable
-  private static Game.Metacritic getMetacritic(AppDetails.App.Data.Metacritic metacritic) {
-    return Optional.ofNullable(metacritic)
-        .map(m -> new Game.Metacritic(m.score(), m.url()))
-        .orElse(null);
-  }
-
-  @Nullable
-  private static String collectNonEmptyValues(@Nullable List<String> values) {
-    if (values == null) {
+  private static List<Platform> parsePlatforms(@Nullable AppDetails.App.Data.Platforms platforms) {
+    if (platforms == null) {
       return null;
     }
 
-    return values.stream()
-        .filter(StringUtils::isNotBlank)
-        .collect(Collectors.joining(", "));
+    return Stream.of(
+            platforms.windows() ? Platform.WINDOWS : null,
+            platforms.mac() ? Platform.MAC : null,
+            platforms.linux() ? Platform.LINUX : null
+        )
+        .filter(Objects::nonNull)
+        .toList();
   }
 
   @Nullable
@@ -102,17 +99,20 @@ public final class MappingUtils {
   }
 
   @Nullable
-  private static List<Platform> parsePlatforms(@Nullable AppDetails.App.Data.Platforms platforms) {
-    if (platforms == null) {
+  private static String collectNonEmptyValues(@Nullable List<String> values) {
+    if (values == null) {
       return null;
     }
 
-    return Stream.of(
-            platforms.windows() ? Platform.WINDOWS : null,
-            platforms.mac() ? Platform.MAC : null,
-            platforms.linux() ? Platform.LINUX : null
-        )
-        .filter(Objects::nonNull)
-        .toList();
+    return values.stream()
+        .filter(StringUtils::isNotBlank)
+        .collect(Collectors.joining(", "));
+  }
+
+  @Nullable
+  private static App.Metacritic getMetacritic(AppDetails.App.Data.Metacritic metacritic) {
+    return Optional.ofNullable(metacritic)
+        .map(m -> new App.Metacritic(m.score(), m.url()))
+        .orElse(null);
   }
 }

@@ -2,7 +2,7 @@ import Table from "react-bootstrap/Table";
 
 import { GameItem, GameItemProps } from "./GameItem";
 
-const games: GameItemProps[] = [
+const apps: GameItemProps[] = [
   { id: 1, name: "GTA 5", price: 100 },
   { id: 2, name: "CS:GO", price: 200 },
   { id: 3, name: "Rust", price: 300 },
@@ -26,8 +26,8 @@ export function GameTable() {
         </tr>
       </thead>
       <tbody>
-        {games.map(game => (
-          <GameItem key={game.id} {...game} />
+        {apps.map(app => (
+          <GameItem key={app.id} {...app} />
         ))}
       </tbody>
     </Table>

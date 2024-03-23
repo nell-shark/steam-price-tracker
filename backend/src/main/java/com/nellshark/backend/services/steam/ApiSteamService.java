@@ -16,8 +16,8 @@ public class ApiSteamService extends AbstractSteamService {
 
   private final ApiSteamClient apiSteamClient;
 
-  public List<Long> getAllSteamGameIds() {
-    log.info("Getting all games id from steam api");
+  public List<Long> getAllSteamAppIds() {
+    log.info("Getting all app ids from steam api");
     handleRateLimit();
 
     return apiSteamClient.getAppList()

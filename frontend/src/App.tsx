@@ -15,7 +15,7 @@ export function App() {
       <Container>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/games/:id" element={<Game />} />
+          <Route path="/apps/:id" element={<Game />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
         <Footer />

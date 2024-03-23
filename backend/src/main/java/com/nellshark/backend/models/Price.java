@@ -33,7 +33,7 @@ import org.springframework.lang.NonNull;
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = "id")
-@ToString(of = {"id", "game"})
+@ToString(of = {"id", "app"})
 public class Price {
 
   @Id
@@ -42,9 +42,9 @@ public class Price {
   private Long id;
 
   @ManyToOne
-  @JoinColumn(name = "game_id", nullable = false, updatable = false)
+  @JoinColumn(name = "app_id", nullable = false, updatable = false)
   @JsonIgnore
-  private Game game;
+  private App app;
 
   @ElementCollection(fetch = FetchType.EAGER)
   @CollectionTable(
@@ -61,9 +61,9 @@ public class Price {
   @JsonFormat(shape = STRING, pattern = "dd-MM-yyyy HH:mm:ss")
   private LocalDateTime createdTime;
 
-  public Price(@NonNull Game game,
+  public Price(@NonNull App app,
       @NonNull Map<Currency, String> currencyPriceMap) {
-    this.game = game;
+    this.app = app;
     this.currencyPriceMap = currencyPriceMap;
   }
 }

@@ -11,6 +11,6 @@ public interface StoreSteamClient {
 
   @GetExchange("/api/appdetails")
   AppDetails getAppDetails(
-      @RequestParam("appids") long gameId,
+      @RequestParam("appids") long appId,
       @RequestParam(value = "l", defaultValue = "english") @Nullable String language);
 }

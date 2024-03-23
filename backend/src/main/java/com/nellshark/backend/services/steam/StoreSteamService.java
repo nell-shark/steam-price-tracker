@@ -1,7 +1,7 @@
 package com.nellshark.backend.services.steam;
 
 import com.nellshark.backend.clients.StoreSteamClient;
-import com.nellshark.backend.models.Game;
+import com.nellshark.backend.models.App;
 import com.nellshark.backend.models.clientresponses.AppDetails;
 import com.nellshark.backend.models.clientresponses.AppDetails.App.Data.ReleaseDate;
 import com.nellshark.backend.utils.MappingUtils;
@@ -19,8 +19,8 @@ public class StoreSteamService extends AbstractSteamService {
   private final StoreSteamClient storeSteamClient;
 
   @Nullable
-  public Game getGameInfo(long id) {
-    log.info("Getting a game info: id={}", id);
+  public App getAppInfo(long id) {
+    log.info("Getting a app info: id={}", id);
     handleRateLimit();
 
     AppDetails appDetails = storeSteamClient.getAppDetails(id, null);
@@ -40,6 +40,6 @@ public class StoreSteamService extends AbstractSteamService {
       return null;
     }
 
-    return MappingUtils.toGame(data);
+    return MappingUtils.toApp(data);
   }
 }

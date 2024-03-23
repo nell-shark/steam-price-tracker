@@ -1,6 +1,6 @@
 package com.nellshark.backend.repositories;
 
-import com.nellshark.backend.models.Game;
+import com.nellshark.backend.models.App;
 import java.util.List;
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
@@ -10,25 +10,25 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface GameRepository extends JpaRepository<Game, Long> {
+public interface AppRepository extends JpaRepository<App, Long> {
 
   @Override
   @NotNull
   @EntityGraph(attributePaths = {"platforms", "prices"})
-  Optional<Game> findById(@NotNull Long id);
+  Optional<App> findById(@NotNull Long id);
 
   @Query("""
        SELECT g.id
-       FROM Game g
+       FROM App g
       """)
   List<Long> findAllIds();
 
   @Query("""
        SELECT g
-       FROM Game g
+       FROM App g
        WHERE LOWER(g.name)
        LIKE LOWER(CONCAT(:prefixName, '%'))
-       ORDER BY CASE WHEN g.gameType = 'GAME' THEN 0 ELSE 1 END, g.gameType
+       ORDER BY CASE WHEN g.appType = 'GAME' THEN 0 ELSE 1 END, g.appType
       """)
-  List<Game> findByNameStartsWithIgnoreCaseOrderByGameType(@NotNull String prefixName);
+  List<App> findByNameStartsWithIgnoreCaseOrderByAppType(@NotNull String prefixName);
 }

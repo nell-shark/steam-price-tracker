@@ -1,6 +1,6 @@
 package com.nellshark.backend.dtos;
 
-public record GameDTO(
+public record AppDTO(
     long id,
     String name,
     String imageUrl) {
