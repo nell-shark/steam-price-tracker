@@ -8,6 +8,7 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Embeddable;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -86,6 +87,14 @@ public class Game {
       orphanRemoval = true,
       cascade = CascadeType.REMOVE)
   private List<Price> prices;
+
+  @Embeddable
+  public record Metacritic(
+      @Column(name = "metacritic_score") int score,
+
+      @Column(name = "metacritic_url") String url) {
+
+  }
 
   @PrePersist
   public void prePersist() {

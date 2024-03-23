@@ -4,7 +4,6 @@ import static java.util.Locale.ENGLISH;
 
 import com.nellshark.backend.dtos.GameDTO;
 import com.nellshark.backend.models.Game;
-import com.nellshark.backend.models.Metacritic;
 import com.nellshark.backend.models.Platform;
 import com.nellshark.backend.models.clientresponses.AppDetails;
 import java.time.LocalDate;
@@ -53,7 +52,7 @@ public final class MappingUtils {
 
     String publishers = collectNonEmptyValues(data.publishers());
 
-    Metacritic metacritic = getMetacritic(data.metacritic());
+    Game.Metacritic metacritic = getMetacritic(data.metacritic());
 
     return Game.builder()
         .id(data.steamAppId())
@@ -71,9 +70,9 @@ public final class MappingUtils {
   }
 
   @Nullable
-  private static Metacritic getMetacritic(AppDetails.App.Data.Metacritic metacritic) {
+  private static Game.Metacritic getMetacritic(AppDetails.App.Data.Metacritic metacritic) {
     return Optional.ofNullable(metacritic)
-        .map(m -> new Metacritic(m.score(), m.url()))
+        .map(m -> new Game.Metacritic(m.score(), m.url()))
         .orElse(null);
   }
 
