@@ -49,13 +49,16 @@ public class App {
   @lombok.NonNull
   private String name;
 
-  @Column(name = "app_type", nullable = false)
+  @Column(name = "type", nullable = false)
   @lombok.NonNull
-  private String appType;
+  private String type;
 
   @Column(name = "header_image", nullable = false)
   @lombok.NonNull
   private String headerImage;
+
+  @Column(name = "is_free")
+  private boolean isFree;
 
   @Column(name = "platform", nullable = false)
   @CollectionTable(name = "platforms")
@@ -65,10 +68,6 @@ public class App {
 
   @Column(name = "short_description", columnDefinition = "TEXT")
   private String shortDescription;
-
-  @Column(name = "release_date")
-  @JsonFormat(shape = Shape.STRING, pattern = "dd-MM-yyyy")
-  private LocalDate releaseDate;
 
   @Column(name = "developers")
   private String developers;
@@ -82,6 +81,9 @@ public class App {
   @Embedded
   private Metacritic metacritic;
 
+  @Embedded
+  private ReleaseDate releaseDate;
+
   @OneToMany(mappedBy = "app",
       fetch = FetchType.LAZY,
       orphanRemoval = true,
@@ -91,14 +93,24 @@ public class App {
   @Embeddable
   public record Metacritic(
       @Column(name = "metacritic_score") int score,
-
       @Column(name = "metacritic_url") String url) {
+
+  }
+
+  @Embeddable
+  public record ReleaseDate(
+      @Column(name = "coming_soon")
+      boolean comingSoon,
+
+      @Column(name = "date")
+      @JsonFormat(shape = Shape.STRING, pattern = "dd-MM-yyyy")
+      LocalDate releaseDate) {
 
   }
 
   @PrePersist
   public void prePersist() {
-    this.appType = this.appType.toUpperCase();
+    this.type = this.type.toUpperCase();
     this.prices = Optional.ofNullable(this.prices).orElse(List.of());
   }
 }

@@ -46,7 +46,7 @@ public final class MappingUtils {
   public static App toApp(@NonNull AppDetails.App.Data data) {
     List<Platform> platforms = parsePlatforms(data.platforms());
 
-    LocalDate releaseDate = parseReleaseDate(data.releaseDate());
+    App.ReleaseDate releaseDate = parseReleaseDate(data.releaseDate());
 
     String developers = collectNonEmptyValues(data.developers());
 
@@ -57,15 +57,16 @@ public final class MappingUtils {
     return App.builder()
         .id(data.steamAppId())
         .name(data.name())
-        .appType(data.type())
+        .type(data.type())
         .headerImage(data.headerImage())
+        .isFree(data.isFree())
         .platforms(platforms)
         .shortDescription(data.shortDescription())
-        .releaseDate(releaseDate)
         .developers(developers)
         .publishers(publishers)
         .website(data.website())
         .metacritic(metacritic)
+        .releaseDate(releaseDate)
         .build();
   }
 
@@ -85,17 +86,23 @@ public final class MappingUtils {
   }
 
   @Nullable
-  private static LocalDate parseReleaseDate(@Nullable AppDetails.App.Data.ReleaseDate releaseDate) {
+  private static App.ReleaseDate parseReleaseDate(
+      @Nullable AppDetails.App.Data.ReleaseDate releaseDate) {
     if (releaseDate == null) {
       return null;
     }
 
+    LocalDate date = null;
     try {
-      return LocalDate.parse(releaseDate.date(), DATE_TIME_FORMATTER);
+      date = LocalDate.parse(releaseDate.date(), DATE_TIME_FORMATTER);
     } catch (DateTimeParseException e) {
       log.warn("Failed to parse date '{}': {}", e.getParsedString(), e.getMessage());
-      return null;
     }
+
+    return new App.ReleaseDate(
+        releaseDate.comingSoon(),
+        date
+    );
   }
 
   @Nullable
@@ -110,7 +117,7 @@ public final class MappingUtils {
   }
 
   @Nullable
-  private static App.Metacritic getMetacritic(AppDetails.App.Data.Metacritic metacritic) {
+  private static App.Metacritic getMetacritic(@Nullable AppDetails.App.Data.Metacritic metacritic) {
     return Optional.ofNullable(metacritic)
         .map(m -> new App.Metacritic(m.score(), m.url()))
         .orElse(null);

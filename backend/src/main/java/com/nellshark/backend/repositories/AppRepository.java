@@ -28,7 +28,7 @@ public interface AppRepository extends JpaRepository<App, Long> {
        FROM App g
        WHERE LOWER(g.name)
        LIKE LOWER(CONCAT(:prefixName, '%'))
-       ORDER BY CASE WHEN g.appType = 'GAME' THEN 0 ELSE 1 END, g.appType
+       ORDER BY CASE WHEN g.type = 'GAME' THEN 0 ELSE 1 END, g.type
       """)
-  List<App> findByNameStartsWithIgnoreCaseOrderByAppType(@NotNull String prefixName);
+  List<App> findByNameStartsWithIgnoreCaseOrderByType(@NotNull String prefixName);
 }

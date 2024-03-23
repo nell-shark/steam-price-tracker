@@ -55,7 +55,7 @@ public class AppService {
 
     List<App> apps = isNull(prefixName)
         ? getAllApps()
-        : appRepository.findByNameStartsWithIgnoreCaseOrderByAppType(prefixName);
+        : appRepository.findByNameStartsWithIgnoreCaseOrderByType(prefixName);
 
     return apps.stream()
         .map(MappingUtils::toAppDTO)
@@ -85,8 +85,12 @@ public class AppService {
   private void addNewApp(long id) {
     App app = storeSteamService.getAppInfo(id);
 
-    if (isNull(app)) {
+    if (isNull(app) || app.isFree()) {
       blockedAppService.addAppToBlockList(id);
+      return;
+    }
+
+    if (app.getReleaseDate().comingSoon()) {
       return;
     }
 

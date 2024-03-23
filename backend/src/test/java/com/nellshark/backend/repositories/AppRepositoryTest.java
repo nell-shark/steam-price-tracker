@@ -27,15 +27,16 @@ class AppRepositoryTest {
   }
 
   @Test
-  void testFindByNameStartsWithIgnoreCaseOrderByAppType() {
-    App app1 = App.builder().id(1L).name("Game1").appType("DLC").headerImage("").build();
-    App app2 = App.builder().id(2L).name("Game2").appType("dlc").headerImage("").build();
-    App app3 = App.builder().id(3L).name("Game3").appType("GAME").headerImage("").build();
+  void testFindByNameStartsWithIgnoreCaseOrderByType() {
+    App app1 = App.builder().id(1L).name("Game1").type("DLC").headerImage("").isFree(false).build();
+    App app2 = App.builder().id(2L).name("Game2").type("dlc").headerImage("").isFree(false).build();
+    App app3 = App.builder().id(3L).name("Game3").type("GAME").headerImage("").isFree(false)
+        .build();
 
     underTest.saveAll(List.of(app1, app2, app3));
 
     String prefixName = "game";
-    List<App> apps = underTest.findByNameStartsWithIgnoreCaseOrderByAppType(prefixName);
+    List<App> apps = underTest.findByNameStartsWithIgnoreCaseOrderByType(prefixName);
 
     assertAll(
         () -> Assertions.assertEquals(3, apps.size()),
