@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nellshark.backend.models.Currency;
 import java.util.List;
 import java.util.Map;
 import lombok.Getter;
@@ -16,14 +17,7 @@ public class AppDetails {
   /**
    * Handles unknown properties during deserialization by dynamically mapping them to the 'app'
    * field. The ignored key represents the app id.
-   * {
-   *  "620": {
-   *    "success": true,
-   *    "data": {
-   *    ...
-   *    }
-   *  }
-   *}
+   * { "620": { "success": true, "data": { ... } } }
    *
    * @param ignoredKey The numeric ID of the unknown property.
    * @param value      The value associated with the unknown property.
@@ -49,6 +43,7 @@ public class AppDetails {
                        @JsonProperty("website") String website,
                        @JsonProperty("developers") List<String> developers,
                        @JsonProperty("publishers") List<String> publishers,
+                       @JsonProperty("price_overview") PriceOverview priceOverview,
                        @JsonProperty("platforms") Platforms platforms,
                        @JsonProperty("metacritic") Metacritic metacritic,
                        @JsonProperty("release_date") ReleaseDate releaseDate) {
@@ -66,6 +61,12 @@ public class AppDetails {
 
       public record ReleaseDate(@JsonProperty("coming_soon") boolean comingSoon,
                                 @JsonProperty("date") String date) {
+
+      }
+
+      @JsonIgnoreProperties(ignoreUnknown = true)
+      public record PriceOverview(@JsonProperty("currency") Currency currency,
+                                  @JsonProperty("final") Long price) {
 
       }
     }

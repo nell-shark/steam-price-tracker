@@ -1,9 +1,9 @@
 package com.nellshark.backend.services.steam;
 
 import com.nellshark.backend.clients.StoreSteamClient;
-import com.nellshark.backend.models.App;
+import com.nellshark.backend.models.Currency;
 import com.nellshark.backend.models.clientresponses.AppDetails;
-import com.nellshark.backend.utils.MappingUtils;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.Nullable;
@@ -17,12 +17,20 @@ public class StoreSteamService extends AbstractSteamService {
   private final StoreSteamClient storeSteamClient;
 
   @Nullable
-  public App getAppInfo(long id) {
+  public AppDetails getAppDetails(
+      long id,
+      @Nullable String filter,
+      @Nullable Currency currency) {
     log.info("Getting app info: id={}", id);
 
     handleRateLimit();
 
-    AppDetails appDetails = storeSteamClient.getAppDetails(id, null);
+    String countryCode = Optional.ofNullable(currency)
+        .map(Currency::getCountryCode)
+        .orElse(null);
+
+    AppDetails appDetails = storeSteamClient.getAppDetails(
+        id, filter, countryCode, null);
 
     if (appDetails == null
         || appDetails.getApp() == null
@@ -31,6 +39,6 @@ public class StoreSteamService extends AbstractSteamService {
       return null;
     }
 
-    return MappingUtils.toApp(appDetails.getApp().data());
+    return appDetails;
   }
 }

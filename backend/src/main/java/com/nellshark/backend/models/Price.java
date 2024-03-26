@@ -41,11 +41,6 @@ public class Price {
   @Column(name = "id", nullable = false, updatable = false)
   private Long id;
 
-  @ManyToOne
-  @JoinColumn(name = "app_id", nullable = false, updatable = false)
-  @JsonIgnore
-  private App app;
-
   @ElementCollection(fetch = FetchType.EAGER)
   @CollectionTable(
       name = "currency_prices",
@@ -54,16 +49,20 @@ public class Price {
   @MapKeyEnumerated(EnumType.STRING)
   @MapKeyColumn(name = "currency")
   @Column(name = "price")
-  private Map<Currency, String> currencyPriceMap;
+  private Map<Currency, Long> currencyPriceMap;
+
+  @ManyToOne
+  @JoinColumn(name = "app_id", nullable = false, updatable = false)
+  @JsonIgnore
+  private App app;
 
   @CreationTimestamp
   @Column(name = "created_time", nullable = false, updatable = false)
   @JsonFormat(shape = STRING, pattern = "dd-MM-yyyy HH:mm:ss")
   private LocalDateTime createdTime;
 
-  public Price(@NonNull App app,
-      @NonNull Map<Currency, String> currencyPriceMap) {
-    this.app = app;
+  public Price(@NonNull Map<Currency, Long> currencyPriceMap, @NonNull App app) {
     this.currencyPriceMap = currencyPriceMap;
+    this.app = app;
   }
 }

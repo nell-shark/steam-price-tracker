@@ -3,32 +3,32 @@ package com.nellshark.backend.repositories;
 import com.nellshark.backend.models.App;
 import java.util.List;
 import java.util.Optional;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface AppRepository extends JpaRepository<App, Long> {
 
   @Override
-  @NotNull
   @EntityGraph(attributePaths = {"platforms", "prices"})
-  Optional<App> findById(@NotNull Long id);
+  @NonNull
+  Optional<App> findById(@NonNull Long id);
 
   @Query("""
-       SELECT g.id
-       FROM App g
+       SELECT a.id
+       FROM App a
       """)
   List<Long> findAllIds();
 
   @Query("""
-       SELECT g
-       FROM App g
-       WHERE LOWER(g.name)
+       SELECT a
+       FROM App a
+       WHERE LOWER(a.name)
        LIKE LOWER(CONCAT(:prefixName, '%'))
-       ORDER BY CASE WHEN g.type = 'GAME' THEN 0 ELSE 1 END, g.type
+       ORDER BY CASE WHEN a.type = 'GAME' THEN 0 ELSE 1 END
       """)
-  List<App> findByNameStartsWithIgnoreCaseOrderByType(@NotNull String prefixName);
+  List<App> findByNameStartsWithIgnoreCaseOrderByType(@NonNull String prefixName);
 }
