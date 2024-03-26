@@ -12,6 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 @DataJpaTest
 @Import(TestConfig.class)
@@ -27,7 +30,7 @@ class AppRepositoryTest {
   }
 
   @Test
-  void testFindByNameStartsWithIgnoreCaseOrderByType() {
+  void shouldOrderByTypeIgnoringCase() {
     App app1 = App.builder().id(1L).name("Game1").type("DLC").headerImage("").isFree(false).build();
     App app2 = App.builder().id(2L).name("Game2").type("dlc").headerImage("").isFree(false).build();
     App app3 = App.builder().id(3L).name("Game3").type("GAME").headerImage("").isFree(false)
@@ -36,7 +39,9 @@ class AppRepositoryTest {
     underTest.saveAll(List.of(app1, app2, app3));
 
     String prefixName = "game";
-    List<App> apps = underTest.findByNameStartsWithIgnoreCaseOrderByType(prefixName);
+    Pageable pageable = PageRequest.of(0, 10);
+    Page<App> appPage = underTest.findByNameStartsWithIgnoreCaseOrderByType(prefixName, pageable);
+    List<App> apps = appPage.getContent();
 
     assertAll(
         () -> Assertions.assertEquals(3, apps.size()),

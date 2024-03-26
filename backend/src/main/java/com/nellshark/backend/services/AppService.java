@@ -1,7 +1,6 @@
 package com.nellshark.backend.services;
 
 import static com.nellshark.backend.clients.StoreSteamClient.PRICE_OVERVIEW_FILTER;
-import static java.util.Objects.isNull;
 
 import com.nellshark.backend.dtos.AppDTO;
 import com.nellshark.backend.exceptions.AppNotFoundException;
@@ -25,6 +24,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.lang.NonNull;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -34,42 +36,45 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class AppService {
 
+  private static final int PAGE_SIZE = 10;
+
   private final AppRepository appRepository;
   private final ApiSteamService apiSteamService;
   private final PriceService priceService;
   private final StoreSteamService storeSteamService;
   private final BlockedAppService blockedAppService;
 
-  public List<AppDTO> getAllAppDTOs() {
-    log.info("Getting all app DTOs");
-    return appRepository.findAll()
-        .stream()
-        .map(MappingUtils::toAppDTO)
-        .toList();
-  }
-
   private List<App> getAllApps() {
     log.info("Getting all apps");
     return appRepository.findAll();
+  }
+
+  public Page<AppDTO> getAppDTOsByPage(int page) {
+    page = page <= 0 ? 0 : --page;
+    Pageable pageable = PageRequest.of(page, PAGE_SIZE);
+    return appRepository.findAll(pageable)
+        .map(MappingUtils::toAppDTO);
+  }
+
+  public Page<AppDTO> getAppDTOsByPrefixName(@NonNull String prefixName, int page) {
+    log.info("Getting app DTOs by prefix name");
+    prefixName = StringUtils.stripToNull(prefixName);
+
+    if (prefixName == null) {
+      return getAppDTOsByPage(1);
+    }
+
+    page = page <= 0 ? 0 : --page;
+    Pageable pageable = PageRequest.of(page, PAGE_SIZE);
+
+    return appRepository.findByNameStartsWithIgnoreCaseOrderByType(prefixName, pageable)
+        .map(MappingUtils::toAppDTO);
   }
 
   public App getAppById(long id) {
     log.info("Getting app by id: {}", id);
     return appRepository.findById(id)
         .orElseThrow(() -> new AppNotFoundException("App is not found id=" + id));
-  }
-
-  public List<AppDTO> getAppDTOsByPrefixName(@NonNull String prefixName) {
-    log.info("Getting app DTOs by prefix name");
-    prefixName = StringUtils.stripToNull(prefixName);
-
-    List<App> apps = isNull(prefixName)
-        ? getAllApps()
-        : appRepository.findByNameStartsWithIgnoreCaseOrderByType(prefixName);
-
-    return apps.stream()
-        .map(MappingUtils::toAppDTO)
-        .toList();
   }
 
   private List<Long> getAllAppIds() {

@@ -3,6 +3,8 @@ package com.nellshark.backend.repositories;
 import com.nellshark.backend.models.App;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -30,5 +32,7 @@ public interface AppRepository extends JpaRepository<App, Long> {
        LIKE LOWER(CONCAT(:prefixName, '%'))
        ORDER BY CASE WHEN a.type = 'GAME' THEN 0 ELSE 1 END
       """)
-  List<App> findByNameStartsWithIgnoreCaseOrderByType(@NonNull String prefixName);
+  Page<App> findByNameStartsWithIgnoreCaseOrderByType(
+      @NonNull String prefixName,
+      @NonNull Pageable pageable);
 }
