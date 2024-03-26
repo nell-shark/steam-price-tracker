@@ -6,12 +6,12 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -24,10 +24,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
   @Override
   protected ResponseEntity<Object> handleMethodArgumentNotValid(
-      @NotNull MethodArgumentNotValidException e,
-      @NotNull HttpHeaders headers,
-      @NotNull HttpStatusCode status,
-      @NotNull WebRequest request) {
+      @NonNull MethodArgumentNotValidException e,
+      @NonNull HttpHeaders headers,
+      @NonNull HttpStatusCode status,
+      @NonNull WebRequest request) {
     super.handleMethodArgumentNotValid(e, headers, status, request);
     log.warn("{} Occurred: {}", e.getClass().getSimpleName(), e.getMessage());
 
