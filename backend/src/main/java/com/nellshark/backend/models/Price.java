@@ -38,7 +38,7 @@ public class Price {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "id", nullable = false, updatable = false)
+  @Column(name = "id", nullable = false, updatable = false, unique = true)
   private Long id;
 
   @ElementCollection(fetch = FetchType.EAGER)

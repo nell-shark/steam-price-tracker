@@ -134,4 +134,9 @@ public class AppService {
     log.info("Saving app: {}", app);
     appRepository.save(app);
   }
+
+  public void deleteAppById(long appId) {
+    log.info("Deleting app");
+    appRepository.deleteById(appId);
+  }
 }

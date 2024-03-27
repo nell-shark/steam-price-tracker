@@ -20,6 +20,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.AccessLevel;
@@ -42,7 +43,7 @@ import lombok.ToString;
 public class App {
 
   @Id
-  @Column(name = "id", nullable = false, updatable = false)
+  @Column(name = "id", nullable = false, updatable = false, unique = true)
   private long id;
 
   @Column(name = "name", nullable = false)
@@ -60,7 +61,7 @@ public class App {
   @Column(name = "is_free")
   private boolean isFree;
 
-  @Column(name = "platform", nullable = false)
+  @Column(name = "platform")
   @CollectionTable(name = "platforms")
   @Enumerated(EnumType.STRING)
   @ElementCollection(targetClass = Platform.class, fetch = FetchType.LAZY)
@@ -88,7 +89,8 @@ public class App {
       fetch = FetchType.LAZY,
       orphanRemoval = true,
       cascade = CascadeType.REMOVE)
-  private List<Price> prices;
+  @Builder.Default
+  private List<Price> prices = new ArrayList<>();
 
   @Embeddable
   public record Metacritic(

@@ -20,6 +20,6 @@ import lombok.ToString;
 public class BlockedApp {
 
   @Id
-  @Column(name = "id", nullable = false)
+  @Column(name = "id", nullable = false, unique = true)
   private long id;
 }

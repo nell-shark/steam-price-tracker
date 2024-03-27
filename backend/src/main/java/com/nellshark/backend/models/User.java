@@ -2,6 +2,8 @@ package com.nellshark.backend.models;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -9,21 +11,20 @@ import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Size;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.springframework.lang.NonNull;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
-@Table(name = "users",
-    indexes = @Index(name = "email_index", columnList = "email")
-)
+@Table(name = "users", indexes = @Index(name = "email_index", columnList = "email"))
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = "id")
@@ -42,12 +43,20 @@ public class User implements UserDetails {
 
   @Column(name = "password", nullable = false)
   @NotEmpty(message = "Password cannot be empty")
-  @Size(min = 8, max = 32, message = "Password should be between 8 and 32 characters in length")
   private String password;
+
+  @Column(name = "role", nullable = false)
+  @Enumerated(EnumType.STRING)
+  private UserRole role = UserRole.ROLE_USER;
+
+  public User(@NonNull String email, @NonNull String password) {
+    this.email = email;
+    this.password = password;
+  }
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    return Collections.emptyList();
+    return List.of(new SimpleGrantedAuthority(role.name()));
   }
 
   @Override
