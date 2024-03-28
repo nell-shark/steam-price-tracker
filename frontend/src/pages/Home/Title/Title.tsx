@@ -3,9 +3,9 @@ import { Form, InputGroup } from "react-bootstrap";
 export function Title() {
   return (
     <div className="my-5">
-      <h1 className="display-4 text-center">Steam Prices</h1>
+      <h1 className="display-4 text-center">Steam Price Tracker</h1>
       <h2 className="fw-light text-center mb-5">
-        Price history, critic scores, system requirements
+        Stay informed, make smarter purchases
       </h2>
       <div className="justify-content-center mb-5 row">
         <div className="col-lg-6">

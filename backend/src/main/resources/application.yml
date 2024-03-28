@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/steam_prices
+    url: jdbc:postgresql://localhost:5432/steam_price_tracker
     driverClassName: org.postgresql.Driver
     username: postgres
     password: root

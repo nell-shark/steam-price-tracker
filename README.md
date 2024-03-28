@@ -1,1 +1,1 @@
-# steam-prices
+# steam-price-tracker
