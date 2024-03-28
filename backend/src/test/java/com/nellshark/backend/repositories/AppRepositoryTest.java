@@ -25,7 +25,7 @@ class AppRepositoryTest {
   }
 
   @Test
-  void check() {
+  void check1() {
     System.out.println("start");
     App app = App.builder()
         .id(1L)
@@ -37,4 +37,19 @@ class AppRepositoryTest {
     underTest.save(app);
     assertThat(underTest.findAll().size()).isSameAs(1);
   }
+
+  @Test
+  void check2() {
+    System.out.println("start");
+    App app = App.builder()
+        .id(2L)
+        .name("Name")
+        .type("GAME")
+        .headerImage("")
+        .isFree(false)
+        .build();
+    underTest.save(app);
+    assertThat(underTest.findAll().size()).isSameAs(2);
+  }
+
 }
