@@ -8,7 +8,6 @@ import com.nellshark.backend.models.App;
 import com.nellshark.backend.models.Currency;
 import com.nellshark.backend.models.Price;
 import com.nellshark.backend.models.clientresponses.AppDetails;
-import com.nellshark.backend.models.clientresponses.AppDetails.App.Data.PriceOverview;
 import com.nellshark.backend.repositories.AppRepository;
 import com.nellshark.backend.services.steam.ApiSteamService;
 import com.nellshark.backend.services.steam.StoreSteamService;
@@ -16,13 +15,17 @@ import com.nellshark.backend.utils.MappingUtils;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -50,6 +53,7 @@ public class AppService {
   }
 
   public Page<AppDTO> getAppDTOsByPage(int page) {
+    log.info("Getting app DTOs by page: page={}", page);
     page = page <= 0 ? 0 : --page;
     Pageable pageable = PageRequest.of(page, PAGE_SIZE);
     return appRepository.findAll(pageable)
@@ -71,6 +75,7 @@ public class AppService {
         .map(MappingUtils::toAppDTO);
   }
 
+  @Cacheable(value = "app", key = "#id")
   public App getAppById(long id) {
     log.info("Getting app by id: {}", id);
     return appRepository.findById(id)
@@ -105,10 +110,12 @@ public class AppService {
           .map(currency ->
               storeSteamService.getAppDetails(app.getId(), PRICE_OVERVIEW_FILTER, currency))
           .filter(Objects::nonNull)
-          .filter(appDetails -> !appDetails.getApp().data().isFree())
-          .filter(appDetails -> appDetails.getApp().data().priceOverview() != null)
-          .map(appDetails -> appDetails.getApp().data().priceOverview())
-          .collect(Collectors.toMap(PriceOverview::currency, PriceOverview::price));
+          .filter(details -> !details.getApp().data().isFree())
+          .filter(details -> details.getApp().data().priceOverview() != null)
+          .map(details -> details.getApp().data().priceOverview())
+          .filter(p -> EnumUtils.isValidEnumIgnoreCase(Currency.class, p.currency()))
+          .map(p -> Map.entry(EnumUtils.getEnumIgnoreCase(Currency.class, p.currency()), p.price()))
+          .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 
       priceService.savePrice(new Price(map, app));
     });
@@ -135,8 +142,9 @@ public class AppService {
     appRepository.save(app);
   }
 
-  public void deleteAppById(long appId) {
+  @CacheEvict(value = "app", key = "#id")
+  public void deleteAppById(long id) {
     log.info("Deleting app");
-    appRepository.deleteById(appId);
+    appRepository.deleteById(id);
   }
 }

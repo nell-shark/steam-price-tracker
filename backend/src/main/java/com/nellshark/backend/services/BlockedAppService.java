@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 public class BlockedAppService {
 
   private final BlockedAppRepository blockedAppRepository;
-
   private final AppService appService;
 
   /**

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nellshark.backend.models.Currency;
 import java.util.List;
 import java.util.Map;
 import lombok.Getter;
@@ -65,7 +64,7 @@ public class AppDetails {
       }
 
       @JsonIgnoreProperties(ignoreUnknown = true)
-      public record PriceOverview(@JsonProperty("currency") Currency currency,
+      public record PriceOverview(@JsonProperty("currency") String currency,
                                   @JsonProperty("final") Long price) {
 
       }
