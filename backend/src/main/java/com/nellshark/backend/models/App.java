@@ -58,7 +58,7 @@ public class App {
   @lombok.NonNull
   private String headerImage;
 
-  @Column(name = "is_free")
+  @Column(name = "is_free", nullable = false)
   private boolean isFree;
 
   @Column(name = "platform")
@@ -70,10 +70,10 @@ public class App {
   @Column(name = "short_description", columnDefinition = "TEXT")
   private String shortDescription;
 
-  @Column(name = "developers")
+  @Column(name = "developers", columnDefinition = "TEXT")
   private String developers;
 
-  @Column(name = "publishers")
+  @Column(name = "publishers", columnDefinition = "TEXT")
   private String publishers;
 
   @Column(name = "website")
@@ -104,7 +104,7 @@ public class App {
       @Column(name = "coming_soon")
       boolean comingSoon,
 
-      @Column(name = "date")
+      @Column(name = "release_date")
       @JsonFormat(shape = Shape.STRING, pattern = "dd-MM-yyyy")
       LocalDate releaseDate) {
 
