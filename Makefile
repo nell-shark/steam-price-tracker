@@ -7,6 +7,14 @@ postgres:
     	-e POSTGRES_DB=steam_price_tracker \
     	postgres:16.1-alpine3.19
 
+pgadmin:
+	docker run -d --rm \
+        --name pgadmin \
+		-p 5050:80 \
+		-e PGADMIN_DEFAULT_EMAIL=admin@gmail.com \
+		-e PGADMIN_DEFAULT_PASSWORD=root \
+		dpage/pgadmin4
+
 up:
 	docker compose up --build
 
