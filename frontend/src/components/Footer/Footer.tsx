@@ -1,9 +1,10 @@
+import { GITHUB_REPO_URL } from "@/data/constants";
+
 import { NavItem, NavItemProps } from "./NavItem";
 
 const navItems: NavItemProps[] = [
-  { href: "#", text: "Home" },
-  { href: "#", text: "Github" },
-  { href: "#", text: "Login" }
+  { href: "/", text: "Home" },
+  { href: GITHUB_REPO_URL, text: "Github" }
 ];
 
 export function Footer() {

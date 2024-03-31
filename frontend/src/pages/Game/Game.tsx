@@ -2,6 +2,8 @@ import { useParams } from "react-router-dom";
 
 import { gameService } from "@/services/gameService.ts";
 
+import styles from "./Game.module.css";
+
 export function Game() {
   const { id } = useParams();
 
@@ -13,7 +15,7 @@ export function Game() {
   void fetchGameInfo();
 
   return (
-    <div>
+    <div className={styles.game}>
       <h2>Game Page</h2>
       <p>Game ID: {id}</p>
     </div>

@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 export interface NavItemProps {
   href: string;
   text: string;
@@ -5,9 +7,9 @@ export interface NavItemProps {
 export function NavItem({ href, text }: NavItemProps) {
   return (
     <li className="nav-item">
-      <a href={href} className="nav-link px-2 text-body-secondary">
+      <Link to={href} className="nav-link px-2 text-body-secondary">
         {text}
-      </a>
+      </Link>
     </li>
   );
 }

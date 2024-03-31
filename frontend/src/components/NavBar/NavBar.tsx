@@ -4,6 +4,8 @@ import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import { Link } from "react-router-dom";
 
+import { GITHUB_REPO_URL } from "@/data/constants";
+
 import styles from "./Navbar.module.css";
 
 export function NavBar() {
@@ -11,7 +13,7 @@ export function NavBar() {
     <Navbar expand="lg" className={styles.navbar} bg="dark" data-bs-theme="dark">
       <Container>
         <Link className="navbar-brand" to="/">
-          SC
+          SPT
         </Link>
         <Navbar.Toggle aria-controls="navbarScroll" />
         <Navbar.Collapse id="navbarScroll" className="justify-content-between">
@@ -19,11 +21,13 @@ export function NavBar() {
             <Link to="/" className="nav-link">
               Home
             </Link>
-            <Link to="/" className="nav-link">
+            <a href={GITHUB_REPO_URL} className="nav-link" target="_blank" rel="noreferrer">
               Github
-            </Link>
+            </a>
           </Nav>
-          <Button variant="outline-warning">Login</Button>
+          <Button href="/login" variant="outline-warning">
+            Login
+          </Button>
         </Navbar.Collapse>
       </Container>
     </Navbar>
