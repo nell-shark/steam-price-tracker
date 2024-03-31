@@ -1,5 +1,6 @@
 package com.nellshark.backend.models;
 
+import com.nellshark.backend.enums.UserRole;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -11,6 +12,7 @@ import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import lombok.AccessLevel;
@@ -29,7 +31,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = "id")
 @ToString(of = {"id", "email"})
-public class User implements UserDetails {
+public class User implements UserDetails, Serializable {
 
   @Id
   @Column(name = "id", nullable = false, unique = true)

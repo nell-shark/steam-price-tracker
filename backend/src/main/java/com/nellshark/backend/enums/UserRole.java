@@ -1,4 +1,4 @@
-package com.nellshark.backend.models;
+package com.nellshark.backend.enums;
 
 public enum UserRole {
   ROLE_USER,

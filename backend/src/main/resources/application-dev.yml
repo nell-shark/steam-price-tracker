@@ -3,10 +3,15 @@ logging:
     root: INFO
 
 spring:
+  flyway:
+    enabled: false
   jpa:
+    hibernate:
+      ddl-auto: create-drop
     properties:
       hibernate:
         show_sql: true
+
 
 springdoc:
   api-docs:

@@ -3,14 +3,15 @@ package com.nellshark.backend.services;
 import static com.nellshark.backend.clients.StoreSteamClient.PRICE_OVERVIEW_FILTER;
 
 import com.nellshark.backend.dtos.AppDTO;
+import com.nellshark.backend.enums.Currency;
 import com.nellshark.backend.exceptions.AppNotFoundException;
 import com.nellshark.backend.models.App;
-import com.nellshark.backend.models.Currency;
 import com.nellshark.backend.models.Price;
 import com.nellshark.backend.models.clientresponses.AppDetails;
 import com.nellshark.backend.repositories.AppRepository;
 import com.nellshark.backend.services.steam.ApiSteamService;
 import com.nellshark.backend.services.steam.StoreSteamService;
+import com.nellshark.backend.utils.CacheNames;
 import com.nellshark.backend.utils.MappingUtils;
 import java.util.Arrays;
 import java.util.List;
@@ -75,7 +76,7 @@ public class AppService {
         .map(MappingUtils::toAppDTO);
   }
 
-  @Cacheable(value = "app", key = "#id")
+  @Cacheable(value = CacheNames.APPS, key = "#id")
   public App getAppById(long id) {
     log.info("Getting app by id: {}", id);
     return appRepository.findById(id)
@@ -124,12 +125,13 @@ public class AppService {
   private void addNewApp(long id) {
     AppDetails appDetails = storeSteamService.getAppDetails(id, null, null);
 
-    if (appDetails == null || appDetails.getApp().data().isFree()) {
+    if (appDetails == null) {
       blockedAppService.addAppToBlockList(id);
       return;
     }
 
-    if (appDetails.getApp().data().releaseDate().comingSoon()) {
+    if (appDetails.getApp().data().isFree()
+        || appDetails.getApp().data().releaseDate().comingSoon()) {
       return;
     }
 
@@ -142,7 +144,7 @@ public class AppService {
     appRepository.save(app);
   }
 
-  @CacheEvict(value = "app", key = "#id")
+  @CacheEvict(value = CacheNames.APPS, key = "#id")
   public void deleteAppById(long id) {
     log.info("Deleting app");
     appRepository.deleteById(id);

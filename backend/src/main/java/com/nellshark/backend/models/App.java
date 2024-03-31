@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.nellshark.backend.enums.Platform;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -19,6 +20,7 @@ import jakarta.persistence.Index;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +42,7 @@ import lombok.ToString;
 @EqualsAndHashCode(of = "id")
 @ToString(of = {"id", "name"})
 @JsonInclude(Include.NON_NULL)
-public class App {
+public class App implements Serializable {
 
   @Id
   @Column(name = "id", nullable = false, updatable = false, unique = true)
@@ -61,8 +63,8 @@ public class App {
   @Column(name = "is_free", nullable = false)
   private boolean isFree;
 
-  @Column(name = "platform")
   @CollectionTable(name = "platforms")
+  @Column(name = "platform")
   @Enumerated(EnumType.STRING)
   @ElementCollection(targetClass = Platform.class, fetch = FetchType.LAZY)
   private List<Platform> platforms;
@@ -95,7 +97,9 @@ public class App {
   @Embeddable
   public record Metacritic(
       @Column(name = "metacritic_score") int score,
-      @Column(name = "metacritic_url") String url) {
+      @Column(name = "metacritic_url") String url)
+
+      implements Serializable {
 
   }
 
@@ -103,10 +107,11 @@ public class App {
   public record ReleaseDate(
       @Column(name = "coming_soon")
       boolean comingSoon,
-
       @Column(name = "release_date")
       @JsonFormat(shape = Shape.STRING, pattern = "dd-MM-yyyy")
-      LocalDate releaseDate) {
+      LocalDate releaseDate)
+
+      implements Serializable {
 
   }
 

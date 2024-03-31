@@ -4,6 +4,7 @@ import static com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.nellshark.backend.enums.Currency;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -18,6 +19,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapKeyColumn;
 import jakarta.persistence.MapKeyEnumerated;
 import jakarta.persistence.Table;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Map;
 import lombok.AccessLevel;
@@ -34,7 +36,7 @@ import org.springframework.lang.NonNull;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = "id")
 @ToString(of = {"id", "app"})
-public class Price {
+public class Price implements Serializable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

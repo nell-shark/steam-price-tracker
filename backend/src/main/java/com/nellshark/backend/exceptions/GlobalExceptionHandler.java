@@ -22,6 +22,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @Slf4j
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
+  private static final String LOG_OCCURRED_MESSAGE = "{} Occurred: {}";
+
   @Override
   protected ResponseEntity<Object> handleMethodArgumentNotValid(
       @NonNull MethodArgumentNotValidException e,
@@ -29,7 +31,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
       @NonNull HttpStatusCode status,
       @NonNull WebRequest request) {
     super.handleMethodArgumentNotValid(e, headers, status, request);
-    log.warn("{} Occurred: {}", e.getClass().getSimpleName(), e.getMessage());
+    log.warn(LOG_OCCURRED_MESSAGE, e.getClass().getSimpleName(), e.getMessage());
 
     String errorMessage = e.getBindingResult().getFieldErrors()
         .stream()
@@ -45,20 +47,20 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
       UserNotFoundException.class
   })
   public ProblemDetail handleNotFoundException(RuntimeException e) {
-    log.warn("{} Occurred: {}", e.getClass().getSimpleName(), e.getMessage());
+    log.warn(LOG_OCCURRED_MESSAGE, e.getClass().getSimpleName(), e.getMessage());
     return ProblemDetail.forStatusAndDetail(NOT_FOUND, e.getMessage());
   }
 
   @ExceptionHandler(EmailAlreadyTakenException.class)
   public ProblemDetail handleBadRequestException(RuntimeException e) {
-    log.warn("{} Occurred: {}", e.getClass().getSimpleName(), e.getMessage());
+    log.warn(LOG_OCCURRED_MESSAGE, e.getClass().getSimpleName(), e.getMessage());
     return ProblemDetail.forStatusAndDetail(BAD_REQUEST, e.getMessage());
   }
 
 
   @ExceptionHandler(Exception.class)
   public ProblemDetail handleInternalServerErrorException(Exception e) {
-    log.error("{} Occurred: {}", e.getClass().getSimpleName(), e.getMessage());
+    log.error(LOG_OCCURRED_MESSAGE, e.getClass().getSimpleName(), e.getMessage());
     return ProblemDetail.forStatusAndDetail(INTERNAL_SERVER_ERROR, e.getMessage());
   }
 }

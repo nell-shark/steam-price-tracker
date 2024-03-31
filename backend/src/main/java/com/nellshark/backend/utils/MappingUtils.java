@@ -3,8 +3,8 @@ package com.nellshark.backend.utils;
 import static java.util.Locale.ENGLISH;
 
 import com.nellshark.backend.dtos.AppDTO;
+import com.nellshark.backend.enums.Platform;
 import com.nellshark.backend.models.App;
-import com.nellshark.backend.models.Platform;
 import com.nellshark.backend.models.clientresponses.AppDetails;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
