@@ -1,5 +1,6 @@
 import { useRef } from "react";
 import { Button, Form } from "react-bootstrap";
+import ReCAPTCHA from "react-google-recaptcha";
 import { Link } from "react-router-dom";
 
 import styles from "./Register.module.css";
@@ -7,6 +8,7 @@ import styles from "./Register.module.css";
 export function RegisterForm() {
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
+  const captchaRef = useRef(null);
 
   function handleClick(event: React.MouseEvent<HTMLElement>) {
     event.preventDefault();
@@ -26,6 +28,10 @@ export function RegisterForm() {
           <Form.Label>Password</Form.Label>
           <Form.Control type="password" placeholder="Password" ref={passwordRef} required />
         </Form.Group>
+
+        <div className="mt-3 d-flex align-items-center justify-content-center ">
+          <ReCAPTCHA sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY} ref={captchaRef} />
+        </div>
 
         <Button
           className="mt-4 w-100"

@@ -27,6 +27,10 @@ export const Login: React.FC = () => {
           <Form.Control type="password" placeholder="Password" ref={passwordRef} required />
         </Form.Group>
 
+        <div className="mt-3 d-flex align-items-center justify-content-center ">
+          <ReCAPTCHA sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY} ref={captchaRef} />
+        </div>
+
         <Button
           className="mt-4 w-100"
           variant="primary"
