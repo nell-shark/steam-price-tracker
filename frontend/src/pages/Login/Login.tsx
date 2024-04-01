@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
 import { Button, Form } from "react-bootstrap";
+import ReCAPTCHA from "react-google-recaptcha";
 import { Link } from "react-router-dom";
 
 import styles from "./Login.module.css";
@@ -7,6 +8,7 @@ import styles from "./Login.module.css";
 export const Login: React.FC = () => {
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
+  const captchaRef = useRef(null);
 
   function handleClick(event: React.MouseEvent<HTMLElement>) {
     event.preventDefault();
