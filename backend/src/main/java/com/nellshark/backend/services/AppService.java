@@ -5,9 +5,9 @@ import static com.nellshark.backend.clients.StoreSteamClient.PRICE_OVERVIEW_FILT
 import com.nellshark.backend.dtos.AppDTO;
 import com.nellshark.backend.enums.Currency;
 import com.nellshark.backend.exceptions.AppNotFoundException;
-import com.nellshark.backend.models.App;
-import com.nellshark.backend.models.Price;
-import com.nellshark.backend.models.clientresponses.AppDetails;
+import com.nellshark.backend.models.entities.App;
+import com.nellshark.backend.models.entities.Price;
+import com.nellshark.backend.models.responses.AppDetailsResponse;
 import com.nellshark.backend.repositories.AppRepository;
 import com.nellshark.backend.services.steam.ApiSteamService;
 import com.nellshark.backend.services.steam.StoreSteamService;
@@ -123,19 +123,19 @@ public class AppService {
   }
 
   private void addNewApp(long id) {
-    AppDetails appDetails = storeSteamService.getAppDetails(id, null, null);
+    AppDetailsResponse appDetailsResponse = storeSteamService.getAppDetails(id, null, null);
 
-    if (appDetails == null) {
+    if (appDetailsResponse == null) {
       blockedAppService.addAppToBlockList(id);
       return;
     }
 
-    if (appDetails.getApp().data().isFree()
-        || appDetails.getApp().data().releaseDate().comingSoon()) {
+    if (appDetailsResponse.getApp().data().isFree()
+        || appDetailsResponse.getApp().data().releaseDate().comingSoon()) {
       return;
     }
 
-    App app = MappingUtils.toApp(appDetails.getApp().data());
+    App app = MappingUtils.toApp(appDetailsResponse.getApp().data());
     saveApp(app);
   }
 

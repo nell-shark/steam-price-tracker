@@ -1,8 +1,8 @@
 package com.nellshark.backend.controllers;
 
-import com.nellshark.backend.models.User;
+import com.nellshark.backend.dtos.UserRequestDTO;
 import com.nellshark.backend.services.UserService;
-import jakarta.validation.Valid;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,8 +20,11 @@ public class UserController {
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  public Long createNewUser(@Valid @RequestBody User user) {
-    userService.createNewUser(user);
-    return user.getId();
+  public Long createNewUser(
+      @RequestBody UserRequestDTO userRequestDTO,
+      HttpServletRequest request) {
+    String response = request.getParameter("g-recaptcha-response");
+    System.out.println("response = " + response);
+    return userService.createNewUser(userRequestDTO);
   }
 }

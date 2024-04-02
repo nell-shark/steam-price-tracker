@@ -3,7 +3,7 @@ package com.nellshark.backend.repositories;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.nellshark.backend.TestConfig;
-import com.nellshark.backend.models.App;
+import com.nellshark.backend.models.entities.App;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

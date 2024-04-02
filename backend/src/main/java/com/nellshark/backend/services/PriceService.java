@@ -1,6 +1,6 @@
 package com.nellshark.backend.services;
 
-import com.nellshark.backend.models.Price;
+import com.nellshark.backend.models.entities.Price;
 import com.nellshark.backend.repositories.PriceRepository;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;

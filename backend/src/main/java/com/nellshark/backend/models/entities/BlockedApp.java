@@ -1,4 +1,4 @@
-package com.nellshark.backend.models;
+package com.nellshark.backend.models.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

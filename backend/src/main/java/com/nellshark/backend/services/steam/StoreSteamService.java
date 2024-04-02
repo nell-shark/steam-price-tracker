@@ -2,7 +2,7 @@ package com.nellshark.backend.services.steam;
 
 import com.nellshark.backend.clients.StoreSteamClient;
 import com.nellshark.backend.enums.Currency;
-import com.nellshark.backend.models.clientresponses.AppDetails;
+import com.nellshark.backend.models.responses.AppDetailsResponse;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +17,7 @@ public class StoreSteamService extends AbstractSteamService {
   private final StoreSteamClient storeSteamClient;
 
   @Nullable
-  public AppDetails getAppDetails(
+  public AppDetailsResponse getAppDetails(
       long id,
       @Nullable String filter,
       @Nullable Currency currency) {
@@ -29,16 +29,16 @@ public class StoreSteamService extends AbstractSteamService {
         .map(Currency::getCountryCode)
         .orElse(null);
 
-    AppDetails appDetails = storeSteamClient.getAppDetails(
+    AppDetailsResponse appDetailsResponse = storeSteamClient.getAppDetails(
         id, filter, countryCode, null);
 
-    if (appDetails == null
-        || appDetails.getApp() == null
-        || !appDetails.getApp().success()
-        || appDetails.getApp().data() == null) {
+    if (appDetailsResponse == null
+        || appDetailsResponse.getApp() == null
+        || !appDetailsResponse.getApp().success()
+        || appDetailsResponse.getApp().data() == null) {
       return null;
     }
 
-    return appDetails;
+    return appDetailsResponse;
   }
 }

@@ -4,8 +4,8 @@ import static java.util.Locale.ENGLISH;
 
 import com.nellshark.backend.dtos.AppDTO;
 import com.nellshark.backend.enums.Platform;
-import com.nellshark.backend.models.App;
-import com.nellshark.backend.models.clientresponses.AppDetails;
+import com.nellshark.backend.models.entities.App;
+import com.nellshark.backend.models.responses.AppDetailsResponse;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
@@ -43,7 +43,7 @@ public final class MappingUtils {
     return new AppDTO(app.getId(), app.getName(), app.getHeaderImage());
   }
 
-  public static App toApp(@NonNull AppDetails.App.Data data) {
+  public static App toApp(@NonNull AppDetailsResponse.App.Data data) {
     List<Platform> platforms = parsePlatforms(data.platforms());
 
     App.ReleaseDate releaseDate = parseReleaseDate(data.releaseDate());
@@ -71,7 +71,8 @@ public final class MappingUtils {
   }
 
   @Nullable
-  private static List<Platform> parsePlatforms(@Nullable AppDetails.App.Data.Platforms platforms) {
+  private static List<Platform> parsePlatforms(
+      @Nullable AppDetailsResponse.App.Data.Platforms platforms) {
     if (platforms == null) {
       return null;
     }
@@ -87,7 +88,7 @@ public final class MappingUtils {
 
   @Nullable
   private static App.ReleaseDate parseReleaseDate(
-      @Nullable AppDetails.App.Data.ReleaseDate releaseDate) {
+      @Nullable AppDetailsResponse.App.Data.ReleaseDate releaseDate) {
     if (releaseDate == null) {
       return null;
     }
@@ -117,7 +118,8 @@ public final class MappingUtils {
   }
 
   @Nullable
-  private static App.Metacritic getMetacritic(@Nullable AppDetails.App.Data.Metacritic metacritic) {
+  private static App.Metacritic getMetacritic(
+      @Nullable AppDetailsResponse.App.Data.Metacritic metacritic) {
     return Optional.ofNullable(metacritic)
         .map(m -> new App.Metacritic(m.score(), m.url()))
         .orElse(null);

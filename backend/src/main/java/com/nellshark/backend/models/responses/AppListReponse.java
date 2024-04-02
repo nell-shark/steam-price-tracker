@@ -1,4 +1,4 @@
-package com.nellshark.backend.models.clientresponses;
+package com.nellshark.backend.models.responses;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
@@ -18,7 +18,7 @@ import java.util.List;
            ]
     }
 } */
-public record AppList(@JsonProperty("applist") AppListRoot appListRoot) {
+public record AppListReponse(@JsonProperty("applist") AppListRoot appListRoot) {
 
   public record AppListRoot(@JsonProperty("apps") List<App> apps) {
 

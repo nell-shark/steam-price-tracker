@@ -1,7 +1,7 @@
 package com.nellshark.backend.controllers;
 
 import com.nellshark.backend.dtos.AppDTO;
-import com.nellshark.backend.models.App;
+import com.nellshark.backend.models.entities.App;
 import com.nellshark.backend.services.AppService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

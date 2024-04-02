@@ -1,4 +1,4 @@
-package com.nellshark.backend.models.clientresponses;
+package com.nellshark.backend.models.responses;
 
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -9,7 +9,7 @@ import java.util.Map;
 import lombok.Getter;
 
 @Getter
-public class AppDetails {
+public class AppDetailsResponse {
 
   private App app;
 

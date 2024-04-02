@@ -1,9 +1,10 @@
 package com.nellshark.backend.services;
 
 
+import com.nellshark.backend.dtos.UserRequestDTO;
 import com.nellshark.backend.exceptions.EmailAlreadyTakenException;
 import com.nellshark.backend.exceptions.UserNotFoundException;
-import com.nellshark.backend.models.User;
+import com.nellshark.backend.models.entities.User;
 import com.nellshark.backend.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,11 +36,19 @@ public class UserService implements UserDetailsService {
 
   }
 
-  public void createNewUser(@NonNull User user) {
-    log.info("Creating new user: {}", user);
-    checkEmailAvailability(user.getEmail());
-    user.setPassword(passwordEncoder.encode(user.getPassword()));
-    userRepository.saveAndFlush(user);
+//  public void createNewUser(@NonNull User user) {
+//    log.info("Creating new user: {}", user);
+//    checkEmailAvailability(user.getEmail());
+//    user.setPassword(passwordEncoder.encode(user.getPassword()));
+//    userRepository.saveAndFlush(user);
+//  }
+
+  public long createNewUser(@NonNull UserRequestDTO userRequestDTO) {
+    log.info("Creating new user: {}", userRequestDTO);
+    checkEmailAvailability(userRequestDTO.email());
+    String encodedPassword = passwordEncoder.encode(userRequestDTO.password());
+    User user = userRepository.saveAndFlush(new User(userRequestDTO.email(), encodedPassword));
+    return user.getId();
   }
 
   private void checkEmailAvailability(@NonNull String email) {

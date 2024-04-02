@@ -1,6 +1,6 @@
 package com.nellshark.backend.repositories;
 
-import com.nellshark.backend.models.BlockedApp;
+import com.nellshark.backend.models.entities.BlockedApp;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

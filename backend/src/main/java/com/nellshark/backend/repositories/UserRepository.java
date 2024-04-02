@@ -1,6 +1,6 @@
 package com.nellshark.backend.repositories;
 
-import com.nellshark.backend.models.User;
+import com.nellshark.backend.models.entities.User;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
