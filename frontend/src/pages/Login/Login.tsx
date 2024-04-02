@@ -30,7 +30,7 @@ export const Login: React.FC = () => {
         </Form.Group>
 
         <div className="mt-3 d-flex align-items-center justify-content-center ">
-          <ReCAPTCHA sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY} ref={captchaRef} />
+          <ReCAPTCHA sitekey={import.meta.env.VITE_CAPTCHA_SITE_KEY} ref={captchaRef} />
         </div>
 
         <Button
@@ -43,7 +43,7 @@ export const Login: React.FC = () => {
         </Button>
 
         <div className="text-center mt-3">
-          <Link className="text-body-secondary" to="/register">
+          <Link className="text-body-secondary" to="/registration">
             Create an account
           </Link>
         </div>

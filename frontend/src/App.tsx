@@ -8,7 +8,7 @@ import { NavBar } from "@/components/NavBar";
 import { Game } from "@/pages/Game";
 import { Home } from "@/pages/Home";
 import { Login } from "@/pages/Login";
-import { RegisterForm } from "@/pages/Register";
+import { Registration } from "@/pages/Registration";
 
 export function App() {
   return (
@@ -19,7 +19,7 @@ export function App() {
           <Route path="/" element={<Home />} />
           <Route path="/apps/:id" element={<Game />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<RegisterForm />} />
+          <Route path="/registration" element={<Registration />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
         <Footer />

@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 import styles from "./Register.module.css";
 
-export function RegisterForm() {
+export function Registration() {
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const captchaRef = useRef(null);
@@ -18,7 +18,7 @@ export function RegisterForm() {
 
   return (
     <div className={`d-flex align-items-center justify-content-center ${styles.register}`}>
-      <Form className={styles.form}>
+      <Form method="POST" className={styles.form}>
         <Form.Group controlId="formBasicEmail">
           <Form.Label>Email address</Form.Label>
           <Form.Control type="email" placeholder="Enter email" ref={emailRef} required />
@@ -30,7 +30,7 @@ export function RegisterForm() {
         </Form.Group>
 
         <div className="mt-3 d-flex align-items-center justify-content-center ">
-          <ReCAPTCHA sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY} ref={captchaRef} />
+          <ReCAPTCHA sitekey={import.meta.env.VITE_CAPTCHA_SITE_KEY} ref={captchaRef} />
         </div>
 
         <Button
