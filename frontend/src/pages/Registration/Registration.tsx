@@ -3,7 +3,7 @@ import { Button, Form } from "react-bootstrap";
 import ReCAPTCHA from "react-google-recaptcha";
 import { Link } from "react-router-dom";
 
-import styles from "./Register.module.css";
+import styles from "./Registration.module.css";
 
 export function Registration() {
   const emailRef = useRef<HTMLInputElement>(null);
