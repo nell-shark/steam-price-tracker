@@ -6,6 +6,8 @@ services:
     ports:
       - "5432:5432"
     environment:
+      - TZ=GMT+6
+      - PGTZ=GMT+6
       - POSTGRES_DB=steam_price_tracker
       - POSTGRES_USER=${POSTGRES_USER:-postgres}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-root}
