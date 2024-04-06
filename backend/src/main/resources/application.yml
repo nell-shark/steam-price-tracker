@@ -45,3 +45,9 @@ server:
   error:
     whitelabel:
       enabled: false
+
+google:
+  captcha:
+    key:
+      secret: ${CAPTCHA_SECRET_KEY}
+

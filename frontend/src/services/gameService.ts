@@ -1,4 +1,4 @@
-import { axiosInstance } from "@/services/axiosInstanse.ts";
+import { axiosInstance } from "@/services/axiosInstance";
 
 class GameService {
   public async getAllGameDTOs() {

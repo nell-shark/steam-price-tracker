@@ -51,12 +51,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     return ProblemDetail.forStatusAndDetail(NOT_FOUND, e.getMessage());
   }
 
-  @ExceptionHandler(EmailAlreadyTakenException.class)
+  @ExceptionHandler({
+      EmailAlreadyTakenException.class,
+      ReCaptchaInvalidException.class
+  })
   public ProblemDetail handleBadRequestException(RuntimeException e) {
     log.warn(LOG_OCCURRED_MESSAGE, e.getClass().getSimpleName(), e.getMessage());
     return ProblemDetail.forStatusAndDetail(BAD_REQUEST, e.getMessage());
   }
-
 
   @ExceptionHandler(Exception.class)
   public ProblemDetail handleInternalServerErrorException(Exception e) {

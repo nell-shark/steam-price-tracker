@@ -14,7 +14,8 @@ public interface StoreSteamClient {
   @GetExchange("/api/appdetails")
   AppDetailsResponse getAppDetails(
       @RequestParam("appids") long appId,
-      @RequestParam(value = "filter", required = false) @Nullable String filter,
-      @RequestParam(value = "cc", required = false) @Nullable String countryCode,
-      @RequestParam(value = "l", defaultValue = "english") @Nullable String language);
+      @Nullable @RequestParam(value = "filter", required = false) String filter,
+      @Nullable @RequestParam(value = "cc", required = false) String countryCode,
+      @Nullable @RequestParam(value = "l", defaultValue = "english") String language
+  );
 }

@@ -1,7 +1,7 @@
 package com.nellshark.backend.services.steam;
 
 import com.nellshark.backend.clients.ApiSteamClient;
-import com.nellshark.backend.models.responses.AppListReponse;
+import com.nellshark.backend.models.responses.AppListResponse;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +27,7 @@ public class ApiSteamService extends AbstractSteamService {
         .stream()
         .filter(Objects::nonNull)
         .filter(app -> StringUtils.isNotBlank(app.name()))
-        .map(AppListReponse.AppListRoot.App::appId)
+        .map(AppListResponse.AppListRoot.App::appId)
         .toList();
   }
 }

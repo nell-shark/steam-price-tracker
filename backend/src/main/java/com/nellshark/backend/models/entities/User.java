@@ -10,8 +10,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
@@ -39,12 +37,9 @@ public class User implements UserDetails, Serializable {
   private Long id;
 
   @Column(name = "email", nullable = false, unique = true)
-  @NotEmpty(message = "Email cannot be empty")
-  @Email(message = "Email is not valid")
   private String email;
 
   @Column(name = "password", nullable = false)
-  @NotEmpty(message = "Password cannot be empty")
   private String password;
 
   @Column(name = "role", nullable = false)

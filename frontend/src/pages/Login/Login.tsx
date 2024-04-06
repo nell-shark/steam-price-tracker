@@ -1,24 +1,38 @@
-import React, { useRef } from "react";
+import React, { FormEvent, useRef } from "react";
 import { Button, Form } from "react-bootstrap";
 import ReCAPTCHA from "react-google-recaptcha";
 import { Link } from "react-router-dom";
+
+import { userService } from "@/services/userService";
+import { User } from "@/types/user";
 
 import styles from "./Login.module.css";
 
 export const Login: React.FC = () => {
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
-  const captchaRef = useRef(null);
+  const captchaRef = useRef<ReCAPTCHA>(null);
 
-  function handleClick(event: React.MouseEvent<HTMLElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    console.log(emailRef.current?.value);
-    console.log(passwordRef.current?.value);
+    if (
+      !captchaRef.current?.getValue() ||
+      !emailRef.current?.value ||
+      !passwordRef.current?.value
+    ) {
+      return;
+    }
+    const user: User = {
+      email: emailRef.current!.value,
+      password: passwordRef.current!.value
+    };
+    const captcha = captchaRef.current!.getValue()!;
+    await userService.postUser(user, captcha);
   }
 
   return (
     <div className={`d-flex align-items-center justify-content-center ${styles.login}`}>
-      <Form className={styles.form}>
+      <Form className={styles.form} onSubmit={e => handleSubmit(e)}>
         <Form.Group controlId="formBasicEmail">
           <Form.Label>Email address</Form.Label>
           <Form.Control type="email" placeholder="Enter email" ref={emailRef} required />
@@ -33,12 +47,7 @@ export const Login: React.FC = () => {
           <ReCAPTCHA sitekey={import.meta.env.VITE_CAPTCHA_SITE_KEY} ref={captchaRef} />
         </div>
 
-        <Button
-          className="mt-4 w-100"
-          variant="primary"
-          type="submit"
-          onClick={e => handleClick(e)}
-        >
+        <Button className="mt-4 w-100" variant="primary" type="submit">
           Login
         </Button>
 

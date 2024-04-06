@@ -3,6 +3,8 @@ package com.nellshark.backend.controllers;
 import com.nellshark.backend.dtos.AppDTO;
 import com.nellshark.backend.models.entities.App;
 import com.nellshark.backend.services.AppService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,7 +27,7 @@ public class AppController {
 
   @GetMapping("/search")
   public Page<AppDTO> getAppDTOsByPrefixName(
-      @RequestParam("name") String prefixName,
+      @Valid @NotBlank @RequestParam("name") String prefixName,
       @RequestParam(value = "page", defaultValue = "1") int page) {
     return appService.getAppDTOsByPrefixName(prefixName, page);
   }

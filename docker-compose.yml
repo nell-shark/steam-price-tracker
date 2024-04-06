@@ -39,6 +39,7 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/steam_price_tracker
       - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER:-postgres}
       - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD:-root}
+      - CAPTCHA_SECRET_KEY=${CAPTCHA_SECRET_KEY}
     restart: on-failure
 
   frontend:
@@ -46,6 +47,8 @@ services:
     build: ./frontend/
     ports:
       - "3000:3000"
+    environment:
+      - VITE_CAPTCHA_SITE_KEY=${CAPTCHA_SITE_KEY}
     restart: on-failure
 
   nginx:

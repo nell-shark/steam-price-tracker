@@ -30,7 +30,8 @@ public class StoreSteamService extends AbstractSteamService {
         .orElse(null);
 
     AppDetailsResponse appDetailsResponse = storeSteamClient.getAppDetails(
-        id, filter, countryCode, null);
+        id, filter, countryCode, null
+    );
 
     if (appDetailsResponse == null
         || appDetailsResponse.getApp() == null

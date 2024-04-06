@@ -18,7 +18,7 @@ import java.util.List;
            ]
     }
 } */
-public record AppListReponse(@JsonProperty("applist") AppListRoot appListRoot) {
+public record AppListResponse(@JsonProperty("applist") AppListRoot appListRoot) {
 
   public record AppListRoot(@JsonProperty("apps") List<App> apps) {
 

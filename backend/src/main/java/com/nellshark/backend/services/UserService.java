@@ -1,7 +1,6 @@
 package com.nellshark.backend.services;
 
-
-import com.nellshark.backend.dtos.UserRequestDTO;
+import com.nellshark.backend.dtos.UserRegistrationDTO;
 import com.nellshark.backend.exceptions.EmailAlreadyTakenException;
 import com.nellshark.backend.exceptions.UserNotFoundException;
 import com.nellshark.backend.models.entities.User;
@@ -21,6 +20,7 @@ public class UserService implements UserDetailsService {
 
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
+  private final CaptchaService captchaService;
 
   @Override
   public UserDetails loadUserByUsername(@NonNull String username) {
@@ -36,18 +36,19 @@ public class UserService implements UserDetailsService {
 
   }
 
-//  public void createNewUser(@NonNull User user) {
-//    log.info("Creating new user: {}", user);
-//    checkEmailAvailability(user.getEmail());
-//    user.setPassword(passwordEncoder.encode(user.getPassword()));
-//    userRepository.saveAndFlush(user);
-//  }
+  public long registerUser(
+      @NonNull UserRegistrationDTO userRegistrationDTO,
+      @NonNull String clientCaptchaToken) {
+    log.info("Register user: email={}", userRegistrationDTO.email());
 
-  public long createNewUser(@NonNull UserRequestDTO userRequestDTO) {
-    log.info("Creating new user: {}", userRequestDTO);
-    checkEmailAvailability(userRequestDTO.email());
-    String encodedPassword = passwordEncoder.encode(userRequestDTO.password());
-    User user = userRepository.saveAndFlush(new User(userRequestDTO.email(), encodedPassword));
+    checkEmailAvailability(userRegistrationDTO.email());
+
+    captchaService.verifyRecaptcha(clientCaptchaToken);
+
+    String encodedPassword = passwordEncoder.encode(userRegistrationDTO.password());
+
+    User user = userRepository.saveAndFlush(new User(userRegistrationDTO.email(), encodedPassword));
+
     return user.getId();
   }
 
