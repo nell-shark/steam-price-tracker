@@ -56,7 +56,7 @@ public class App implements Serializable {
   @lombok.NonNull
   private String type;
 
-  @Column(name = "header_image", nullable = false)
+  @Column(name = "header_image", nullable = false, columnDefinition = "TEXT")
   @lombok.NonNull
   private String headerImage;
 
