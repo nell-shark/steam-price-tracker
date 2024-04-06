@@ -49,7 +49,7 @@ public class Price implements Serializable {
       joinColumns = @JoinColumn(name = "price_id")
   )
   @MapKeyEnumerated(EnumType.STRING)
-  @MapKeyColumn(name = "currency")
+  @MapKeyColumn(name = "currency", columnDefinition = "BPCHAR(3)")
   @Column(name = "price")
   private Map<Currency, Long> currencyPriceMap;
 

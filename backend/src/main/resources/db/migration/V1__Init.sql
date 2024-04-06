@@ -35,7 +35,7 @@ CREATE TABLE prices (
 
 CREATE TABLE currency_prices (
     price_id BIGINT NOT NULL,
-    currency CHAR(3) NOT NULL check (currency in ('USD','EUR','RUB','KZT'),
+    currency BPCHAR(3) NOT NULL CHECK (currency IN ('USD', 'EUR', 'RUB', 'KZT')),
     price BIGINT NOT NULL,
     FOREIGN KEY (price_id) REFERENCES prices (id)
 );
@@ -47,8 +47,8 @@ CREATE TABLE blocked_apps (
 CREATE TABLE users (
     id BIGSERIAL PRIMARY KEY,
     email VARCHAR(255) NOT NULL UNIQUE,
-    password CHAR(60) NOT NULL,
-    role VARCHAR(255) NOT NULL CHECK (role IN ('ROLE_USER', 'ROLE_ADMIN')
+    password BPCHAR(60) NOT NULL,
+    role VARCHAR(255) NOT NULL CHECK (role IN ('ROLE_USER', 'ROLE_ADMIN'))
 );
 
 CREATE INDEX name_index ON apps (name);
