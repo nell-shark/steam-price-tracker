@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 
-import { gameService } from "@/services/gameService.ts";
+import { appService } from "@/services/appService";
 
 import styles from "./Game.module.css";
 
@@ -8,7 +8,7 @@ export function Game() {
   const { id } = useParams();
 
   async function fetchGameInfo() {
-    const result = await gameService.getGameById(Number(id));
+    const result = await appService.getGameById(Number(id));
     console.log(result);
   }
 
