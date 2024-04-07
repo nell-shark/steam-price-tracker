@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Col, Row } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 
 import { appService } from "@/services/appService";
@@ -6,6 +7,7 @@ import { AppById } from "@/types/app";
 
 import styles from "./App.module.css";
 import { AppDetailRow } from "./AppDetailRow";
+import { Point, PriceChart } from "./PriceChart";
 
 export function App() {
   const { id } = useParams();
@@ -34,7 +36,7 @@ export function App() {
     { label: "Name:", value: app?.name },
     { label: "Type:", value: app?.type },
     { label: "Free:", value: app?.free ? "Yes" : "" },
-    { label: "Platforms:", value: app?.platforms.join(" ") },
+    { label: "Platforms:", value: app?.platforms.join(", ") },
     { label: "Developers:", value: app?.developers },
     { label: "Publishers:", value: app?.publishers },
     { label: "Website:", value: app?.website },
@@ -46,23 +48,47 @@ export function App() {
     { label: "Description:", value: app?.shortDescription }
   ];
 
+  const points: Point[] = [];
+  if (app) {
+    for (const price of app.prices) {
+      points.push({
+        name: price.createdTime.toString(),
+        RUB: price.currencyPriceMap.USD,
+        KZT: price.currencyPriceMap.KZT,
+        USD: price.currencyPriceMap.USD,
+        EUR: price.currencyPriceMap.USD
+      });
+    }
+  }
+
   return (
-    <div className={styles.app}>
-      {status === "loading" && <h1>Loading...</h1>}
-      {status === "error" && (
-        <div>
-          <h1>Error!</h1>
-          <p>{errorMessage}</p>
-        </div>
-      )}
-      {status === "completed" && app && (
-        <>
-          {appDetails.map(detail => (
-            <AppDetailRow key={detail.label} label={detail.label} value={detail.value} />
-          ))}
-          <img src={app.headerImage} className="w-100 rounded" alt="" />
-        </>
-      )}
-    </div>
+    <>
+      <div className={styles.app}>
+        {status === "loading" && <h1>Loading...</h1>}
+        {status === "error" && (
+          <div>
+            <h1>Error!</h1>
+            <p>{errorMessage}</p>
+          </div>
+        )}
+
+        {status === "completed" && app && (
+          <Row>
+            <Col>
+              <div className="h-100 d-flex align-items-center justify-content-center mb-4">
+                <img src={app.headerImage} className="rounded" alt="" />
+              </div>
+            </Col>
+            <Col>
+              {appDetails.map(detail => (
+                <AppDetailRow key={detail.label} label={detail.label} value={detail.value} />
+              ))}
+            </Col>
+          </Row>
+        )}
+      </div>
+
+      {status === "completed" && app && <PriceChart data={points} />}
+    </>
   );
 }

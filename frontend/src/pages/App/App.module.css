@@ -1,13 +1,9 @@
 .app {
     min-height: calc(100vh - 350px);
-    width: 70%;
+    width: 100%;
     margin: 0 auto;
     padding: 20px;
     background-color: #f8f9fa;
     border: 1px solid #dee2e6;
     border-radius: 5px;
-}
-
-.app img {
-    margin-top: 30px;
 }
