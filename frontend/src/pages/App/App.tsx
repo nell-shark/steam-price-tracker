@@ -53,10 +53,10 @@ export function App() {
     for (const price of app.prices) {
       points.push({
         name: price.createdTime.toString(),
-        RUB: price.currencyPriceMap.USD,
+        RUB: price.currencyPriceMap.RUB,
         KZT: price.currencyPriceMap.KZT,
         USD: price.currencyPriceMap.USD,
-        EUR: price.currencyPriceMap.USD
+        EUR: price.currencyPriceMap.EUR
       });
     }
   }
