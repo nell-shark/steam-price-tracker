@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import Pagination from "react-bootstrap/Pagination";
 import Table from "react-bootstrap/Table";
 import { PaginationControl } from "react-bootstrap-pagination-control";
 
