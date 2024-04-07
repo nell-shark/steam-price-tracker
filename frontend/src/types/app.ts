@@ -32,3 +32,36 @@ export type AppsByPage = {
   };
   empty: boolean;
 };
+
+export type AppById = {
+  id: number;
+  name: string;
+  type: string;
+  free: boolean;
+  headerImage: string;
+  platforms: string[];
+  shortDescription?: string;
+  developers?: string;
+  publishers?: string;
+  website?: string;
+  metacritic?: {
+    score: number;
+    url: string;
+  };
+  releaseDate?: {
+    comingSoon: boolean;
+    releaseDate: string;
+  };
+  prices: [
+    {
+      id: number;
+      createdTime: string;
+      currencyPriceMap: {
+        USD?: number;
+        KZT?: number;
+        RUB?: number;
+        EUR?: number;
+      };
+    }
+  ];
+};
