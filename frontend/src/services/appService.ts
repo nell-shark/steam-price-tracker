@@ -11,6 +11,16 @@ class AppService {
     return data;
   }
 
+  public async searchAppsByPage(search: string, page: number = 1) {
+    const { data } = await axiosInstance.get<AppsByPage>("/api/v1/apps/search", {
+      params: {
+        name: search,
+        page
+      }
+    });
+    return data;
+  }
+
   public async getAppById(id: number) {
     const { data } = await axiosInstance.get<AppById>(`/api/v1/apps/${id}`);
     return data;
