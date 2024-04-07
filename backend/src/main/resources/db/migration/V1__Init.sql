@@ -27,7 +27,7 @@ CREATE TABLE platforms (
 );
 
 CREATE TABLE prices (
-    id BIGSERIAL NOT NULL PRIMARY KEY,
+    id BIGSERIAL GENERATED ALWAYS AS IDENTITY NOT NULL PRIMARY KEY,
     app_id BIGINT NOT NULL,
     created_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (app_id) REFERENCES apps (id)
@@ -36,7 +36,7 @@ CREATE TABLE prices (
 CREATE TABLE currency_prices (
     price_id BIGINT NOT NULL,
     currency BPCHAR(3) NOT NULL CHECK (currency IN ('USD', 'EUR', 'RUB', 'KZT')),
-    price BIGINT NOT NULL,
+    price DOUBLE PRECISION NOT NULL,
     FOREIGN KEY (price_id) REFERENCES prices (id)
 );
 

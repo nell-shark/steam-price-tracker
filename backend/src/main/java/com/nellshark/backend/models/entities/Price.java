@@ -51,7 +51,7 @@ public class Price implements Serializable {
   @MapKeyEnumerated(EnumType.STRING)
   @MapKeyColumn(name = "currency", columnDefinition = "BPCHAR(3)")
   @Column(name = "price")
-  private Map<Currency, Long> currencyPriceMap;
+  private Map<Currency, Double> currencyPriceMap;
 
   @ManyToOne
   @JoinColumn(name = "app_id", nullable = false, updatable = false)
@@ -63,7 +63,7 @@ public class Price implements Serializable {
   @JsonFormat(shape = STRING, pattern = "dd-MM-yyyy HH:mm:ss")
   private LocalDateTime createdTime;
 
-  public Price(@NonNull Map<Currency, Long> currencyPriceMap, @NonNull App app) {
+  public Price(@NonNull Map<Currency, Double> currencyPriceMap, @NonNull App app) {
     this.currencyPriceMap = currencyPriceMap;
     this.app = app;
   }

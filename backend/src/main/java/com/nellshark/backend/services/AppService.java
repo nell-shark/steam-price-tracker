@@ -107,7 +107,7 @@ public class AppService {
   public void updateAppPricePeriodically() {
     log.info("Update app price");
     getAllApps().forEach(app -> {
-      Map<Currency, Long> map = Arrays.stream(Currency.values())
+      Map<Currency, Double> map = Arrays.stream(Currency.values())
           .map(currency ->
               storeSteamService.getAppDetails(app.getId(), PRICE_OVERVIEW_FILTER, currency))
           .filter(Objects::nonNull)
@@ -115,11 +115,28 @@ public class AppService {
           .filter(details -> details.getApp().data().priceOverview() != null)
           .map(details -> details.getApp().data().priceOverview())
           .filter(p -> EnumUtils.isValidEnumIgnoreCase(Currency.class, p.currency()))
-          .map(p -> Map.entry(EnumUtils.getEnumIgnoreCase(Currency.class, p.currency()), p.price()))
+          .filter(p -> p.price() != null)
+          .map(this::convertPriceToDouble)
           .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 
       priceService.savePrice(new Price(map, app));
     });
+  }
+
+  /**
+   * Converts the price from Steam's long format (e.g., $9.99 -> 999) to a double value.
+   *
+   * @param priceOverview The price overview object containing the price and currency information.
+   * @return A Map.Entry containing the currency and the converted price.
+   */
+  private Map.Entry<Currency, Double> convertPriceToDouble(
+      @NonNull AppDetailsResponse.App.Data.PriceOverview priceOverview) {
+    String priceLongString = priceOverview.price().toString();
+    StringBuilder stringBuilder = new StringBuilder(priceLongString);
+    stringBuilder.insert(priceLongString.length() - 2, '.');
+    double price = Double.parseDouble(stringBuilder.toString());
+
+    return Map.entry(EnumUtils.getEnumIgnoreCase(Currency.class, priceOverview.currency()), price);
   }
 
   private void addNewApp(long id) {
