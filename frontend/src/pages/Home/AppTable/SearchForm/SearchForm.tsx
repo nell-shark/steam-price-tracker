@@ -15,6 +15,7 @@ export function SearchForm() {
       } else {
         prev.set("search", searchValue);
       }
+      prev.set("page", String(1));
       return prev;
     });
   }

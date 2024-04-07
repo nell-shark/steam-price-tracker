@@ -11,18 +11,17 @@ import styles from "./AppTable.module.css";
 import { SearchForm } from "./SearchForm";
 
 export function AppTable() {
-  const [activePage, setActivePage] = useState<number>(1);
   const [appsByPage, setAppsByPage] = useState<AppsByPage | null>(null);
-  const [searchParams] = useSearchParams({ search: "" });
+  const [searchParams, setSearchParams] = useSearchParams({ page: "1" });
   const [status, setStatus] = useState<"loading" | "completed" | "error">("loading");
   const [errorMessage, setErrorMessage] = useState<string>("");
 
   useEffect(() => {
-    async function fetchAppsByPage(page: number) {
+    async function fetchAppsByPage(page: number, search?: string) {
       setStatus(() => "loading");
       try {
-        const res = searchParams.get("search")
-          ? await appService.searchAppsByPage(searchParams.get("search") ?? "", activePage)
+        const res = search
+          ? await appService.searchAppsByPage(search, page)
           : await appService.getAppsByPage(page);
         console.log(res);
         setAppsByPage(res);
@@ -33,8 +32,10 @@ export function AppTable() {
       }
     }
 
-    fetchAppsByPage(activePage);
-  }, [activePage, searchParams]);
+    const page = Number(searchParams.get("page"));
+    const search = searchParams.get("search") ?? undefined;
+    fetchAppsByPage(page, search);
+  }, [searchParams]);
 
   return (
     <>
@@ -59,11 +60,16 @@ export function AppTable() {
           </Table>
           {appsByPage && (
             <PaginationControl
-              page={activePage}
+              page={Number(searchParams.get("page")) || 1}
               between={4}
               total={appsByPage.totalElements}
               limit={appsByPage.size}
-              changePage={page => setActivePage(() => page)}
+              changePage={page =>
+                setSearchParams(prev => {
+                  prev.set("page", page.toString());
+                  return prev;
+                })
+              }
               ellipsis={1}
             />
           )}
