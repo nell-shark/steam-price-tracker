@@ -1,5 +1,6 @@
 package com.nellshark.backend.services.steam;
 
+import com.nellshark.backend.exceptions.RateLimitException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -18,7 +19,7 @@ abstract class AbstractSteamService {
       countOfSteamRequests.set(0);
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
-      throw new RuntimeException("Sleep interrupted while handling rate limit", e);
+      throw new RateLimitException("Sleep interrupted while handling rate limit", e);
     }
   }
 }
