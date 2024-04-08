@@ -9,8 +9,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import lombok.AccessLevel;
@@ -45,6 +49,14 @@ public class User implements UserDetails, Serializable {
   @Column(name = "role", nullable = false)
   @Enumerated(EnumType.STRING)
   private UserRole role = UserRole.ROLE_USER;
+
+  @ManyToMany
+  @JoinTable(
+      name = "favorite_apps",
+      joinColumns = @JoinColumn(name = "user_id"),
+      inverseJoinColumns = @JoinColumn(name = "app_id")
+  )
+  private List<App> favoriteApps = new ArrayList<>();
 
   public User(@NonNull String email, @NonNull String password) {
     this.email = email;

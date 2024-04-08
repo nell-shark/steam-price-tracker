@@ -2,6 +2,7 @@ package com.nellshark.backend.models.entities;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Shape;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.nellshark.backend.enums.Platform;
@@ -17,6 +18,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
@@ -94,6 +96,11 @@ public class App implements Serializable {
   @Builder.Default
   private List<Price> prices = new ArrayList<>();
 
+  @ManyToMany(mappedBy = "favoriteApps", fetch = FetchType.LAZY)
+  @Builder.Default
+  @JsonIgnore
+  private List<User> likedUsers = new ArrayList<>();
+
   @Embeddable
   public record Metacritic(
       @Column(name = "metacritic_score") int score,
@@ -119,6 +126,7 @@ public class App implements Serializable {
   public void prePersist() {
     this.type = this.type.toUpperCase();
     this.prices = Optional.ofNullable(this.prices).orElse(List.of());
+    this.likedUsers = Optional.ofNullable(this.likedUsers).orElse(List.of());
   }
 }
 

@@ -3,6 +3,7 @@ package com.nellshark.backend.services;
 import com.nellshark.backend.dtos.UserRegistrationDTO;
 import com.nellshark.backend.exceptions.EmailAlreadyTakenException;
 import com.nellshark.backend.exceptions.UserNotFoundException;
+import com.nellshark.backend.models.entities.App;
 import com.nellshark.backend.models.entities.User;
 import com.nellshark.backend.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ public class UserService implements UserDetailsService {
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
   private final CaptchaService captchaService;
+  private final AppService appService;
 
   @Override
   public UserDetails loadUserByUsername(@NonNull String username) {
@@ -32,8 +34,15 @@ public class UserService implements UserDetailsService {
     return userRepository
         .findByEmail(email)
         .orElseThrow(
-            () -> new UserNotFoundException("User with email='%s' wasn't found".formatted(email)));
+            () -> new UserNotFoundException("User with email='%s' wasn't found".formatted(email))
+        );
+  }
 
+  private User getUserById(long id) {
+    log.info("Getting the user by id: {}", id);
+    return userRepository.
+        findById(id)
+        .orElseThrow(() -> new UserNotFoundException("User not found: id=" + id));
   }
 
   public long registerUser(
@@ -56,5 +65,13 @@ public class UserService implements UserDetailsService {
     if (userRepository.isEmailTaken(email)) {
       throw new EmailAlreadyTakenException("Email '%s' is already taken".formatted(email));
     }
+  }
+
+  public void addFavoriteAppToUser(long userId, long appId) {
+    log.info("Adding favorite app to user");
+    User userById = getUserById(userId);
+    App appById = appService.getAppById(appId);
+    userById.getFavoriteApps().add(appById);
+    userRepository.save(userById);
   }
 }
