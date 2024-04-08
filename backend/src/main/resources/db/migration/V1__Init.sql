@@ -1,8 +1,8 @@
-DROP TABLE IF EXISTS apps cascade;
-DROP TABLE IF EXISTS blocked_apps cascade;
-DROP TABLE IF EXISTS prices cascade;
-DROP TABLE IF EXISTS currency_prices cascade;
-DROP TABLE IF EXISTS users cascade;
+DROP TABLE IF EXISTS apps CASCADE;
+DROP TABLE IF EXISTS blocked_apps CASCADE;
+DROP TABLE IF EXISTS prices CASCADE;
+DROP TABLE IF EXISTS currency_prices CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
 
 CREATE TABLE apps (
     id BIGINT NOT NULL PRIMARY KEY,
@@ -14,30 +14,27 @@ CREATE TABLE apps (
     developers TEXT,
     publishers TEXT,
     website VARCHAR(255),
-    metacritic_score INT,
+    metacritic_score INTEGER,
     metacritic_url VARCHAR(255),
     coming_soon BOOLEAN,
     release_date DATE
 );
 
 CREATE TABLE platforms (
-    app_id BIGINT NOT NULL,
-    platform VARCHAR(32) NOT NULL,
-    FOREIGN KEY (app_id) REFERENCES apps (id)
+    app_id BIGINT NOT NULL REFERENCES apps (id),
+    platform VARCHAR(32) NOT NULL
 );
 
 CREATE TABLE prices (
     id BIGINT GENERATED ALWAYS AS IDENTITY NOT NULL PRIMARY KEY,
-    app_id BIGINT NOT NULL,
-    created_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (app_id) REFERENCES apps (id)
+    app_id BIGINT NOT NULL REFERENCES apps (id),
+    created_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE currency_prices (
-    price_id BIGINT NOT NULL,
+    price_id BIGINT NOT NULL REFERENCES prices (id),
     currency BPCHAR(3) NOT NULL CHECK (currency IN ('USD', 'EUR', 'RUB', 'KZT')),
-    price DOUBLE PRECISION NOT NULL,
-    FOREIGN KEY (price_id) REFERENCES prices (id)
+    price DOUBLE PRECISION NOT NULL
 );
 
 CREATE TABLE blocked_apps (
@@ -45,10 +42,10 @@ CREATE TABLE blocked_apps (
 );
 
 CREATE TABLE users (
-    id BIGSERIAL PRIMARY KEY,
+    id BIGINT GENERATED ALWAYS AS IDENTITY NOT NULL PRIMARY KEY,
     email VARCHAR(255) NOT NULL UNIQUE,
     password BPCHAR(60) NOT NULL,
-    role VARCHAR(255) NOT NULL CHECK (role IN ('ROLE_USER', 'ROLE_ADMIN'))
+    role VARCHAR(255) NOT NULL DEFAULT 'ROLE_USER' CHECK (role IN ('ROLE_USER', 'ROLE_ADMIN'))
 );
 
 CREATE INDEX name_index ON apps (name);
