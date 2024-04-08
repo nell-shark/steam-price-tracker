@@ -1,5 +1,6 @@
 package com.nellshark.backend.controllers;
 
+import com.nellshark.backend.dtos.AppBlockRequestDTO;
 import com.nellshark.backend.services.AdminService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.annotation.Secured;
@@ -17,7 +18,7 @@ public class AdminController {
   private final AdminService adminService;
 
   @PostMapping
-  public void addAppToBlockList(@RequestBody long id) {
-    adminService.addAppToBlockList(id);
+  public void addAppToBlockList(@RequestBody AppBlockRequestDTO appBlockRequestDTO) {
+    adminService.addAppToBlockList(appBlockRequestDTO.id());
   }
 }
