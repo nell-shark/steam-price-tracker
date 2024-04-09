@@ -1,4 +1,4 @@
-import React, { FormEvent, useRef, useState } from "react";
+import { FormEvent, useRef, useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
@@ -7,7 +7,7 @@ import { User } from "@/types/user";
 
 import styles from "./Login.module.css";
 
-export const Login: React.FC = () => {
+export function Login() {
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const [isEmailValid, setIsEmailValid] = useState<boolean>(false);
@@ -80,4 +80,4 @@ export const Login: React.FC = () => {
       </Form>
     </div>
   );
-};
+}

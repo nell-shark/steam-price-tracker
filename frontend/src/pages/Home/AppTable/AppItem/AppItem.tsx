@@ -15,7 +15,7 @@ export function AppItem({ id, name, imageUrl }: AppItemProps) {
       <td>{id}</td>
       <td>{name}</td>
       <td>
-        <img src={imageUrl} alt="" />{" "}
+        <img src={imageUrl} alt="" />
       </td>
     </tr>
   );

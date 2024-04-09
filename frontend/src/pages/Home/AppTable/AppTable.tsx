@@ -23,7 +23,6 @@ export function AppTable() {
         const res = search
           ? await appService.searchAppsByPage(search, page)
           : await appService.getAppsByPage(page);
-        console.log(res);
         setAppsByPage(res);
         setStatus(() => "completed");
       } catch (error) {
@@ -41,7 +40,7 @@ export function AppTable() {
     <>
       {status === "loading" && <h1>Loading...</h1>}
       {status === "error" && <h1>{errorMessage}</h1>}
-      {status === "completed" && (
+      {status === "completed" && appsByPage && (
         <div className="text-center">
           <SearchForm />
           <Table hover className={`overflow-hidden rounded ${styles.appTable}`}>
@@ -53,26 +52,25 @@ export function AppTable() {
               </tr>
             </thead>
             <tbody>
-              {appsByPage?.content.map(app => (
+              {// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+              appsByPage.content?.map(app => (
                 <AppItem key={app.id} id={app.id} name={app.name} imageUrl={app.imageUrl} />
               ))}
             </tbody>
           </Table>
-          {appsByPage && (
-            <PaginationControl
-              page={Number(searchParams.get("page")) || 1}
-              between={4}
-              total={appsByPage.totalElements}
-              limit={appsByPage.size}
-              changePage={page =>
-                setSearchParams(prev => {
-                  prev.set("page", page.toString());
-                  return prev;
-                })
-              }
-              ellipsis={1}
-            />
-          )}
+          <PaginationControl
+            page={Number(searchParams.get("page")) || 1}
+            between={4}
+            total={appsByPage.totalElements}
+            limit={appsByPage.size}
+            changePage={page =>
+              setSearchParams(prev => {
+                prev.set("page", page.toString());
+                return prev;
+              })
+            }
+            ellipsis={1}
+          />
         </div>
       )}
     </>
