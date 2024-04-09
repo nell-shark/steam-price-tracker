@@ -25,12 +25,12 @@ public class UserService implements UserDetailsService {
   private final AppService appService;
 
   @Override
-  public UserDetails loadUserByUsername(@NonNull String username) {
-    return getUserByEmail(username);
+  public UserDetails loadUserByUsername(@NonNull String email) {
+    return getUserByEmail(email);
   }
 
-  public User getUserByEmail(String email) {
-    log.info("Getting the user by email: {}", email);
+  public User getUserByEmail(@NonNull String email) {
+    log.info("Getting user by email: {}", email);
     return userRepository
         .findByEmail(email)
         .orElseThrow(
@@ -39,7 +39,7 @@ public class UserService implements UserDetailsService {
   }
 
   private User getUserById(long id) {
-    log.info("Getting the user by id: {}", id);
+    log.info("Getting user by id: {}", id);
     return userRepository.
         findById(id)
         .orElseThrow(() -> new UserNotFoundException("User not found: id=" + id));

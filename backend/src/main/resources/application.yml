@@ -34,13 +34,6 @@ springdoc:
   swagger-ui:
     enabled: false
 
-cors:
-  allowed-origins: "http://localhost:3000"
-  allowed-methods: "*"
-  allowed-headers: "*"
-  exposed-headers: "*"
-  allowed-credentials: true
-
 server:
   error:
     whitelabel:
