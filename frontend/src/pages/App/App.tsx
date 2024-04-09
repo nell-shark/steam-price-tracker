@@ -88,7 +88,7 @@ export function App() {
         )}
       </div>
 
-      {status === "completed" && app && <PriceChart data={points} />}
+      {status === "completed" && app && !app.free && <PriceChart data={points} />}
     </>
   );
 }
