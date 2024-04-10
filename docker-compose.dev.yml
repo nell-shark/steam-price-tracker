@@ -1,0 +1,11 @@
+services:
+  db:
+    restart: no
+  redis:
+    restart: no
+  backend:
+    restart: no
+  frontend:
+    restart: no
+  nginx:
+    restart: no

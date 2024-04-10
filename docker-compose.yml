@@ -18,7 +18,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    restart: on-failure
+    restart: unless-stopped
 
   redis:
     container_name: redis
@@ -32,7 +32,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    restart: on-failure
+    restart: unless-stopped
 
   backend:
     container_name: backend
@@ -50,7 +50,7 @@ services:
       - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD:-root}
       - SPRING_DATA_REDIS_HOST=redis
       - CAPTCHA_SECRET_KEY=${CAPTCHA_SECRET_KEY}
-    restart: on-failure
+    restart: unless-stopped
 
   frontend:
     container_name: frontend
@@ -60,7 +60,7 @@ services:
         - VITE_CAPTCHA_SITE_KEY=${VITE_CAPTCHA_SITE_KEY}
     ports:
       - "3000:3000"
-    restart: on-failure
+    restart: unless-stopped
 
   nginx:
     image: nginx:1.25.3-alpine
@@ -73,7 +73,7 @@ services:
         condition: service_healthy
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
-    restart: on-failure
+    restart: unless-stopped
 
 volumes:
   db-data:
