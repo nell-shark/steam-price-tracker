@@ -36,7 +36,7 @@ services:
 
   backend:
     container_name: backend
-    build: ./backend/
+    build: ./backend
     ports:
       - "8080:8080"
     depends_on:
@@ -54,11 +54,12 @@ services:
 
   frontend:
     container_name: frontend
-    build: ./frontend/
+    build:
+      context: ./frontend
+      args:
+        - VITE_CAPTCHA_SITE_KEY=${VITE_CAPTCHA_SITE_KEY}
     ports:
       - "3000:3000"
-    environment:
-      - VITE_CAPTCHA_SITE_KEY=${CAPTCHA_SITE_KEY}
     restart: on-failure
 
   nginx:
