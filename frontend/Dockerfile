@@ -1,5 +1,5 @@
 # Build stage
-FROM node:20.11.0-alpine as build
+FROM node:20.11.0-alpine AS build
 
 WORKDIR /frontend
 

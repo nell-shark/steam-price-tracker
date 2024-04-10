@@ -25,6 +25,8 @@ services:
     image: redis:7.2.4-alpine3.19
     ports:
       - "6379:6379"
+    volumes:
+      - redis:/data
     restart: on-failure
 
   backend:
@@ -66,3 +68,4 @@ services:
 
 volumes:
   db-data:
+  redis:
