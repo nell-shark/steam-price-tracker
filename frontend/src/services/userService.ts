@@ -16,7 +16,7 @@ class UserService {
     params.append("email", user.email);
     params.append("password", user.password);
 
-    const { data } = await axiosInstance.post<number>(`/login`, params, {
+    const { data } = await axiosInstance.post<number>(`/api/login`, params, {
       headers: {
         "Content-type": "application/x-www-form-urlencoded"
       }

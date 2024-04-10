@@ -15,8 +15,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-  private static final String FRONTEND_LOCALHOST = "http://localhost:3000";
-
   @Bean
   public SecurityFilterChain filterChain(
       HttpSecurity http,
@@ -31,13 +29,13 @@ public class SecurityConfig {
             .csrfTokenRequestHandler(csrfTokenRequestHandler)
         )
         .formLogin(formLogin -> formLogin
-            .loginProcessingUrl("/login")
+            .loginProcessingUrl("/api/login")
             .usernameParameter("email")
             .passwordParameter("password")
             .successHandler((request, response, authentication) -> response.setStatus(200))
         )
         .logout(logout -> logout
-            .logoutUrl("/logout")
+            .logoutUrl("/api/logout")
             .deleteCookies("JSESSIONID")
             .invalidateHttpSession(true)
             .logoutSuccessHandler((request, response, authentication) -> response.setStatus(200))
