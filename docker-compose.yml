@@ -27,6 +27,11 @@ services:
       - "6379:6379"
     volumes:
       - redis:/data
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     restart: on-failure
 
   backend:
@@ -37,10 +42,13 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/steam_price_tracker
       - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER:-postgres}
       - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD:-root}
+      - SPRING_DATA_REDIS_HOST=redis
       - CAPTCHA_SECRET_KEY=${CAPTCHA_SECRET_KEY}
     restart: on-failure
 
