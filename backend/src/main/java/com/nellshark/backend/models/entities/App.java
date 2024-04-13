@@ -21,6 +21,7 @@ import jakarta.persistence.Index;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -123,10 +124,11 @@ public class App implements Serializable {
   }
 
   @PrePersist
+  @PreUpdate
   public void prePersist() {
-    this.type = this.type.toUpperCase();
-    this.prices = Optional.ofNullable(this.prices).orElse(List.of());
-    this.likedUsers = Optional.ofNullable(this.likedUsers).orElse(List.of());
+    type = type.toUpperCase();
+    prices = Optional.ofNullable(prices).orElse(List.of());
+    likedUsers = Optional.ofNullable(likedUsers).orElse(List.of());
   }
 }
 

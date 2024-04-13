@@ -12,6 +12,8 @@ import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -61,6 +63,12 @@ public class User implements UserDetails, Serializable {
   public User(@NonNull String email, @NonNull String password) {
     this.email = email;
     this.password = password;
+  }
+
+  @PrePersist
+  @PreUpdate
+  public void prePersist() {
+    email = email.toLowerCase();
   }
 
   @Override
