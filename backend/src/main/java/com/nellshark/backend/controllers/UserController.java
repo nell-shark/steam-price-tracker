@@ -26,9 +26,9 @@ public class UserController {
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   public Long registerUser(
-      @Valid @RequestBody UserRegistrationDTO userRegistrationDTO,
+      @Valid @RequestBody UserRegistrationDTO user,
       @Valid @NotBlank @RequestParam("captcha") String clientCaptchaToken) {
-    return userService.registerUser(userRegistrationDTO, clientCaptchaToken);
+    return userService.registerUser(user, clientCaptchaToken);
   }
 
   @PostMapping("/{id}/apps")
