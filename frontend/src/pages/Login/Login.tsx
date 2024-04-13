@@ -16,20 +16,23 @@ export function Login() {
   const [isEmailValid, setIsEmailValid] = useState<boolean>(false);
   const [isPasswordValid, setIsPasswordValid] = useState<boolean>(false);
   const [isCaptchaValid, setIsCaptchaValid] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!isEmailValid || !isPasswordValid || !isCaptchaValid) {
-      return;
-    }
     const user: User = {
       email: emailRef.current!.value,
       password: passwordRef.current!.value
     };
     const captcha = captchaRef.current!.getValue()!;
 
-    const { data } = await userService.login(user, captcha);
-    console.log(data);
+    try {
+      const res = await userService.login(user, captcha);
+      console.log(res.status);
+    } catch (error) {
+      const e = error as Error;
+      setErrorMessage(() => e.message);
+    }
   }
 
   function isValidEmail(email: string) {
@@ -52,6 +55,11 @@ export function Login() {
   return (
     <div className={`d-flex align-items-center justify-content-center ${styles.login}`}>
       <Form className={styles.form} onSubmit={e => handleSubmit(e)}>
+        {errorMessage && (
+          <div className="alert alert-danger mt-3" role="alert">
+            {errorMessage}
+          </div>
+        )}
         <Form.Group controlId="formBasicEmail">
           <Form.Label>Email address</Form.Label>
           <Form.Control
