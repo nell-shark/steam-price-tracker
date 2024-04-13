@@ -6,27 +6,50 @@ import com.nellshark.backend.exceptions.UserNotFoundException;
 import com.nellshark.backend.models.entities.App;
 import com.nellshark.backend.models.entities.User;
 import com.nellshark.backend.repositories.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class UserService implements UserDetailsService {
+public class UserService implements AuthenticationProvider {
 
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
   private final CaptchaService captchaService;
   private final AppService appService;
+  private final HttpServletRequest request;
 
   @Override
-  public UserDetails loadUserByUsername(@NonNull String email) {
-    return getUserByEmail(email);
+  public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+    String userEmail = authentication.getName();
+    log.info("Authenticating user: email='{}'", userEmail);
+
+    String captcha = request.getParameter("captcha");
+    captchaService.verifyRecaptcha(captcha);
+
+    User user = getUserByEmail(userEmail);
+
+    String password = authentication.getCredentials().toString();
+    if (!passwordEncoder.matches(password, user.getPassword())) {
+      throw new BadCredentialsException("Invalid credentials for user: " + userEmail);
+    }
+
+    return new UsernamePasswordAuthenticationToken(user, user.getPassword(), user.getAuthorities());
+  }
+
+  @Override
+  public boolean supports(Class<?> authentication) {
+    return authentication.equals(UsernamePasswordAuthenticationToken.class);
   }
 
   public User getUserByEmail(@NonNull String email) {
@@ -34,7 +57,7 @@ public class UserService implements UserDetailsService {
     return userRepository
         .findByEmail(email)
         .orElseThrow(
-            () -> new UserNotFoundException("User with email='%s' wasn't found".formatted(email))
+            () -> new UserNotFoundException("User with email='" + email + "' not found")
         );
   }
 
@@ -42,13 +65,14 @@ public class UserService implements UserDetailsService {
     log.info("Getting user by id: {}", id);
     return userRepository.
         findById(id)
-        .orElseThrow(() -> new UserNotFoundException("User not found: id=" + id));
+        .orElseThrow(() -> new UserNotFoundException("User not found for ID: " + id));
   }
 
   public long registerUser(
       @NonNull UserRegistrationDTO userRegistrationDTO,
       @NonNull String clientCaptchaToken) {
-    log.info("Register user: email={}", userRegistrationDTO.email());
+    String userEmail = userRegistrationDTO.email();
+    log.info("Registering user: email='{}'", userEmail);
 
     checkEmailAvailability(userRegistrationDTO.email());
 
@@ -56,19 +80,20 @@ public class UserService implements UserDetailsService {
 
     String encodedPassword = passwordEncoder.encode(userRegistrationDTO.password());
 
-    User user = userRepository.saveAndFlush(new User(userRegistrationDTO.email(), encodedPassword));
+    User newUser = new User(userEmail, encodedPassword);
+    newUser = userRepository.saveAndFlush(newUser);
 
-    return user.getId();
+    return newUser.getId();
   }
 
   private void checkEmailAvailability(@NonNull String email) {
     if (userRepository.isEmailTaken(email)) {
-      throw new EmailAlreadyTakenException("Email '%s' is already taken".formatted(email));
+      throw new EmailAlreadyTakenException("Email '" + email + "' is already taken");
     }
   }
 
   public void addFavoriteAppToUser(long userId, long appId) {
-    log.info("Adding favorite app to user");
+    log.info("Adding favorite app to user: userId={}, appId={}", userId, appId);
     User userById = getUserById(userId);
     App appById = appService.getAppById(appId);
     userById.getFavoriteApps().add(appById);

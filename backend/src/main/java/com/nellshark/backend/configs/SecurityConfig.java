@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRequestHandler;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -19,11 +18,9 @@ public class SecurityConfig {
   @Bean
   public SecurityFilterChain filterChain(
       HttpSecurity http,
-      AuthenticationFilter authenticationFilter,
       CorsConfigurationSource corsConfigurationSource,
       CsrfTokenRequestHandler csrfTokenRequestHandler) throws Exception {
     return http
-        .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
         .cors(cors -> cors
             .configurationSource(corsConfigurationSource)
         )
@@ -35,13 +32,11 @@ public class SecurityConfig {
             .loginProcessingUrl("/api/login")
             .usernameParameter("email")
             .passwordParameter("password")
-            .successHandler((request, response, authentication) -> response.setStatus(200))
         )
         .logout(logout -> logout
             .logoutUrl("/api/logout")
             .deleteCookies("JSESSIONID")
             .invalidateHttpSession(true)
-            .logoutSuccessHandler((request, response, authentication) -> response.setStatus(200))
         )
         .build();
   }
