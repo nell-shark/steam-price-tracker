@@ -1,5 +1,6 @@
 import { FormEvent, useRef, useState } from "react";
 import { Button, Form } from "react-bootstrap";
+import ReCAPTCHA from "react-google-recaptcha";
 import { Link } from "react-router-dom";
 
 import { userService } from "@/services/userService";
@@ -10,19 +11,25 @@ import styles from "./Login.module.css";
 export function Login() {
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
+  const captchaRef = useRef<ReCAPTCHA>(null);
+
   const [isEmailValid, setIsEmailValid] = useState<boolean>(false);
   const [isPasswordValid, setIsPasswordValid] = useState<boolean>(false);
+  const [isCaptchaValid, setIsCaptchaValid] = useState<boolean>(false);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!isEmailValid || !isPasswordValid) {
+    if (!isEmailValid || !isPasswordValid || !isCaptchaValid) {
       return;
     }
     const user: User = {
       email: emailRef.current!.value,
       password: passwordRef.current!.value
     };
-    await userService.login(user);
+    const captcha = captchaRef.current!.getValue()!;
+
+    const { data } = await userService.login(user, captcha);
+    console.log(data);
   }
 
   function isValidEmail(email: string) {
@@ -36,6 +43,10 @@ export function Login() {
 
   function handlePasswordChange() {
     setIsPasswordValid(() => (passwordRef.current?.value.length ?? 0) >= 8);
+  }
+
+  function handleCaptchaChange(value: string | null) {
+    setIsCaptchaValid(() => value !== null);
   }
 
   return (
@@ -63,11 +74,19 @@ export function Login() {
           />
         </Form.Group>
 
+        <div className="mt-3 d-flex align-items-center justify-content-center ">
+          <ReCAPTCHA
+            sitekey={import.meta.env.VITE_CAPTCHA_SITE_KEY}
+            ref={captchaRef}
+            onChange={e => handleCaptchaChange(e)}
+          />
+        </div>
+
         <Button
           className="mt-4 w-100"
           variant="primary"
           type="submit"
-          disabled={!isEmailValid || !isPasswordValid}
+          disabled={!isEmailValid || !isPasswordValid || !isCaptchaValid}
         >
           Login
         </Button>
