@@ -28,8 +28,8 @@ public interface AppRepository extends JpaRepository<App, Long> {
   @Query("""
        SELECT a
        FROM App a
-       WHERE LOWER(a.name)
-       LIKE LOWER(CONCAT(:prefixName, '%'))
+       WHERE a.name
+       ILIKE CONCAT(:prefixName, '%')
        ORDER BY CASE WHEN a.type = 'GAME' THEN 0 ELSE 1 END
       """)
   Page<App> findByNameStartsWithIgnoreCaseOrderByType(
