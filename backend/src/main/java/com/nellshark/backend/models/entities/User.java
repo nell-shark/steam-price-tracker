@@ -50,7 +50,7 @@ public class User implements UserDetails, Serializable {
 
   @Column(name = "role", nullable = false)
   @Enumerated(EnumType.STRING)
-  private UserRole role = UserRole.ROLE_USER;
+  private UserRole role = UserRole.USER;
 
   @ManyToMany
   @JoinTable(

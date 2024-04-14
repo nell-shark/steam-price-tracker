@@ -1,12 +1,15 @@
 package com.nellshark.backend.services;
 
+import com.nellshark.backend.dtos.AppDTO;
 import com.nellshark.backend.dtos.UserRegistrationDTO;
 import com.nellshark.backend.exceptions.EmailAlreadyTakenException;
 import com.nellshark.backend.exceptions.UserNotFoundException;
 import com.nellshark.backend.models.entities.App;
 import com.nellshark.backend.models.entities.User;
 import com.nellshark.backend.repositories.UserRepository;
+import com.nellshark.backend.utils.MappingUtils;
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
@@ -98,5 +101,14 @@ public class UserService implements AuthenticationProvider {
     App appById = appService.getAppById(appId);
     userById.getFavoriteApps().add(appById);
     userRepository.save(userById);
+  }
+
+  public List<AppDTO> getFavoriteAppsByUserId(long id) {
+    log.info("Getting favorite apps by user id: {}", id);
+    User user = getUserById(id);
+    return user.getFavoriteApps()
+        .stream()
+        .map(MappingUtils::toAppDTO)
+        .toList();
   }
 }
