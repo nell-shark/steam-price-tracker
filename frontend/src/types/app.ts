@@ -1,14 +1,14 @@
+export type AppInfo = {
+  id: number;
+  name: string;
+  imageUrl: string;
+};
+
 export type AppsByPage = {
   totalElements: number;
   totalPages: number;
   size: number;
-  content: [
-    {
-      id: number;
-      name: string;
-      imageUrl: string;
-    }
-  ];
+  content: AppInfo[];
   number: number;
   sort: {
     empty: boolean;

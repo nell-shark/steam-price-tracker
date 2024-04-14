@@ -2,13 +2,27 @@ import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
+import { useAppContext } from "@/contexts/AppContext";
 import { GITHUB_REPO_URL } from "@/data/constants";
+import { userService } from "@/services/userService";
 
 import styles from "./Navbar.module.css";
 
 export function NavBar() {
+  const navigate = useNavigate();
+  const { user } = useAppContext();
+
+  async function handleClick() {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+
+    userService.logout();
+  }
+
   return (
     <Navbar expand="lg" className={styles.navbar} bg="dark" data-bs-theme="dark">
       <Container>
@@ -25,8 +39,8 @@ export function NavBar() {
               Github
             </a>
           </Nav>
-          <Button href="/login" variant="outline-warning">
-            Login
+          <Button onClick={() => handleClick()} variant="outline-warning">
+            {user ? "Logout" : "Login"}
           </Button>
         </Navbar.Collapse>
       </Container>

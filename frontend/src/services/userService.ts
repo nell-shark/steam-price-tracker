@@ -1,4 +1,5 @@
 import { axiosInstance } from "@/services/axiosInstance";
+import { AppInfo } from "@/types/app";
 import { User } from "@/types/user";
 
 class UserService {
@@ -23,6 +24,25 @@ class UserService {
       }
     });
     return data;
+  }
+
+  public async getUser() {
+    const { data } = await axiosInstance.get<User>(`/api/v1/users`);
+    return data;
+  }
+
+  public async getFavoriteApps(userId: number) {
+    const { data } = await axiosInstance.get<AppInfo[]>(`/api/v1/users/${userId}`);
+    return data;
+  }
+
+  public async addFavoriteApp(userId: number, appId: number) {
+    await axiosInstance.post(`/api/v1/users/${userId}/apps`, appId);
+  }
+
+  public async logout() {
+    localStorage.removeItem("user");
+    await axiosInstance.post("/api/logout");
   }
 }
 

@@ -1,8 +1,9 @@
 import { FormEvent, useRef, useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import ReCAPTCHA from "react-google-recaptcha";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
+import { useAppContext } from "@/contexts/AppContext";
 import { userService } from "@/services/userService";
 import { User } from "@/types/user";
 
@@ -13,6 +14,8 @@ export type AuthFormProps = {
 };
 
 export function AuthForm({ type }: AuthFormProps) {
+  const navigate = useNavigate();
+  const { setUser } = useAppContext();
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const captchaRef = useRef<ReCAPTCHA>(null);
@@ -28,7 +31,8 @@ export function AuthForm({ type }: AuthFormProps) {
       email: emailRef.current!.value,
       password: passwordRef.current!.value
     };
-    const captcha = captchaRef.current!.getValue()!;
+
+    const captcha = import.meta.env.PROD ? captchaRef.current!.getValue()! : "";
 
     try {
       if (type === "login") {
@@ -36,6 +40,11 @@ export function AuthForm({ type }: AuthFormProps) {
       } else {
         await userService.postUser(user, captcha);
       }
+
+      setUser(() => user);
+      localStorage.setItem("user", JSON.stringify(user));
+
+      navigate("/");
     } catch (error) {
       const e = error as Error;
       setErrorMessage(() => e.message);
@@ -74,6 +83,7 @@ export function AuthForm({ type }: AuthFormProps) {
             placeholder="Enter email"
             onChange={() => handleEmailChange()}
             ref={emailRef}
+            defaultValue={import.meta.env.DEV ? "sads1@fsdf.com" : ""}
             required
           />
         </Form.Group>
@@ -85,23 +95,26 @@ export function AuthForm({ type }: AuthFormProps) {
             placeholder="Password"
             onChange={() => handlePasswordChange()}
             ref={passwordRef}
+            defaultValue={import.meta.env.DEV ? "password123" : ""}
             required
           />
         </Form.Group>
 
-        <div className="mt-3 d-flex align-items-center justify-content-center ">
-          <ReCAPTCHA
-            sitekey={import.meta.env.VITE_CAPTCHA_SITE_KEY}
-            ref={captchaRef}
-            onChange={e => handleCaptchaChange(e)}
-          />
-        </div>
+        {import.meta.env.PROD && (
+          <div className="mt-3 d-flex align-items-center justify-content-center ">
+            <ReCAPTCHA
+              sitekey={import.meta.env.VITE_CAPTCHA_SITE_KEY}
+              ref={captchaRef}
+              onChange={e => handleCaptchaChange(e)}
+            />
+          </div>
+        )}
 
         <Button
           className="mt-4 w-100"
           variant="primary"
           type="submit"
-          disabled={!isEmailValid || !isPasswordValid || !isCaptchaValid}
+          disabled={!isEmailValid || !isPasswordValid || (import.meta.env.PROD && !isCaptchaValid)}
         >
           Login
         </Button>
@@ -111,7 +124,7 @@ export function AuthForm({ type }: AuthFormProps) {
             className="text-body-secondary"
             to={type === "registration" ? "/login" : "/registration"}
           >
-            {type === "registration" ? "Create an account" : "Or login"}
+            {type === "registration" ? "Or login" : "Create an account"}
           </Link>
         </div>
       </Form>
