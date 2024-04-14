@@ -1,6 +1,7 @@
 package com.nellshark.backend.exceptions;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
@@ -12,6 +13,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -58,6 +60,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
   public ProblemDetail handleBadRequestException(RuntimeException e) {
     log.warn(LOG_OCCURRED_MESSAGE, e.getClass().getSimpleName(), e.getMessage());
     return ProblemDetail.forStatusAndDetail(BAD_REQUEST, e.getMessage());
+  }
+
+  @ExceptionHandler(AccessDeniedException.class)
+  public ProblemDetail handleForbiddenException(RuntimeException e) {
+    log.warn(LOG_OCCURRED_MESSAGE, e.getClass().getSimpleName(), e.getMessage());
+    return ProblemDetail.forStatusAndDetail(FORBIDDEN, e.getMessage());
   }
 
   @ExceptionHandler(Exception.class)

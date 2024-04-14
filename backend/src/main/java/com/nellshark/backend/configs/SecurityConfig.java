@@ -3,6 +3,7 @@ package com.nellshark.backend.configs;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
@@ -12,6 +13,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(securedEnabled = true)
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -32,11 +34,13 @@ public class SecurityConfig {
             .loginProcessingUrl("/api/login")
             .usernameParameter("email")
             .passwordParameter("password")
+            .successHandler((request, response, authentication) -> response.setStatus(200))
         )
         .logout(logout -> logout
             .logoutUrl("/api/logout")
             .deleteCookies("JSESSIONID")
             .invalidateHttpSession(true)
+            .logoutSuccessHandler((request, response, authentication) -> response.setStatus(200))
         )
         .build();
   }
