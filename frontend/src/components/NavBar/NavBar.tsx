@@ -12,15 +12,15 @@ import styles from "./Navbar.module.css";
 
 export function NavBar() {
   const navigate = useNavigate();
-  const { user } = useAppContext();
+  const { user, setUser } = useAppContext();
 
   async function handleClick() {
-    if (!user) {
-      navigate("/login");
-      return;
+    if (user) {
+      setUser(() => null);
+      await userService.logout();
     }
 
-    userService.logout();
+    navigate("/login");
   }
 
   return (

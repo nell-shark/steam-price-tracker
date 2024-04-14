@@ -12,7 +12,7 @@ export function User() {
   useEffect(() => {
     async function fetchFavoriteApps() {
       try {
-        const data = await userService.getFavoriteApps(Number(id));
+        const data = await userService.getFavoriteAppsByUserId(Number(id));
         setFavoriteApps(() => data);
       } catch (error) {
         const e = error as Error;

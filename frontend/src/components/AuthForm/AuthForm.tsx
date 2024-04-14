@@ -114,7 +114,9 @@ export function AuthForm({ type }: AuthFormProps) {
           className="mt-4 w-100"
           variant="primary"
           type="submit"
-          disabled={!isEmailValid || !isPasswordValid || (import.meta.env.PROD && !isCaptchaValid)}
+          disabled={
+            import.meta.env.PROD ? !isEmailValid || !isPasswordValid || !isCaptchaValid : false
+          }
         >
           Login
         </Button>

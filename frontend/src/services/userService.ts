@@ -26,12 +26,7 @@ class UserService {
     return data;
   }
 
-  public async getUser() {
-    const { data } = await axiosInstance.get<User>(`/api/v1/users`);
-    return data;
-  }
-
-  public async getFavoriteApps(userId: number) {
+  public async getFavoriteAppsByUserId(userId: number) {
     const { data } = await axiosInstance.get<AppInfo[]>(`/api/v1/users/${userId}`);
     return data;
   }
