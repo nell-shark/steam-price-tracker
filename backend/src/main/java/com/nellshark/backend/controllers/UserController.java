@@ -35,7 +35,7 @@ public class UserController {
   }
 
   @GetMapping("/{id}")
-  @PreAuthorize("#id == authentication.principal.id")
+  @PreAuthorize("isAuthenticated() AND #id == authentication.principal.id")
   public List<AppDTO> getFavoriteAppsByUserId(@PathVariable("id") long id) {
     return userService.getFavoriteAppsByUserId(id);
   }

@@ -1,5 +1,6 @@
 package com.nellshark.backend.configs;
 
+import com.nellshark.backend.models.entities.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,7 +35,11 @@ public class SecurityConfig {
             .loginProcessingUrl("/api/login")
             .usernameParameter("email")
             .passwordParameter("password")
-            .successHandler((request, response, authentication) -> response.setStatus(200))
+            .successHandler((request, response, authentication) -> {
+              response.setStatus(200);
+              User user = (User) authentication.getPrincipal();
+              response.getWriter().write(user.getId().toString());
+            })
         )
         .logout(logout -> logout
             .logoutUrl("/api/logout")
