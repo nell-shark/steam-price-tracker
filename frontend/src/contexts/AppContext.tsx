@@ -1,11 +1,11 @@
-import { Dispatch, ReactNode, SetStateAction, useState } from "react";
+import { Dispatch, ReactNode, SetStateAction, useEffect, useState } from "react";
 import { createContext, useContextSelector } from "use-context-selector";
 
-import { User } from "@/types/user";
+import { AuthenticatedUser } from "@/types/user";
 
 type AppContextValue = {
-  user: User | null;
-  setUser: Dispatch<SetStateAction<User | null>>;
+  user: AuthenticatedUser | null;
+  setUser: Dispatch<SetStateAction<AuthenticatedUser | null>>;
 };
 
 type StateProviderProps = {
@@ -15,11 +15,18 @@ type StateProviderProps = {
 const AppContext = createContext<AppContextValue | null>(null);
 
 export function StateProvider({ children }: StateProviderProps) {
-  const userFromStorage = localStorage.getItem("user")
-    ? JSON.parse(localStorage.getItem("user")!)
-    : null;
+  const [user, setUser] = useState<AuthenticatedUser | null>(() => {
+    const userFromStorage = localStorage.getItem("user");
+    return userFromStorage ? JSON.parse(userFromStorage) : null;
+  });
 
-  const [user, setUser] = useState<User | null>(userFromStorage);
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem("user", JSON.stringify(user));
+    } else {
+      localStorage.removeItem("user");
+    }
+  }, [user]);
 
   return <AppContext.Provider value={{ user, setUser }}>{children}</AppContext.Provider>;
 }

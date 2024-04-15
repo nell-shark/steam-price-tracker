@@ -1,9 +1,9 @@
 import { axiosInstance } from "@/services/axiosInstance";
 import { AppInfo } from "@/types/app";
-import { User } from "@/types/user";
+import { AuthenticatedUser, UserLoginRequest } from "@/types/user";
 
 class UserService {
-  public async postUser(user: User, captcha: string) {
+  public async postUser(user: UserLoginRequest, captcha: string) {
     const { data } = await axiosInstance.post<number>(`/api/v1/users`, user, {
       params: {
         captcha
@@ -12,17 +12,18 @@ class UserService {
     return data;
   }
 
-  public async login(user: User, captcha: string) {
+  public async login(user: UserLoginRequest, captcha: string) {
     const params = new URLSearchParams();
     params.append("email", user.email);
     params.append("password", user.password);
     params.append("captcha", captcha);
 
-    const { data } = await axiosInstance.post(`/api/login`, params, {
+    const { data } = await axiosInstance.post<number>(`/api/login`, params, {
       headers: {
         "Content-type": "application/x-www-form-urlencoded"
       }
     });
+
     return data;
   }
 
@@ -36,7 +37,6 @@ class UserService {
   }
 
   public async logout() {
-    localStorage.removeItem("user");
     await axiosInstance.post("/api/logout");
   }
 }

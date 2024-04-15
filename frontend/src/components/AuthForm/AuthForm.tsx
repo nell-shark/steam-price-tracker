@@ -3,11 +3,11 @@ import { Button, Form } from "react-bootstrap";
 import ReCAPTCHA from "react-google-recaptcha";
 import { Link, useNavigate } from "react-router-dom";
 
-import { useAppContext } from "@/contexts/AppContext";
 import { userService } from "@/services/userService";
-import { User } from "@/types/user";
+import { AuthenticatedUser, UserLoginRequest } from "@/types/user";
 
 import styles from "./Auth.module.css";
+import { useAppContext } from "@/contexts/AppContext";
 
 export type AuthFormProps = {
   readonly type: "registration" | "login";
@@ -16,6 +16,7 @@ export type AuthFormProps = {
 export function AuthForm({ type }: AuthFormProps) {
   const navigate = useNavigate();
   const { setUser } = useAppContext();
+
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const captchaRef = useRef<ReCAPTCHA>(null);
@@ -24,32 +25,6 @@ export function AuthForm({ type }: AuthFormProps) {
   const [isPasswordValid, setIsPasswordValid] = useState<boolean>(false);
   const [isCaptchaValid, setIsCaptchaValid] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const user: User = {
-      email: emailRef.current!.value,
-      password: passwordRef.current!.value
-    };
-
-    const captcha = import.meta.env.PROD ? captchaRef.current!.getValue()! : "";
-
-    try {
-      if (type === "login") {
-        await userService.login(user, captcha);
-      } else {
-        await userService.postUser(user, captcha);
-      }
-
-      setUser(() => user);
-      localStorage.setItem("user", JSON.stringify(user));
-
-      navigate("/");
-    } catch (error) {
-      const e = error as Error;
-      setErrorMessage(() => e.message);
-    }
-  }
 
   function isValidEmail(email: string) {
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -66,6 +41,34 @@ export function AuthForm({ type }: AuthFormProps) {
 
   function handleCaptchaChange(value: string | null) {
     setIsCaptchaValid(() => value !== null);
+  }
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const user: UserLoginRequest = {
+      email: emailRef.current!.value,
+      password: passwordRef.current!.value
+    };
+
+    const captcha = import.meta.env.PROD ? captchaRef.current!.getValue()! : "";
+
+    try {
+      const userId =
+        type === "login"
+          ? await userService.login(user, captcha)
+          : await userService.postUser(user, captcha);
+
+      const authenticatedUser: AuthenticatedUser = {
+        id: userId
+      };
+
+      setUser(() => authenticatedUser);
+
+      navigate("/");
+    } catch (error) {
+      const e = error as Error;
+      setErrorMessage(() => e.message);
+    }
   }
 
   return (
