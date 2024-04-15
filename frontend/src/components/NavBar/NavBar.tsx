@@ -38,6 +38,11 @@ export function NavBar() {
             <a href={GITHUB_REPO_URL} className="nav-link" target="_blank" rel="noreferrer">
               Github
             </a>
+            {user && (
+              <Link to={`/users/${user.id}`} className="nav-link">
+                Favorites
+              </Link>
+            )}
           </Nav>
           <Button onClick={() => handleClick()} variant="outline-warning">
             {user ? "Logout" : "Login"}
