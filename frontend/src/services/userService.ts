@@ -1,6 +1,6 @@
 import { axiosInstance } from "@/services/axiosInstance";
 import { AppInfo } from "@/types/app";
-import { AuthenticatedUser, UserLoginRequest } from "@/types/user";
+import { UserLoginRequest } from "@/types/user";
 
 class UserService {
   public async postUser(user: UserLoginRequest, captcha: string) {
@@ -28,7 +28,7 @@ class UserService {
   }
 
   public async getFavoriteAppsByUserId(userId: number) {
-    const { data } = await axiosInstance.get<AppInfo[]>(`/api/v1/users/${userId}`);
+    const { data } = await axiosInstance.get<AppInfo[]>(`/api/v1/users/${userId}/apps`);
     return data;
   }
 

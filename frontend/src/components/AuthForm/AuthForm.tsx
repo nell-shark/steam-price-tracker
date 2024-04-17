@@ -86,7 +86,7 @@ export function AuthForm({ type }: AuthFormProps) {
             placeholder="Enter email"
             onChange={() => handleEmailChange()}
             ref={emailRef}
-            defaultValue={import.meta.env.DEV ? "sads1@fsdf.com" : ""}
+            defaultValue={import.meta.env.DEV ? "admin@gmail.com" : ""}
             required
           />
         </Form.Group>
