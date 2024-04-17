@@ -34,8 +34,8 @@ public class UserController {
     return userService.registerUser(user, clientCaptchaToken);
   }
 
-  @GetMapping("/{id}")
-  @PreAuthorize("isAuthenticated() AND #id == authentication.principal.id")
+  @GetMapping("/{id}/apps")
+  @PreAuthorize("#id == authentication.principal.id OR hasRole('ADMIN')")
   public List<AppDTO> getFavoriteAppsByUserId(@PathVariable("id") long id) {
     return userService.getFavoriteAppsByUserId(id);
   }
