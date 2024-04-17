@@ -21,12 +21,16 @@ public class CaptchaService {
   public void verifyRecaptcha(@NonNull String clientCaptchaToken) {
     log.info("Verify reCaptcha: {}", clientCaptchaToken);
 
+    if (!captchaProperties.isEnabled()) {
+      return;
+    }
+
     if (StringUtils.isBlank(clientCaptchaToken)) {
       throw new ReCaptchaInvalidException("reCaptcha must not be blank");
     }
 
     RecaptchaResponse recaptchaResponse = googleClient.verifyRecaptcha(
-        captchaProperties.getSecret(),
+        captchaProperties.getSecretKey(),
         clientCaptchaToken
     );
 

@@ -40,6 +40,6 @@ server:
 
 google:
   captcha:
-    key:
-      secret: ${CAPTCHA_SECRET_KEY}
+    enabled: true
+    secret-key: ${CAPTCHA_SECRET_KEY}
 

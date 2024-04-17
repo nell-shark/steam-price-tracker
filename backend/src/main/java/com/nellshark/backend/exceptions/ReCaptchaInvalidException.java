@@ -1,6 +1,8 @@
 package com.nellshark.backend.exceptions;
 
-public class ReCaptchaInvalidException extends RuntimeException {
+import org.springframework.security.core.AuthenticationException;
+
+public class ReCaptchaInvalidException extends AuthenticationException {
 
   public ReCaptchaInvalidException(String message) {
     super(message);

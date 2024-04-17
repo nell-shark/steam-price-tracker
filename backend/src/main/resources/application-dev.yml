@@ -32,3 +32,6 @@ management:
     health:
       show-details: "always"
 
+google:
+  captcha:
+    enabled: false

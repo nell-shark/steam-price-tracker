@@ -37,8 +37,8 @@ public class UserService implements AuthenticationProvider {
     String userEmail = authentication.getName();
     log.info("Authenticating user: email='{}'", userEmail);
 
-//    String captcha = request.getParameter("captcha");
-//    captchaService.verifyRecaptcha(captcha);
+    String captcha = request.getParameter("captcha");
+    captchaService.verifyRecaptcha(captcha);
 
     User user = getUserByEmail(userEmail);
 
