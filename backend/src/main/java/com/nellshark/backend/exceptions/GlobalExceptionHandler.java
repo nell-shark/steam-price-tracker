@@ -14,6 +14,7 @@ import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -46,7 +47,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
   @ExceptionHandler({
       AppNotFoundException.class,
-      UserNotFoundException.class
+      UserNotFoundException.class,
+      BadCredentialsException.class
   })
   public ProblemDetail handleNotFoundException(RuntimeException e) {
     log.warn(LOG_OCCURRED_MESSAGE, e.getClass().getSimpleName(), e.getMessage());

@@ -22,7 +22,8 @@ public class SecurityConfig {
   public SecurityFilterChain filterChain(
       HttpSecurity http,
       CorsConfigurationSource corsConfigurationSource,
-      CsrfTokenRequestHandler csrfTokenRequestHandler) throws Exception {
+      CsrfTokenRequestHandler csrfTokenRequestHandler,
+      CustomAuthenticationFailureHandler customAuthenticationFailureHandler) throws Exception {
     return http
         .cors(cors -> cors
             .configurationSource(corsConfigurationSource)
@@ -40,6 +41,7 @@ public class SecurityConfig {
               User user = (User) authentication.getPrincipal();
               response.getWriter().write(user.getId().toString());
             })
+            .failureHandler(customAuthenticationFailureHandler)
         )
         .logout(logout -> logout
             .logoutUrl("/api/logout")
