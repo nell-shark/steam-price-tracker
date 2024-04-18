@@ -4,7 +4,7 @@ import { UserLoginRequest } from "@/types/user";
 
 class UserService {
   public async postUser(user: UserLoginRequest, captcha: string) {
-    const { data } = await axiosInstance.post<number>(`/api/v1/users`, user, {
+    const { data } = await axiosInstance.post<number>(`/api/v1/auth/users`, user, {
       params: {
         captcha
       }

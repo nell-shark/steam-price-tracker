@@ -8,6 +8,8 @@ import { AuthenticatedUser, UserLoginRequest } from "@/types/user";
 
 import styles from "./Auth.module.css";
 import { useAppContext } from "@/contexts/AppContext";
+import { ProblemDetail } from "@/types/error";
+import axios, { AxiosError } from "axios";
 
 export type AuthFormProps = {
   readonly type: "registration" | "login";
@@ -24,7 +26,7 @@ export function AuthForm({ type }: AuthFormProps) {
   const [isEmailValid, setIsEmailValid] = useState<boolean>(false);
   const [isPasswordValid, setIsPasswordValid] = useState<boolean>(false);
   const [isCaptchaValid, setIsCaptchaValid] = useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [error, setError] = useState<string>("");
 
   function isValidEmail(email: string) {
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -65,18 +67,23 @@ export function AuthForm({ type }: AuthFormProps) {
       setUser(() => authenticatedUser);
 
       navigate("/");
-    } catch (error) {
-      const e = error as Error;
-      setErrorMessage(() => e.message);
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        const e = err as AxiosError;
+        const problemDetail = e.response?.data as ProblemDetail;
+        setError(() => problemDetail.detail);
+        return;
+      }
+      setError(() => "Something went wrong");
     }
   }
 
   return (
     <div className={`d-flex align-items-center justify-content-center ${styles.auth}`}>
       <Form className={styles.form} onSubmit={e => handleSubmit(e)}>
-        {errorMessage && (
+        {error && (
           <div className="alert alert-danger mt-3" role="alert">
-            {errorMessage}
+            {error}
           </div>
         )}
         <Form.Group controlId="formBasicEmail">
