@@ -18,7 +18,7 @@ class UserService {
     params.append("password", user.password);
     params.append("captcha", captcha);
 
-    const { data } = await axiosInstance.post<number>(`/api/login`, params, {
+    const { data } = await axiosInstance.post<number>(`/api/v1/auth/login`, params, {
       headers: {
         "Content-type": "application/x-www-form-urlencoded"
       }
@@ -37,7 +37,7 @@ class UserService {
   }
 
   public async logout() {
-    await axiosInstance.post("/api/logout");
+    await axiosInstance.post("/api/v1/auth/logout");
   }
 }
 
