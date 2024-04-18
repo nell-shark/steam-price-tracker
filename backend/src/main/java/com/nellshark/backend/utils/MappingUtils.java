@@ -15,12 +15,15 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
 @Slf4j
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class MappingUtils {
 
   private static final DateTimeFormatter DATE_TIME_FORMATTER;
@@ -33,10 +36,6 @@ public final class MappingUtils {
         .appendOptional(pattern1)
         .appendOptional(pattern2)
         .toFormatter();
-  }
-
-  private MappingUtils() {
-    throw new AssertionError();
   }
 
   public static AppDTO toAppDTO(@NonNull App app) {

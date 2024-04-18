@@ -3,6 +3,7 @@ package com.nellshark.backend.controllers;
 import com.nellshark.backend.dtos.AppDTO;
 import com.nellshark.backend.models.entities.App;
 import com.nellshark.backend.services.AppService;
+import com.nellshark.backend.utils.Api;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/apps")
+@RequestMapping(Api.App.BASE_URL)
 @RequiredArgsConstructor
 public class AppController {
 

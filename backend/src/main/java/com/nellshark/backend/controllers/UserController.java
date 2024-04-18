@@ -4,6 +4,7 @@ import com.nellshark.backend.dtos.AppDTO;
 import com.nellshark.backend.dtos.FavoriteAppRequestDTO;
 import com.nellshark.backend.dtos.UserRegistrationDTO;
 import com.nellshark.backend.services.UserService;
+import com.nellshark.backend.utils.Api;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import java.util.List;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/users")
+@RequestMapping(Api.User.BASE_URL)
 @RequiredArgsConstructor
 public class UserController {
 

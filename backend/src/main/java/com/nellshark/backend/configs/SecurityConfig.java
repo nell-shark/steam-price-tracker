@@ -1,6 +1,7 @@
 package com.nellshark.backend.configs;
 
 import com.nellshark.backend.models.entities.User;
+import com.nellshark.backend.utils.Api.Auth;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,7 +34,7 @@ public class SecurityConfig {
             .csrfTokenRequestHandler(csrfTokenRequestHandler)
         )
         .formLogin(formLogin -> formLogin
-            .loginProcessingUrl("/api/v1/auth/login")
+            .loginProcessingUrl(Auth.BASE_URL + "/login")
             .usernameParameter("email")
             .passwordParameter("password")
             .successHandler((request, response, authentication) -> {
@@ -44,7 +45,7 @@ public class SecurityConfig {
             .failureHandler(customAuthenticationFailureHandler)
         )
         .logout(logout -> logout
-            .logoutUrl("/api/v1/auth/logout")
+            .logoutUrl(Auth.BASE_URL + "/logout")
             .deleteCookies("JSESSIONID")
             .invalidateHttpSession(true)
             .logoutSuccessHandler((request, response, authentication) -> response.setStatus(204))
