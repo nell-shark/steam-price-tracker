@@ -14,28 +14,28 @@ public class ClientConfig {
 
   @Bean
   public ApiSteamClient apiSteamClient() {
-    RestClient client = RestClient.create("https://api.steampowered.com");
-    HttpServiceProxyFactory factory = HttpServiceProxyFactory
-        .builderFor(RestClientAdapter.create(client))
-        .build();
-    return factory.createClient(ApiSteamClient.class);
+    RestClient restClient = RestClient.create("https://api.steampowered.com");
+    return HttpServiceProxyFactory
+        .builderFor(RestClientAdapter.create(restClient))
+        .build()
+        .createClient(ApiSteamClient.class);
   }
 
   @Bean
   public StoreSteamClient storeSteamClient() {
-    RestClient client = RestClient.create("https://store.steampowered.com");
-    HttpServiceProxyFactory factory = HttpServiceProxyFactory
-        .builderFor(RestClientAdapter.create(client))
-        .build();
-    return factory.createClient(StoreSteamClient.class);
+    RestClient restClient = RestClient.create("https://store.steampowered.com");
+    return HttpServiceProxyFactory
+        .builderFor(RestClientAdapter.create(restClient))
+        .build()
+        .createClient(StoreSteamClient.class);
   }
 
   @Bean
   public GoogleClient googleClient() {
-    RestClient client = RestClient.create("https://www.google.com");
-    HttpServiceProxyFactory factory = HttpServiceProxyFactory
-        .builderFor(RestClientAdapter.create(client))
-        .build();
-    return factory.createClient(GoogleClient.class);
+    RestClient restClient = RestClient.create("https://www.google.com");
+    return HttpServiceProxyFactory
+        .builderFor(RestClientAdapter.create(restClient))
+        .build()
+        .createClient(GoogleClient.class);
   }
 }

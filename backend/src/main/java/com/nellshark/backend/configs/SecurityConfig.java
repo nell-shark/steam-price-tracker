@@ -18,8 +18,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-  private static final String FRONTEND_LOCALHOST = "http://localhost:3000";
-
   @Bean
   public SecurityFilterChain filterChain(
       HttpSecurity http,

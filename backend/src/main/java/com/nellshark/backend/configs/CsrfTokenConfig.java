@@ -12,7 +12,7 @@ public class CsrfTokenConfig {
   public CsrfTokenRequestHandler csrfTokenRequestHandler() {
     XorCsrfTokenRequestAttributeHandler delegate = new XorCsrfTokenRequestAttributeHandler();
     delegate.setCsrfRequestAttributeName(null);
-    //noinspection FunctionalExpressionCanBeFolded
+//    noinspection FunctionalExpressionCanBeFolded
     return delegate::handle;
   }
 }
