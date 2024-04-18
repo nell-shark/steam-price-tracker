@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
+import { Table } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 
+import { AppItem } from "@/components/AppItem";
 import { userService } from "@/services/userService";
 import { AppInfo } from "@/types/app";
 
@@ -25,7 +27,20 @@ export function User() {
   return (
     <div>
       {errorMessage && <h1>{errorMessage}</h1>}
-      {favoriteApps?.map(app => <p key={app.id}>{app.id}</p>)}
+      <Table hover className={`overflow-hidden rounded`}>
+        <thead className="table-dark">
+          <tr>
+            <th>id</th>
+            <th>Name</th>
+            <th>Image</th>
+          </tr>
+        </thead>
+        <tbody>
+          {favoriteApps?.map(app => (
+            <AppItem key={app.id} id={app.id} name={app.name} imageUrl={app.imageUrl} />
+          ))}
+        </tbody>
+      </Table>
     </div>
   );
 }

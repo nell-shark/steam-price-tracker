@@ -3,10 +3,10 @@ import Table from "react-bootstrap/Table";
 import { PaginationControl } from "react-bootstrap-pagination-control";
 import { useSearchParams } from "react-router-dom";
 
+import { AppItem } from "@/components/AppItem";
 import { appService } from "@/services/appService";
 import { AppsByPage } from "@/types/app";
 
-import { AppItem } from "./AppItem/AppItem";
 import styles from "./AppTable.module.css";
 import { SearchForm } from "./SearchForm";
 
