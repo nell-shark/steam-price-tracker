@@ -6,7 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 import { useAppContext } from "@/contexts/AppContext";
 import { GITHUB_REPO_URL } from "@/data/constants";
-import { userService } from "@/services/userService";
+import { authService } from "@/services/authService";
 
 import styles from "./Navbar.module.css";
 
@@ -17,7 +17,7 @@ export function NavBar() {
   async function handleClick() {
     if (user) {
       setUser(() => null);
-      await userService.logout();
+      await authService.logout();
     }
 
     navigate("/login");

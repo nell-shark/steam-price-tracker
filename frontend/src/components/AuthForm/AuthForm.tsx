@@ -1,15 +1,16 @@
+import axios, { AxiosError } from "axios";
 import { FormEvent, useRef, useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import ReCAPTCHA from "react-google-recaptcha";
 import { Link, useNavigate } from "react-router-dom";
 
+import { useAppContext } from "@/contexts/AppContext";
+import { authService } from "@/services/authService";
 import { userService } from "@/services/userService";
+import { ProblemDetail } from "@/types/error";
 import { AuthenticatedUser, UserLoginRequest } from "@/types/user";
 
 import styles from "./Auth.module.css";
-import { useAppContext } from "@/contexts/AppContext";
-import { ProblemDetail } from "@/types/error";
-import axios, { AxiosError } from "axios";
 
 export type AuthFormProps = {
   readonly type: "registration" | "login";
@@ -57,7 +58,7 @@ export function AuthForm({ type }: AuthFormProps) {
     try {
       const userId =
         type === "login"
-          ? await userService.login(user, captcha)
+          ? await authService.login(user, captcha)
           : await userService.postUser(user, captcha);
 
       const authenticatedUser: AuthenticatedUser = {
