@@ -1,12 +1,9 @@
 package com.nellshark.backend.controllers;
 
 import com.nellshark.backend.dtos.requests.FavoriteAppRequest;
-import com.nellshark.backend.dtos.requests.UserRegistration;
 import com.nellshark.backend.dtos.responses.AppResponse;
 import com.nellshark.backend.services.UserService;
 import com.nellshark.backend.utils.Api;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,7 +13,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,14 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
   private final UserService userService;
-
-  @PostMapping
-  @ResponseStatus(HttpStatus.CREATED)
-  public Long registerUser(
-      @Valid @RequestBody UserRegistration user,
-      @Valid @NotBlank @RequestParam("captcha") String clientCaptchaToken) {
-    return userService.registerUser(user, clientCaptchaToken);
-  }
 
   @GetMapping("/{id}/apps")
   @PreAuthorize("#id == authentication.principal.id OR hasRole('ADMIN')")

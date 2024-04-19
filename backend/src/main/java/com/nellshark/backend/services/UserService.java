@@ -1,6 +1,5 @@
 package com.nellshark.backend.services;
 
-import com.nellshark.backend.dtos.requests.UserRegistration;
 import com.nellshark.backend.dtos.responses.AppResponse;
 import com.nellshark.backend.exceptions.EmailAlreadyTakenException;
 import com.nellshark.backend.exceptions.UserNotFoundException;
@@ -71,25 +70,7 @@ public class UserService implements AuthenticationProvider {
         .orElseThrow(() -> new UserNotFoundException("User not found for ID: " + id));
   }
 
-  public long registerUser(
-      @NonNull UserRegistration userRegistration,
-      @NonNull String clientCaptchaToken) {
-    String userEmail = userRegistration.email();
-    log.info("Registering user: email='{}'", userEmail);
-
-    checkEmailAvailability(userRegistration.email());
-
-    captchaService.verifyRecaptcha(clientCaptchaToken);
-
-    String encodedPassword = passwordEncoder.encode(userRegistration.password());
-
-    User newUser = new User(userEmail, encodedPassword);
-    newUser = userRepository.saveAndFlush(newUser);
-
-    return newUser.getId();
-  }
-
-  private void checkEmailAvailability(@NonNull String email) {
+  public void checkEmailAvailability(@NonNull String email) {
     if (userRepository.isEmailTaken(email)) {
       throw new EmailAlreadyTakenException("Email '" + email + "' is already taken");
     }
@@ -110,5 +91,10 @@ public class UserService implements AuthenticationProvider {
         .stream()
         .map(MappingUtils::toAppDTO)
         .toList();
+  }
+
+  public void saveUser(@NonNull User user) {
+    log.info("Saving user to db: email={}", user.getEmail());
+    userRepository.save(user);
   }
 }
