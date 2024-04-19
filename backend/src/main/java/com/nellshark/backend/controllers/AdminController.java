@@ -1,6 +1,6 @@
 package com.nellshark.backend.controllers;
 
-import com.nellshark.backend.dtos.AppBlockRequestDTO;
+import com.nellshark.backend.dtos.requests.AppBlockRequest;
 import com.nellshark.backend.services.AdminService;
 import com.nellshark.backend.utils.Api;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ public class AdminController {
   private final AdminService adminService;
 
   @PostMapping
-  public void addAppToBlockList(@RequestBody AppBlockRequestDTO appBlockRequestDTO) {
-    adminService.addAppToBlockList(appBlockRequestDTO.id());
+  public void addAppToBlockList(@RequestBody AppBlockRequest appBlockRequest) {
+    adminService.addAppToBlockList(appBlockRequest.id());
   }
 }

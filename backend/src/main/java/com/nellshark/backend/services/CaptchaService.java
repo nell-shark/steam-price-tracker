@@ -2,8 +2,8 @@ package com.nellshark.backend.services;
 
 import com.nellshark.backend.clients.GoogleClient;
 import com.nellshark.backend.configs.CaptchaProperties;
+import com.nellshark.backend.dtos.responses.RecaptchaResponse;
 import com.nellshark.backend.exceptions.ReCaptchaInvalidException;
-import com.nellshark.backend.models.responses.RecaptchaResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

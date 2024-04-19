@@ -1,7 +1,7 @@
 package com.nellshark.backend.services.steam;
 
 import com.nellshark.backend.clients.ApiSteamClient;
-import com.nellshark.backend.models.responses.AppListResponse;
+import com.nellshark.backend.dtos.responses.AppListResponse;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;

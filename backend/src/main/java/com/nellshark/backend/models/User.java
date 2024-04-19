@@ -1,4 +1,4 @@
-package com.nellshark.backend.models.entities;
+package com.nellshark.backend.models;
 
 import com.nellshark.backend.enums.UserRole;
 import jakarta.persistence.Column;

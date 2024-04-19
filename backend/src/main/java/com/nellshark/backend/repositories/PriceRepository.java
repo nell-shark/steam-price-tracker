@@ -1,6 +1,6 @@
 package com.nellshark.backend.repositories;
 
-import com.nellshark.backend.models.entities.Price;
+import com.nellshark.backend.models.Price;
 import java.time.LocalDateTime;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

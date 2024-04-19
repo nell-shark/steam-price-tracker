@@ -1,11 +1,11 @@
 package com.nellshark.backend.services;
 
-import com.nellshark.backend.dtos.AppDTO;
-import com.nellshark.backend.dtos.UserRegistrationDTO;
+import com.nellshark.backend.dtos.requests.UserRegistration;
+import com.nellshark.backend.dtos.responses.AppResponse;
 import com.nellshark.backend.exceptions.EmailAlreadyTakenException;
 import com.nellshark.backend.exceptions.UserNotFoundException;
-import com.nellshark.backend.models.entities.App;
-import com.nellshark.backend.models.entities.User;
+import com.nellshark.backend.models.App;
+import com.nellshark.backend.models.User;
 import com.nellshark.backend.repositories.UserRepository;
 import com.nellshark.backend.utils.MappingUtils;
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,15 +34,15 @@ public class UserService implements AuthenticationProvider {
 
   @Override
   public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-    String userEmail = authentication.getName();
+    final String userEmail = authentication.getName();
     log.info("Authenticating user: email='{}'", userEmail);
 
-    String captcha = request.getParameter("captcha");
+    final String captcha = request.getParameter("captcha");
     captchaService.verifyRecaptcha(captcha);
 
     User user = getUserByEmail(userEmail);
 
-    String password = authentication.getCredentials().toString();
+    final String password = authentication.getCredentials().toString();
     if (!passwordEncoder.matches(password, user.getPassword())) {
       throw new BadCredentialsException("Invalid credentials for user: " + userEmail);
     }
@@ -58,7 +58,7 @@ public class UserService implements AuthenticationProvider {
   public User getUserByEmail(@NonNull String email) {
     log.info("Getting user by email: {}", email);
     return userRepository
-        .findByEmail(email)
+        .findByEmail(email.toLowerCase())
         .orElseThrow(
             () -> new UserNotFoundException("User with email='" + email + "' not found")
         );
@@ -72,16 +72,16 @@ public class UserService implements AuthenticationProvider {
   }
 
   public long registerUser(
-      @NonNull UserRegistrationDTO userRegistrationDTO,
+      @NonNull UserRegistration userRegistration,
       @NonNull String clientCaptchaToken) {
-    String userEmail = userRegistrationDTO.email();
+    String userEmail = userRegistration.email();
     log.info("Registering user: email='{}'", userEmail);
 
-    checkEmailAvailability(userRegistrationDTO.email());
+    checkEmailAvailability(userRegistration.email());
 
     captchaService.verifyRecaptcha(clientCaptchaToken);
 
-    String encodedPassword = passwordEncoder.encode(userRegistrationDTO.password());
+    String encodedPassword = passwordEncoder.encode(userRegistration.password());
 
     User newUser = new User(userEmail, encodedPassword);
     newUser = userRepository.saveAndFlush(newUser);
@@ -103,7 +103,7 @@ public class UserService implements AuthenticationProvider {
     userRepository.save(userById);
   }
 
-  public List<AppDTO> getFavoriteAppsByUserId(long id) {
+  public List<AppResponse> getFavoriteAppsByUserId(long id) {
     log.info("Getting favorite apps by user id: {}", id);
     User user = getUserById(id);
     return user.getFavoriteApps()

@@ -1,8 +1,8 @@
 package com.nellshark.backend.services.steam;
 
 import com.nellshark.backend.clients.StoreSteamClient;
+import com.nellshark.backend.dtos.responses.AppDetailsResponse;
 import com.nellshark.backend.enums.Currency;
-import com.nellshark.backend.models.responses.AppDetailsResponse;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

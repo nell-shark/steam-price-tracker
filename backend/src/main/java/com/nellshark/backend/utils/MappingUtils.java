@@ -2,10 +2,10 @@ package com.nellshark.backend.utils;
 
 import static java.util.Locale.ENGLISH;
 
-import com.nellshark.backend.dtos.AppDTO;
+import com.nellshark.backend.dtos.responses.AppDetailsResponse;
+import com.nellshark.backend.dtos.responses.AppResponse;
 import com.nellshark.backend.enums.Platform;
-import com.nellshark.backend.models.entities.App;
-import com.nellshark.backend.models.responses.AppDetailsResponse;
+import com.nellshark.backend.models.App;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
@@ -38,8 +38,8 @@ public final class MappingUtils {
         .toFormatter();
   }
 
-  public static AppDTO toAppDTO(@NonNull App app) {
-    return new AppDTO(app.getId(), app.getName(), app.getHeaderImage());
+  public static AppResponse toAppDTO(@NonNull App app) {
+    return new AppResponse(app.getId(), app.getName(), app.getHeaderImage());
   }
 
   public static App toApp(@NonNull AppDetailsResponse.App.Data data) {

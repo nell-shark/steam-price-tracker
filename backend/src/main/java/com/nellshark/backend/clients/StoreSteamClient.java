@@ -1,6 +1,6 @@
 package com.nellshark.backend.clients;
 
-import com.nellshark.backend.models.responses.AppDetailsResponse;
+import com.nellshark.backend.dtos.responses.AppDetailsResponse;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestParam;

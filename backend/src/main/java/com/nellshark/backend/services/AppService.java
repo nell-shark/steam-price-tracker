@@ -2,12 +2,12 @@ package com.nellshark.backend.services;
 
 import static com.nellshark.backend.clients.StoreSteamClient.PRICE_OVERVIEW_FILTER;
 
-import com.nellshark.backend.dtos.AppDTO;
+import com.nellshark.backend.dtos.responses.AppDetailsResponse;
+import com.nellshark.backend.dtos.responses.AppResponse;
 import com.nellshark.backend.enums.Currency;
 import com.nellshark.backend.exceptions.AppNotFoundException;
-import com.nellshark.backend.models.entities.App;
-import com.nellshark.backend.models.entities.Price;
-import com.nellshark.backend.models.responses.AppDetailsResponse;
+import com.nellshark.backend.models.App;
+import com.nellshark.backend.models.Price;
 import com.nellshark.backend.repositories.AppRepository;
 import com.nellshark.backend.services.steam.ApiSteamService;
 import com.nellshark.backend.services.steam.StoreSteamService;
@@ -53,7 +53,7 @@ public class AppService {
     return appRepository.findAll();
   }
 
-  public Page<AppDTO> getAppDTOsByPage(int page) {
+  public Page<AppResponse> getAppDTOsByPage(int page) {
     log.info("Getting app DTOs by page: page={}", page);
     page = page <= 0 ? 0 : --page;
     Pageable pageable = PageRequest.of(page, PAGE_SIZE);
@@ -61,7 +61,7 @@ public class AppService {
         .map(MappingUtils::toAppDTO);
   }
 
-  public Page<AppDTO> getAppDTOsByPrefixName(@NonNull String prefixName, int page) {
+  public Page<AppResponse> getAppDTOsByPrefixName(@NonNull String prefixName, int page) {
     log.info("Getting app DTOs by prefix name");
     prefixName = StringUtils.stripToNull(prefixName);
 

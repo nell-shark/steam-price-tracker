@@ -1,6 +1,6 @@
 package com.nellshark.backend.clients;
 
-import com.nellshark.backend.models.responses.AppListResponse;
+import com.nellshark.backend.dtos.responses.AppListResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.service.annotation.GetExchange;
 

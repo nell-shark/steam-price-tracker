@@ -1,4 +1,4 @@
-package com.nellshark.backend.models.entities;
+package com.nellshark.backend.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Shape;

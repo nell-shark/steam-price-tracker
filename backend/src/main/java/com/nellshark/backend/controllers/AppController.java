@@ -1,7 +1,7 @@
 package com.nellshark.backend.controllers;
 
-import com.nellshark.backend.dtos.AppDTO;
-import com.nellshark.backend.models.entities.App;
+import com.nellshark.backend.dtos.responses.AppResponse;
+import com.nellshark.backend.models.App;
 import com.nellshark.backend.services.AppService;
 import com.nellshark.backend.utils.Api;
 import jakarta.validation.Valid;
@@ -22,12 +22,13 @@ public class AppController {
   private final AppService appService;
 
   @GetMapping
-  public Page<AppDTO> getAppDTOsByPage(@RequestParam(value = "page", defaultValue = "1") int page) {
+  public Page<AppResponse> getAppDTOsByPage(
+      @RequestParam(value = "page", defaultValue = "1") int page) {
     return appService.getAppDTOsByPage(page);
   }
 
   @GetMapping("/search")
-  public Page<AppDTO> getAppDTOsByPrefixName(
+  public Page<AppResponse> getAppDTOsByPrefixName(
       @Valid @NotBlank @RequestParam("name") String prefixName,
       @RequestParam(value = "page", defaultValue = "1") int page) {
     return appService.getAppDTOsByPrefixName(prefixName, page);

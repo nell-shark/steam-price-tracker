@@ -1,23 +1,8 @@
-package com.nellshark.backend.models.responses;
+package com.nellshark.backend.dtos.responses;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
-/* {
-    "applist": {
-        "apps": [
-            {
-                "appid": 1941401,
-                "name": ""
-            },
-            {
-                "appid": 1897482,
-                "name": ""
-            },
-            ...
-           ]
-    }
-} */
 public record AppListResponse(@JsonProperty("applist") AppListRoot appListRoot) {
 
   public record AppListRoot(@JsonProperty("apps") List<App> apps) {

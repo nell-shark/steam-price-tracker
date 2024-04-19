@@ -1,8 +1,8 @@
 package com.nellshark.backend.controllers;
 
-import com.nellshark.backend.dtos.AppDTO;
-import com.nellshark.backend.dtos.FavoriteAppRequestDTO;
-import com.nellshark.backend.dtos.UserRegistrationDTO;
+import com.nellshark.backend.dtos.requests.FavoriteAppRequest;
+import com.nellshark.backend.dtos.requests.UserRegistration;
+import com.nellshark.backend.dtos.responses.AppResponse;
 import com.nellshark.backend.services.UserService;
 import com.nellshark.backend.utils.Api;
 import jakarta.validation.Valid;
@@ -30,14 +30,14 @@ public class UserController {
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   public Long registerUser(
-      @Valid @RequestBody UserRegistrationDTO user,
+      @Valid @RequestBody UserRegistration user,
       @Valid @NotBlank @RequestParam("captcha") String clientCaptchaToken) {
     return userService.registerUser(user, clientCaptchaToken);
   }
 
   @GetMapping("/{id}/apps")
   @PreAuthorize("#id == authentication.principal.id OR hasRole('ADMIN')")
-  public List<AppDTO> getFavoriteAppsByUserId(@PathVariable("id") long id) {
+  public List<AppResponse> getFavoriteAppsByUserId(@PathVariable("id") long id) {
     return userService.getFavoriteAppsByUserId(id);
   }
 
@@ -46,7 +46,7 @@ public class UserController {
   @ResponseStatus(HttpStatus.CREATED)
   public void addFavoriteAppToUser(
       @PathVariable("id") long userId,
-      @RequestBody FavoriteAppRequestDTO favoriteAppRequestDTO) {
-    userService.addFavoriteAppToUser(userId, favoriteAppRequestDTO.appId());
+      @RequestBody FavoriteAppRequest favoriteAppRequest) {
+    userService.addFavoriteAppToUser(userId, favoriteAppRequest.appId());
   }
 }

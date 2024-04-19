@@ -1,6 +1,6 @@
 package com.nellshark.backend.services;
 
-import com.nellshark.backend.models.entities.BlockedApp;
+import com.nellshark.backend.models.BlockedApp;
 import com.nellshark.backend.repositories.BlockedAppRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

@@ -1,6 +1,6 @@
 package com.nellshark.backend.repositories;
 
-import com.nellshark.backend.models.entities.App;
+import com.nellshark.backend.models.App;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;

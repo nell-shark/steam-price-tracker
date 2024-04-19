@@ -1,4 +1,4 @@
-package com.nellshark.backend.models.responses;
+package com.nellshark.backend.dtos.responses;
 
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

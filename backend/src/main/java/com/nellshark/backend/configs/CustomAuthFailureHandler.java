@@ -10,7 +10,7 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 
 @Component
 @RequiredArgsConstructor
-public class CustomAuthenticationFailureHandler implements AuthenticationFailureHandler {
+public class CustomAuthFailureHandler implements AuthenticationFailureHandler {
 
   private final HandlerExceptionResolver handlerExceptionResolver;
 

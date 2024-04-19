@@ -1,6 +1,6 @@
 package com.nellshark.backend.clients;
 
-import com.nellshark.backend.models.responses.RecaptchaResponse;
+import com.nellshark.backend.dtos.responses.RecaptchaResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.service.annotation.PostExchange;
