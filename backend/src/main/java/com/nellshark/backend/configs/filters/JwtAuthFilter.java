@@ -1,4 +1,4 @@
-package com.nellshark.backend.configs;
+package com.nellshark.backend.configs.filters;
 
 import com.nellshark.backend.services.JwtService;
 import com.nellshark.backend.services.UserService;

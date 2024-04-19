@@ -1,4 +1,4 @@
-package com.nellshark.backend.configs;
+package com.nellshark.backend.configs.properties;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -6,9 +6,10 @@ import org.springframework.context.annotation.Configuration;
 
 @Data
 @Configuration
-@ConfigurationProperties(prefix = "google.captcha.key")
-public class CaptchaProperties {
+@ConfigurationProperties(prefix = "jwt")
+public class JwtProperties {
 
-  private boolean enabled;
   private String secretKey;
+  private long expiration;
+  private long refreshExpiration;
 }

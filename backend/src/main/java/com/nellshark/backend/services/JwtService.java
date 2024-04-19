@@ -1,6 +1,7 @@
 package com.nellshark.backend.services;
 
 
+import com.nellshark.backend.configs.properties.JwtProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -10,21 +11,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 import javax.crypto.SecretKey;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class JwtService {
 
-  @Value("${application.security.jwt.secret-key}")
-  private String secretKey;
-  @Value("${application.security.jwt.expiration}")
-  private long jwtExpiration;
-  @Value("${application.security.jwt.refresh-token.expiration}")
-  private long refreshExpiration;
+  private final JwtProperties jwtProperties;
 
   public String extractUsername(String token) {
     log.info("extractUsername");
@@ -47,14 +44,14 @@ public class JwtService {
       UserDetails userDetails
   ) {
     log.info("generateToken2");
-    return buildToken(extraClaims, userDetails, jwtExpiration);
+    return buildToken(extraClaims, userDetails, jwtProperties.getExpiration());
   }
 
   public String generateRefreshToken(
       UserDetails userDetails
   ) {
     log.info("generateRefreshToken");
-    return buildToken(new HashMap<>(), userDetails, refreshExpiration);
+    return buildToken(new HashMap<>(), userDetails, jwtProperties.getRefreshExpiration());
   }
 
   private String buildToken(
@@ -100,7 +97,7 @@ public class JwtService {
 
   private SecretKey getSignInKey() {
     log.info("getSignInKey");
-    byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+    byte[] keyBytes = Decoders.BASE64.decode(jwtProperties.getSecretKey());
     return Keys.hmacShaKeyFor(keyBytes);
   }
 }
