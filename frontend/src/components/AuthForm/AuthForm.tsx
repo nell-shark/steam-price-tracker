@@ -6,11 +6,12 @@ import { Link, useNavigate } from "react-router-dom";
 
 import { useAppContext } from "@/contexts/AppContext";
 import { authService } from "@/services/authService";
-import { userService } from "@/services/userService";
 import { ProblemDetail } from "@/types/error";
-import { AuthenticatedUser, UserLoginRequest } from "@/types/user";
+import { AuthenticatedUser, AuthRequest } from "@/types/user";
 
 import styles from "./Auth.module.css";
+import { jwtDecode } from "jwt-decode";
+import { JwtPayload } from "@/types/jwt";
 
 export type AuthFormProps = {
   readonly type: "registration" | "login";
@@ -48,21 +49,21 @@ export function AuthForm({ type }: AuthFormProps) {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const user: UserLoginRequest = {
+    const user: AuthRequest = {
       email: emailRef.current!.value,
       password: passwordRef.current!.value
     };
 
-    const captcha = import.meta.env.PROD ? captchaRef.current!.getValue()! : "";
+//     const captcha = import.meta.env.PROD ? captchaRef.current!.getValue()! : "";
 
     try {
-      const userId =
-        type === "login"
-          ? await authService.login(user, captcha)
-          : await userService.postUser(user, captcha);
+      const data =
+        type === "login" ? await authService.login(user) : await authService.register(user);
+
+      const payload = jwtDecode<JwtPayload>(data.accessToken);
 
       const authenticatedUser: AuthenticatedUser = {
-        id: userId
+        id: payload.userId
       };
 
       setUser(() => authenticatedUser);

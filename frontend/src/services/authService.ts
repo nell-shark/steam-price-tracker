@@ -1,26 +1,36 @@
 import { axiosInstance } from "@/services/axiosInstance";
-import { UserLoginRequest } from "@/types/user";
+import { AuthRequest, AuthResponse } from "@/types/auth";
 
 class AuthService {
   private baseUrl: string = "/api/v1/auth";
 
-  public async login(user: UserLoginRequest, captcha: string) {
-    const params = new URLSearchParams();
-    params.append("email", user.email);
-    params.append("password", user.password);
-    params.append("captcha", captcha);
+  public async register(user: AuthRequest) {
+    const { data } = await axiosInstance.post<AuthResponse>(`${this.baseUrl}/register`, user);
+    this.setTokens(data);
+    return data;
+  }
 
-    const { data } = await axiosInstance.post<number>(`${this.baseUrl}/login`, params, {
-      headers: {
-        "Content-type": "application/x-www-form-urlencoded"
-      }
-    });
+  public async login(user: AuthRequest) {
+    const { data } = await axiosInstance.post<AuthResponse>(`${this.baseUrl}/login`, user);
+    this.setTokens(data);
+    return data;
+  }
 
+  public async refreshToken() {
+    const { data } = await axiosInstance.post<AuthResponse>(`${this.baseUrl}/refresh-token`);
+    this.setTokens(data);
     return data;
   }
 
   public async logout() {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
     await axiosInstance.post(`${this.baseUrl}/logout`);
+  }
+
+  private setTokens(data: AuthResponse) {
+    localStorage.setItem("accessToken", data.accessToken);
+    localStorage.setItem("refreshToken", data.refreshToken);
   }
 }
 
