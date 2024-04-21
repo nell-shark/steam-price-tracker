@@ -3,11 +3,9 @@ package com.nellshark.backend.services;
 import com.nellshark.backend.dtos.requests.AuthRequest;
 import com.nellshark.backend.dtos.responses.AuthResponse;
 import com.nellshark.backend.models.User;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.http.HttpHeaders;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -65,7 +63,7 @@ public class AuthService {
   public AuthResponse refreshToken(@NonNull String authHeader) {
     log.info("Refreshing token");
 
-    if (StringUtils.isBlank(authHeader)) {
+    if (StringUtils.isBlank(authHeader) || !authHeader.startsWith("Bearer ")) {
       throw new BadCredentialsException("Invalid or missing Authorization header");
     }
 

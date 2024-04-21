@@ -36,7 +36,8 @@ public class SecurityConfig {
             .csrfTokenRequestHandler(csrfTokenRequestHandler)
         )
         .sessionManagement(
-            session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        )
         .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
         .build();
   }
