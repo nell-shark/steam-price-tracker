@@ -4,7 +4,10 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -57,7 +60,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
   @ExceptionHandler({
       EmailAlreadyTakenException.class,
-      ReCaptchaInvalidException.class
+      ReCaptchaInvalidException.class,
+      JwtException.class,
+      IllegalArgumentException.class
   })
   public ProblemDetail handleBadRequestException(RuntimeException e) {
     log.warn(LOG_OCCURRED_MESSAGE, e.getClass().getSimpleName(), e.getMessage());
@@ -68,6 +73,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
   public ProblemDetail handleForbiddenException(RuntimeException e) {
     log.warn(LOG_OCCURRED_MESSAGE, e.getClass().getSimpleName(), e.getMessage());
     return ProblemDetail.forStatusAndDetail(FORBIDDEN, e.getMessage());
+  }
+
+  @ExceptionHandler(ExpiredJwtException.class)
+  public ProblemDetail handleUnauthorizedException(RuntimeException e) {
+    log.warn(LOG_OCCURRED_MESSAGE, e.getClass().getSimpleName(), e.getMessage());
+    return ProblemDetail.forStatusAndDetail(UNAUTHORIZED, e.getMessage());
   }
 
   @ExceptionHandler(Exception.class)

@@ -17,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
 @Component
 @RequiredArgsConstructor
@@ -24,6 +25,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
   private final JwtService jwtService;
   private final UserService userService;
+  private final HandlerExceptionResolver handlerExceptionResolver;
 
   @Override
   protected void doFilterInternal(
@@ -39,23 +41,28 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
     String token = null;
     String username = null;
-    if (StringUtils.isNotBlank(authHeader) && authHeader.startsWith("Bearer ")) {
-      token = authHeader.substring(7);
-      username = jwtService.extractUsername(token);
-    }
-
-    if (StringUtils.isNotBlank(username)
-        && SecurityContextHolder.getContext().getAuthentication() == null) {
-      User user = userService.getUserByEmail(username);
-      if (jwtService.isTokenValid(token, user)) {
-        var authenticationToken = new UsernamePasswordAuthenticationToken(
-            user,
-            null,
-            user.getAuthorities()
-        );
-        authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+    try {
+      if (StringUtils.isNotBlank(authHeader) && authHeader.startsWith("Bearer ")) {
+        token = authHeader.substring(7);
+        username = jwtService.extractUsername(token);
       }
+
+      if (StringUtils.isNotBlank(username)
+          && SecurityContextHolder.getContext().getAuthentication() == null) {
+        User user = userService.getUserByEmail(username);
+        if (jwtService.isTokenValid(token, user)) {
+          var authenticationToken = new UsernamePasswordAuthenticationToken(
+              user,
+              null,
+              user.getAuthorities()
+          );
+          authenticationToken.setDetails(
+              new WebAuthenticationDetailsSource().buildDetails(request));
+          SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+        }
+      }
+    } catch (RuntimeException exception) {
+      handlerExceptionResolver.resolveException(request, response, null, exception);
     }
 
     filterChain.doFilter(request, response);
