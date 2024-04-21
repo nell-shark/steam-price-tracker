@@ -48,7 +48,6 @@ import lombok.ToString;
 public class App implements Serializable {
 
   @Id
-  @Column(name = "id", nullable = false, updatable = false, unique = true)
   private long id;
 
   @Column(name = "name", nullable = false)

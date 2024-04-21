@@ -1,13 +1,16 @@
 package com.nellshark.backend.services;
 
 import com.nellshark.backend.dtos.requests.AuthRequest;
-import com.nellshark.backend.dtos.requests.RegisterRequest;
 import com.nellshark.backend.dtos.responses.AuthResponse;
 import com.nellshark.backend.models.User;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.HttpHeaders;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,23 +26,22 @@ public class AuthService {
   private final AuthenticationManager authenticationManager;
   private final PasswordEncoder passwordEncoder;
 
-  public AuthResponse register(@NonNull RegisterRequest registerRequest) {
-    final String userEmail = registerRequest.email();
+  public AuthResponse register(@NonNull AuthRequest authRequest) {
+    final String userEmail = authRequest.email();
     log.info("Registering user: email='{}'", userEmail);
 
-    userService.checkEmailAvailability(registerRequest.email());
+    userService.checkEmailAvailability(authRequest.email());
 
     captchaService.verifyRecaptcha("clientCaptchaToken");
 
-    final String encodedPassword = passwordEncoder.encode(registerRequest.password());
-
+    final String encodedPassword = passwordEncoder.encode(authRequest.password());
     User user = new User(userEmail, encodedPassword);
     userService.saveUser(user);
 
-    String jwtToken = jwtService.generateToken(user);
+    String accessToken = jwtService.generateToken(user);
     String refreshToken = jwtService.generateRefreshToken(user);
 
-    return new AuthResponse(jwtToken, refreshToken);
+    return new AuthResponse(accessToken, refreshToken);
   }
 
   public AuthResponse authenticate(@NonNull AuthRequest request) {
@@ -54,9 +56,33 @@ public class AuthService {
     );
 
     User user = userService.getUserByEmail(request.email());
-    String jwtToken = jwtService.generateToken(user);
+    String accessToken = jwtService.generateToken(user);
     String refreshToken = jwtService.generateRefreshToken(user);
 
-    return new AuthResponse(jwtToken, refreshToken);
+    return new AuthResponse(accessToken, refreshToken);
+  }
+
+  public AuthResponse refreshToken(@NonNull HttpServletRequest request) {
+    String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+
+    if (StringUtils.isBlank(authHeader) || !authHeader.startsWith("Bearer ")) {
+      throw new BadCredentialsException("Invalid or missing Authorization header");
+    }
+
+    String refreshToken = authHeader.substring(7);
+    String userEmail = jwtService.extractUsername(refreshToken);
+
+    if (StringUtils.isBlank(userEmail)) {
+      throw new BadCredentialsException("Unable to extract user email from refresh token");
+    }
+
+    User user = userService.getUserByEmail(userEmail);
+    if (!jwtService.isTokenValid(refreshToken, user)) {
+      throw new BadCredentialsException("Refresh token is invalid");
+    }
+
+    String accessToken = jwtService.generateToken(user);
+
+    return new AuthResponse(accessToken, refreshToken);
   }
 }

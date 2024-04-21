@@ -3,7 +3,6 @@ package com.nellshark.backend.controllers;
 import com.nellshark.backend.dtos.requests.FavoriteAppRequest;
 import com.nellshark.backend.dtos.responses.AppResponse;
 import com.nellshark.backend.services.UserService;
-import com.nellshark.backend.utils.Api;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,7 +16,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(Api.User.BASE_URL)
+@RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
 public class UserController {
 
