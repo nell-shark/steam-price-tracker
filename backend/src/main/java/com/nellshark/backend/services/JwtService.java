@@ -2,6 +2,7 @@ package com.nellshark.backend.services;
 
 
 import com.nellshark.backend.configs.properties.JwtProperties;
+import com.nellshark.backend.models.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -14,7 +15,6 @@ import javax.crypto.SecretKey;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -33,39 +33,41 @@ public class JwtService {
     return claimsResolver.apply(claims);
   }
 
-  public String generateToken(@NonNull UserDetails userDetails) {
-    return generateToken(new HashMap<>(), userDetails);
+  public String generateToken(@NonNull User user) {
+    return generateToken(new HashMap<>(), user);
   }
 
   public String generateToken(
       @NonNull Map<String, Object> extraClaims,
-      @NonNull UserDetails userDetails
+      @NonNull User user
   ) {
-    return buildToken(extraClaims, userDetails, jwtProperties.getExpiration());
+    return buildToken(extraClaims, user, jwtProperties.getExpiration());
   }
 
-  public String generateRefreshToken(@NonNull UserDetails userDetails) {
-    return buildToken(new HashMap<>(), userDetails, jwtProperties.getRefreshExpiration());
+  public String generateRefreshToken(@NonNull User user) {
+    return buildToken(new HashMap<>(), user, jwtProperties.getRefreshExpiration());
   }
 
   private String buildToken(
       @NonNull Map<String, Object> extraClaims,
-      @NonNull UserDetails userDetails,
+      @NonNull User user,
       long expiration
   ) {
+    extraClaims.put("userId", user.getId());
+    extraClaims.put("role", user.getRole());
     return Jwts
         .builder()
         .claims(extraClaims)
-        .subject(userDetails.getUsername())
+        .subject(user.getUsername())
         .issuedAt(new Date())
         .expiration(new Date(System.currentTimeMillis() + expiration))
         .signWith(getSignInKey())
         .compact();
   }
 
-  public boolean isTokenValid(@NonNull String token, @NonNull UserDetails userDetails) {
+  public boolean isTokenValid(@NonNull String token, @NonNull User user) {
     final String username = extractUsername(token);
-    return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
+    return (username.equals(user.getUsername())) && !isTokenExpired(token);
   }
 
   private boolean isTokenExpired(@NonNull String token) {

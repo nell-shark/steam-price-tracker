@@ -62,10 +62,10 @@ public class AuthService {
     return new AuthResponse(accessToken, refreshToken);
   }
 
-  public AuthResponse refreshToken(@NonNull HttpServletRequest request) {
-    String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+  public AuthResponse refreshToken(@NonNull String authHeader) {
+    log.info("Refreshing token");
 
-    if (StringUtils.isBlank(authHeader) || !authHeader.startsWith("Bearer ")) {
+    if (StringUtils.isBlank(authHeader)) {
       throw new BadCredentialsException("Invalid or missing Authorization header");
     }
 

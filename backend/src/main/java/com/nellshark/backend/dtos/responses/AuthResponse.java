@@ -3,10 +3,10 @@ package com.nellshark.backend.dtos.responses;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record AuthResponse(
-    @JsonProperty("access_token")
+    @JsonProperty("accessToken")
     String accessToken,
 
-    @JsonProperty("refresh_token")
+    @JsonProperty("refreshToken")
     String refreshToken
 ) {
 
