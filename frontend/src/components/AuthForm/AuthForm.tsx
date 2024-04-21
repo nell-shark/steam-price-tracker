@@ -7,6 +7,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 import { useAppContext } from "@/contexts/AppContext";
 import { authService } from "@/services/authService";
+import { AuthRequest } from "@/types/auth";
 import { ProblemDetail } from "@/types/error";
 import { JwtPayload } from "@/types/jwt";
 import { AuthenticatedUser } from "@/types/user";
