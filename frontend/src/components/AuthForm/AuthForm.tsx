@@ -1,4 +1,5 @@
 import axios, { AxiosError } from "axios";
+import { jwtDecode } from "jwt-decode";
 import { FormEvent, useRef, useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import ReCAPTCHA from "react-google-recaptcha";
@@ -7,11 +8,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAppContext } from "@/contexts/AppContext";
 import { authService } from "@/services/authService";
 import { ProblemDetail } from "@/types/error";
-import { AuthenticatedUser, AuthRequest } from "@/types/user";
+import { JwtPayload } from "@/types/jwt";
+import { AuthenticatedUser } from "@/types/user";
 
 import styles from "./Auth.module.css";
-import { jwtDecode } from "jwt-decode";
-import { JwtPayload } from "@/types/jwt";
 
 export type AuthFormProps = {
   readonly type: "registration" | "login";
