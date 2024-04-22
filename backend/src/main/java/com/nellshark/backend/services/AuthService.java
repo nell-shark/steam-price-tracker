@@ -42,7 +42,7 @@ public class AuthService {
     return new AuthResponse(accessToken, refreshToken);
   }
 
-  public AuthResponse authenticate(@NonNull AuthRequest request) {
+  public AuthResponse login(@NonNull AuthRequest request) {
     final String userEmail = request.email();
     log.info("Authenticating user: email='{}'", userEmail);
 
@@ -79,8 +79,9 @@ public class AuthService {
       throw new BadCredentialsException("Refresh token is invalid");
     }
 
-    String accessToken = jwtService.generateToken(user);
+    String newAccessToken = jwtService.generateToken(user);
+    String newRefreshToken = jwtService.generateRefreshToken(user);
 
-    return new AuthResponse(accessToken, refreshToken);
+    return new AuthResponse(newAccessToken, newRefreshToken);
   }
 }

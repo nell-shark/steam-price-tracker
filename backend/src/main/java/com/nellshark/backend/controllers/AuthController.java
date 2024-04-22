@@ -25,8 +25,8 @@ public class AuthController {
   }
 
   @PostMapping("/login")
-  public AuthResponse authenticate(@RequestBody @Valid AuthRequest authRequest) {
-    return authService.authenticate(authRequest);
+  public AuthResponse login(@RequestBody @Valid AuthRequest authRequest) {
+    return authService.login(authRequest);
   }
 
   @PostMapping("/refresh-token")
