@@ -1,16 +1,12 @@
 import axios, { AxiosError } from "axios";
-import { jwtDecode } from "jwt-decode";
 import { FormEvent, useRef, useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import ReCAPTCHA from "react-google-recaptcha";
 import { Link, useNavigate } from "react-router-dom";
 
-import { useAppContext } from "@/contexts/AppContext";
 import { authService } from "@/services/authService";
 import { AuthRequest } from "@/types/auth";
 import { ProblemDetail } from "@/types/error";
-import { JwtPayload } from "@/types/jwt";
-import { AuthenticatedUser } from "@/types/user";
 
 import styles from "./Auth.module.css";
 
@@ -20,7 +16,6 @@ export type AuthFormProps = {
 
 export function AuthForm({ type }: AuthFormProps) {
   const navigate = useNavigate();
-  const { setUser } = useAppContext();
 
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
@@ -55,19 +50,14 @@ export function AuthForm({ type }: AuthFormProps) {
       password: passwordRef.current!.value
     };
 
-//     const captcha = import.meta.env.PROD ? captchaRef.current!.getValue()! : "";
+    // const captcha = import.meta.env.PROD ? captchaRef.current!.getValue()! : "";
 
     try {
-      const data =
-        type === "login" ? await authService.login(user) : await authService.register(user);
-
-      const payload = jwtDecode<JwtPayload>(data.accessToken);
-
-      const authenticatedUser: AuthenticatedUser = {
-        id: payload.userId
-      };
-
-      setUser(() => authenticatedUser);
+      if (type === "login") {
+        await authService.login(user);
+      } else {
+        await authService.register(user);
+      }
 
       navigate("/");
     } catch (err) {

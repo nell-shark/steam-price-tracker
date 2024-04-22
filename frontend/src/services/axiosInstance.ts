@@ -14,11 +14,10 @@ export const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   config => {
-    const token = config.url?.includes("/api/v1/auth/refresh-token")
-      ? localStorage.getItem("refreshToken")
-      : localStorage.getItem("accessToken");
-
-    config.headers.Authorization = token ? `Bearer ${token}` : "";
+    console.log(`accessToken ${localStorage.getItem("accessToken")}`);
+    console.log(`refreshToken ${localStorage.getItem("refreshToken")}`);
+    const token = localStorage.getItem("accessToken");
+    config.headers.Authorization = token ? `Bearer ${token}` : undefined;
     return config;
   },
   error => {
@@ -40,6 +39,7 @@ axiosInstance.interceptors.response.use(
         window.location.href = "/login";
       }
     }
+
     return Promise.reject(error);
   }
 );

@@ -1,25 +1,24 @@
+import { jwtDecode } from "jwt-decode";
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import { Link, useNavigate } from "react-router-dom";
 
-import { useAppContext } from "@/contexts/AppContext";
 import { GITHUB_REPO_URL } from "@/data/constants";
 import { authService } from "@/services/authService";
+import { JwtPayload } from "@/types/jwt";
 
 import styles from "./Navbar.module.css";
 
 export function NavBar() {
   const navigate = useNavigate();
-  const { user, setUser } = useAppContext();
+  const user = localStorage.getItem("accessToken")
+    ? jwtDecode<JwtPayload>(localStorage.getItem("accessToken")!)
+    : null;
 
   async function handleClick() {
-    if (user) {
-      setUser(() => null);
-      await authService.logout();
-    }
-
+    await authService.logout();
     navigate("/login");
   }
 
@@ -39,7 +38,7 @@ export function NavBar() {
               Github
             </a>
             {user && (
-              <Link to={`/users/${user.id}`} className="nav-link">
+              <Link to={`/users/${user.userId}`} className="nav-link">
                 Favorites
               </Link>
             )}
