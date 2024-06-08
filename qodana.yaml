@@ -1,6 +1,0 @@
-version: "1.0"
-profile:
-  name: qodana.recommended
-linters:
-  - name: "jetbrains/qodana-jvm:2024.1"
-  - name: "jetbrains/qodana-js:2024.1"
